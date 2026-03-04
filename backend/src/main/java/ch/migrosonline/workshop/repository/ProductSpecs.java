@@ -19,7 +19,8 @@ public final class ProductSpecs {
         ? Specification.unrestricted()
         : (root, query, cb) ->
             cb.like(
-                cb.lower(root.get("name")), "%" + escapeLikePattern(search.toLowerCase()) + "%");
+                cb.lower(root.get("name")),
+                "%" + escapeLikePattern(search.toLowerCase(java.util.Locale.ROOT)) + "%");
   }
 
   private static String escapeLikePattern(String input) {

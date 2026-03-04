@@ -31,7 +31,7 @@ public class CartController {
     try {
       UUID.fromString(sessionId);
     } catch (IllegalArgumentException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid session ID format");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid session ID format", e);
     }
   }
 
