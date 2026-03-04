@@ -10,7 +10,7 @@ describe('FooterComponent', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
+  it('should create the footer component', () => {
     const fixture = TestBed.createComponent(FooterComponent);
     expect(fixture.componentInstance).toBeTruthy();
   });

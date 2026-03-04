@@ -3,7 +3,6 @@ import { HlmButton } from '@spartan-ng/helm/button';
 
 @Component({
   selector: 'app-pagination',
-  standalone: true,
   imports: [HlmButton],
   template: `
     <nav class="flex items-center justify-center gap-1.5 mt-8" data-testid="pagination">

@@ -4,7 +4,6 @@ import { HlmButton } from '@spartan-ng/helm/button';
 
 @Component({
   selector: 'app-theme-toggle',
-  standalone: true,
   imports: [HlmButton],
   template: `
     <button hlmBtn variant="ghost" size="icon"

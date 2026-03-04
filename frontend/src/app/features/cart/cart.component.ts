@@ -8,7 +8,6 @@ import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-cart',
-  standalone: true,
   imports: [CartItemRowComponent, OrderSummaryComponent, EmptyStateComponent, HlmButton, HlmH2, HlmMuted],
   template: `
     <div>

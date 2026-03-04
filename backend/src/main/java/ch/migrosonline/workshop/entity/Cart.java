@@ -20,7 +20,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "cart")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +32,7 @@ public class Cart {
   @Column(name = "session_id", unique = true, nullable = false)
   private String sessionId;
 
+  @Setter
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<CartItem> items = new ArrayList<>();
@@ -40,6 +40,24 @@ public class Cart {
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
+  @Setter
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Cart cart = (Cart) o;
+    return sessionId != null && sessionId.equals(cart.sessionId);
+  }
+
+  @Override
+  public int hashCode() {
+    return sessionId != null ? sessionId.hashCode() : 0;
+  }
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, switchMap } from 'rxjs';
 import { Cart, AddToCartRequest, UpdateCartItemRequest } from '../models/cart.model';
 import { environment } from '../../../environments/environment';
 
@@ -44,9 +44,9 @@ export class CartService {
     );
   }
 
-  removeItem(itemId: number): Observable<void> {
+  removeItem(itemId: number): Observable<Cart> {
     return this.http.delete<void>(`${this.baseUrl}/items/${itemId}`, { headers: this.headers }).pipe(
-      tap(() => this.getCart().subscribe())
+      switchMap(() => this.getCart())
     );
   }
 

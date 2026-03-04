@@ -159,8 +159,6 @@ export class CatalogComponent {
   readonly products = computed(() => this.productsResource.value().content);
   readonly totalPages = computed(() => this.productsResource.value().totalPages);
   readonly totalElements = computed(() => this.productsResource.value().totalElements);
-  readonly isLoading = computed(() => this.productsResource.isLoading());
-
   readonly rangeStart = computed(() => {
     const total = this.totalElements();
     if (total === 0) return 0;

@@ -20,7 +20,6 @@ import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [
     RouterLink,
     RouterLinkActive,

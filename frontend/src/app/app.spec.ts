@@ -41,7 +41,7 @@ describe('App', () => {
       .compileComponents();
   });
 
-  it('shouldCreateAppWhenBootstrapped', () => {
+  it('should create app when bootstrapped', () => {
     // given/when — app component created
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
@@ -50,16 +50,7 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('shouldHaveTitleWorkshopStoreWhenCreated', () => {
-    // given — app component created
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-
-    // then — title matches
-    expect(app.title).toBe('Workshop Store');
-  });
-
-  it('shouldRenderHeaderAndFooterElementsWhenRendered', () => {
+  it('should render header and footer elements when rendered', () => {
     // given — app rendered
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
@@ -69,7 +60,7 @@ describe('App', () => {
     expect(fixture.nativeElement.querySelector('app-footer')).toBeTruthy();
   });
 
-  it('shouldHaveMainWithPt16WhenRendered', () => {
+  it('should have main with pt-16 when rendered', () => {
     // given — app rendered
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
@@ -80,7 +71,7 @@ describe('App', () => {
     expect(main.classList).toContain('pt-16');
   });
 
-  it('shouldUseMinHScreenFlexLayoutWhenRendered', () => {
+  it('should use min-h-screen flex layout when rendered', () => {
     // given — app rendered
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();

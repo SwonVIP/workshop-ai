@@ -34,7 +34,7 @@ import { Product } from '../../../core/models/product.model';
       </div>
 
       <div hlmCardFooter class="flex items-center justify-between">
-        <span class="text-lg font-bold text-card-foreground">
+        <span data-testid="product-price" class="text-lg font-bold text-card-foreground">
           {{ product().price | currency: 'CHF' : 'symbol' : '1.2-2' }}
         </span>
         @if (cartQuantity() > 0) {

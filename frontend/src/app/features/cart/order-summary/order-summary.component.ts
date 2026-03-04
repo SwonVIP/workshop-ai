@@ -7,7 +7,6 @@ import { HlmSeparator } from '@spartan-ng/helm/separator';
 
 @Component({
   selector: 'app-order-summary',
-  standalone: true,
   imports: [CurrencyPipe, RouterLink, HlmButton, HlmSeparator, ...HlmCardImports],
   template: `
     <div hlmCard class="p-6">

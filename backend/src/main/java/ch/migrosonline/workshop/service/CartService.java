@@ -19,11 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CartService {
 
+  private static final String CART_NOT_FOUND_MSG = "Cart not found for session: ";
+  private static final String PRODUCT_NOT_FOUND_MSG = "Product not found with id: ";
+  private static final String CART_ITEM_NOT_FOUND_MSG = "Cart item not found with id: ";
+
   private final CartRepository cartRepository;
   private final CartItemRepository cartItemRepository;
   private final ProductRepository productRepository;
   private final CartMapper cartMapper;
 
+  @Transactional
   public CartResponse getCart(String sessionId) {
     var cart =
         cartRepository
@@ -48,9 +53,7 @@ public class CartService {
         productRepository
             .findById(request.productId())
             .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Product not found with id: " + request.productId()));
+                () -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MSG + request.productId()));
     var existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
     if (existingItem.isPresent()) {
       existingItem.get().setQuantity(existingItem.get().getQuantity() + request.quantity());
@@ -71,15 +74,13 @@ public class CartService {
     var cart =
         cartRepository
             .findBySessionId(sessionId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException("Cart not found for session: " + sessionId));
+            .orElseThrow(() -> new ResourceNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     var item =
         cartItemRepository
             .findById(itemId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException("Cart item not found with id: " + itemId));
+            .orElseThrow(() -> new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId));
     if (!item.getCart().getId().equals(cart.getId())) {
-      throw new ResourceNotFoundException("Cart item not found with id: " + itemId);
+      throw new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId);
     }
     item.setQuantity(request.quantity());
     cartItemRepository.save(item);
@@ -92,15 +93,13 @@ public class CartService {
     var cart =
         cartRepository
             .findBySessionId(sessionId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException("Cart not found for session: " + sessionId));
+            .orElseThrow(() -> new ResourceNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     var item =
         cartItemRepository
             .findById(itemId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException("Cart item not found with id: " + itemId));
+            .orElseThrow(() -> new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId));
     if (!item.getCart().getId().equals(cart.getId())) {
-      throw new ResourceNotFoundException("Cart item not found with id: " + itemId);
+      throw new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId);
     }
     cart.getItems().remove(item);
     cartRepository.save(cart);
@@ -111,8 +110,7 @@ public class CartService {
     var cart =
         cartRepository
             .findBySessionId(sessionId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException("Cart not found for session: " + sessionId));
+            .orElseThrow(() -> new ResourceNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     cart.getItems().clear();
     cartRepository.save(cart);
     var updatedCart = cartRepository.findBySessionId(sessionId).orElseThrow();

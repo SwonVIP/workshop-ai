@@ -24,7 +24,6 @@ test.describe('Header — Navigation & Branding', () => {
   test('should show the cart trigger button with shopping cart label', async ({ page }) => {
     // given — user opens the catalog
     await page.goto('/catalog');
-    await page.waitForTimeout(1000);
 
     // then — cart trigger is visible with correct aria-label
     const cartTrigger = page.locator('[data-testid="cart-trigger"]');

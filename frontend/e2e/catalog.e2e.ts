@@ -60,7 +60,7 @@ test.describe('Product Catalog — Browsing & Discovery', () => {
 
     // and — all displayed prices fall within CHF 50–100
     for (const card of await cards.all()) {
-      const priceText = await card.locator('.text-lg.font-bold').textContent();
+      const priceText = await card.locator('[data-testid="product-price"]').textContent();
       const price = parseFloat(priceText!.replace(/[^0-9.]/g, ''));
       expect(price).toBeGreaterThanOrEqual(50);
       expect(price).toBeLessThanOrEqual(100);
@@ -76,8 +76,8 @@ test.describe('Product Catalog — Browsing & Discovery', () => {
     await expect(cards.first()).toBeVisible();
 
     // and — first product price ≤ second product price (sort order verified)
-    const firstPriceText = await cards.nth(0).locator('.text-lg.font-bold').textContent();
-    const secondPriceText = await cards.nth(1).locator('.text-lg.font-bold').textContent();
+    const firstPriceText = await cards.nth(0).locator('[data-testid="product-price"]').textContent();
+    const secondPriceText = await cards.nth(1).locator('[data-testid="product-price"]').textContent();
     const firstPrice = parseFloat(firstPriceText!.replace(/[^0-9.]/g, ''));
     const secondPrice = parseFloat(secondPriceText!.replace(/[^0-9.]/g, ''));
     expect(firstPrice).toBeLessThanOrEqual(secondPrice);

@@ -39,7 +39,7 @@ describe('HeaderComponent', () => {
       .compileComponents();
   });
 
-  it('shouldDisplayStoreNameWhenRendered', () => {
+  it('should display store name when rendered', () => {
     // given — header component rendered
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
@@ -48,7 +48,7 @@ describe('HeaderComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Workshop Store');
   });
 
-  it('shouldContainCatalogLinkWhenRendered', () => {
+  it('should contain catalog link when rendered', () => {
     // given — header rendered
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
@@ -59,7 +59,7 @@ describe('HeaderComponent', () => {
     expect(catalogLink.textContent.trim()).toContain('Catalog');
   });
 
-  it('shouldRenderSheetTriggerElementWhenRendered', () => {
+  it('should render sheet trigger element when rendered', () => {
     // given — header rendered (Sheet components replaced by NO_ERRORS_SCHEMA)
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
@@ -69,7 +69,7 @@ describe('HeaderComponent', () => {
     expect(sheet).toBeInstanceOf(HTMLElement);
   });
 
-  it('shouldHaveFixedPositionWhenRendered', () => {
+  it('should have fixed position when rendered', () => {
     // given — header rendered
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();

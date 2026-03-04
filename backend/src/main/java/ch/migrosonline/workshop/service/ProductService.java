@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class ProductService {
   private final ProductRepository productRepository;
   private final CategoryRepository categoryRepository;
 
+  @Transactional(readOnly = true)
   public Page<ProductResponse> getProducts(
       String category, String search, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
     var spec =
@@ -31,6 +33,7 @@ public class ProductService {
     return productRepository.findAll(spec, pageable).map(ProductResponse::from);
   }
 
+  @Transactional(readOnly = true)
   public ProductResponse getProduct(Long id) {
     return productRepository
         .findById(id)
@@ -38,6 +41,7 @@ public class ProductService {
         .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
   }
 
+  @Transactional(readOnly = true)
   public List<CategoryResponse> getCategories() {
     return categoryRepository.findAllByOrderByNameAsc().stream()
         .map(CategoryResponse::from)

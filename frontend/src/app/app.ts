@@ -20,7 +20,6 @@ import { CartService } from './core/services/cart.service';
   `,
 })
 export class App implements OnInit {
-  title = 'Workshop Store';
   private readonly cartService = inject(CartService);
 
   ngOnInit(): void {

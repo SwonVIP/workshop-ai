@@ -6,7 +6,6 @@ import { CartItem } from '../../../core/models/cart.model';
 
 @Component({
   selector: 'app-cart-item-row',
-  standalone: true,
   imports: [CurrencyPipe, HlmButton, HlmSeparator],
   template: `
     <div data-testid="cart-item-row" class="flex items-center gap-4 py-4">

@@ -4,7 +4,6 @@ import { HlmButton } from '@spartan-ng/helm/button';
 
 @Component({
   selector: 'app-empty-state',
-  standalone: true,
   imports: [RouterLink, HlmButton],
   template: `
     <div class="flex flex-col items-center justify-center py-16 text-center">

@@ -1,15 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 
 @Component({
   selector: 'app-footer',
-  standalone: true,
-  imports: [RouterLink, HlmSeparator],
+  imports: [RouterLink],
   template: `
     <footer class="bg-muted border-t border-border">
       <div class="max-w-7xl mx-auto px-4">
-        <div hlmSeparator class="hidden"></div>
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6">
           <p class="text-sm text-muted-foreground">
             &copy; {{ currentYear }} Workshop Store. All rights reserved.

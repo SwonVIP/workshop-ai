@@ -18,7 +18,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "cart_item")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,6 +35,31 @@ public class CartItem {
   @JoinColumn(name = "product_id", nullable = false)
   private Product product;
 
+  @Setter
   @Column(nullable = false)
   private Integer quantity;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CartItem cartItem = (CartItem) o;
+    if (cart == null || cart.getId() == null || product == null || product.getId() == null) {
+      return false;
+    }
+    return cart.getId().equals(cartItem.cart != null ? cartItem.cart.getId() : null)
+        && product.getId().equals(cartItem.product != null ? cartItem.product.getId() : null);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = cart != null && cart.getId() != null ? cart.getId().hashCode() : 0;
+    result =
+        31 * result + (product != null && product.getId() != null ? product.getId().hashCode() : 0);
+    return result;
+  }
 }
