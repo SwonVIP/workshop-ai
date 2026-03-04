@@ -328,4 +328,20 @@ class CartServiceTest {
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessageContaining("Cart not found for session: " + SESSION_ID);
   }
+
+  @Test
+  void shouldThrowNotFoundWhenRemovingItemBelongingToDifferentCart() {
+    // given
+    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var otherCart = Cart.builder().id(2L).sessionId("other-session").build();
+    var item = CartItem.builder().id(5L).cart(otherCart).quantity(1).build();
+
+    when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(cart));
+    when(cartItemRepository.findById(5L)).thenReturn(Optional.of(item));
+
+    // when/then
+    assertThatThrownBy(() -> cartService.removeItem(SESSION_ID, 5L))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessageContaining("Cart item not found with id: 5");
+  }
 }

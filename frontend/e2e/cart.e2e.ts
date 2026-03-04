@@ -123,6 +123,19 @@ test.describe('Shopping Cart — Full User Journey', () => {
     await expect(page).toHaveURL(/\/catalog/);
   });
 
+  test('should persist cart across hard page refresh', async ({ page }) => {
+    await page.goto('/catalog');
+    await addFirstProductToCart(page);
+    await expect(page.getByTestId('cart-badge')).toHaveText('1');
+
+    // hard refresh — full page reload
+    await page.reload();
+    await page.waitForSelector('[data-testid="product-card"]');
+
+    // then — cart badge still shows "1"
+    await expect(page.getByTestId('cart-badge')).toHaveText('1');
+  });
+
   test('should persist cart across page navigation', async ({ page }) => {
     await page.goto('/catalog');
     await addFirstProductToCart(page);

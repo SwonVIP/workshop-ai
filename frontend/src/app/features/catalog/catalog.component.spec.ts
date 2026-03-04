@@ -422,6 +422,27 @@ describe('CatalogComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('No products found');
   });
 
+  it('should include sort and direction params in products request URL', async () => {
+    // given — the catalog component is rendered
+    const fixture = TestBed.createComponent(CatalogComponent);
+    fixture.detectChanges();
+    await flushInitialRequests(fixture);
+
+    // when — a filter change with sort and direction is received
+    const filterBar = fixture.debugElement.query(By.directive(SearchFilterBarComponent));
+    filterBar.triggerEventHandler('filterChange', { sort: 'price', direction: 'desc' });
+    fixture.detectChanges();
+
+    // then — the products request URL contains sort=price,desc
+    const req = httpMock.expectOne(
+      (r) => r.urlWithParams.includes('/api/products?') &&
+             urlContains(r.urlWithParams, 'sort=price,desc')
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+    await fixture.whenStable();
+  });
+
   // ── Cart quantity integration ─────────────────────────────────────
 
   describe('cart quantity on product cards', () => {

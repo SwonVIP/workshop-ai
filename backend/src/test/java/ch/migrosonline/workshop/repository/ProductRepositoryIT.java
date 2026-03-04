@@ -278,4 +278,20 @@ class ProductRepositoryIT extends RepositoryTestSupport {
     // then
     assertThat(page.getTotalElements()).isEqualTo(50);
   }
+
+  @Test
+  void shouldReturnAllProductsWhenSearchIsEmptyString() {
+    // given — empty string search should behave like no filter
+    var specEmpty = Specification.where(ProductSpecs.nameContains(""));
+    var specNull = Specification.where(ProductSpecs.nameContains(null));
+    var pageable = PageRequest.of(0, 100);
+
+    // when
+    var pageEmpty = productRepository.findAll(specEmpty, pageable);
+    var pageNull = productRepository.findAll(specNull, pageable);
+
+    // then
+    assertThat(pageEmpty.getTotalElements()).isEqualTo(pageNull.getTotalElements());
+    assertThat(pageEmpty.getTotalElements()).isEqualTo(50);
+  }
 }

@@ -1,6 +1,7 @@
 package ch.migrosonline.workshop.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import ch.migrosonline.workshop.entity.Cart;
 import ch.migrosonline.workshop.entity.CartItem;
@@ -168,5 +169,16 @@ class CartMapperTest {
     assertThat(singleItem.product().name()).isEqualTo("Book");
     assertThat(singleItem.product().price()).isEqualByComparingTo(new BigDecimal("15.00"));
     assertThat(singleItem.product().imageUrl()).isEqualTo("book.png");
+  }
+
+  @Test
+  void shouldThrowNullPointerWhenCartItemHasNullProduct() {
+    // given — CartItem with null product documents current NPE behavior
+    var cart = Cart.builder().id(1L).sessionId("sess-npe").items(new ArrayList<>()).build();
+    var item = CartItem.builder().id(1L).cart(cart).product(null).quantity(1).build();
+    cart.setItems(List.of(item));
+
+    // when/then
+    assertThatThrownBy(() -> mapper.toResponse(cart)).isInstanceOf(NullPointerException.class);
   }
 }

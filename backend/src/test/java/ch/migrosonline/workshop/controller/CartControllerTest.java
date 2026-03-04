@@ -450,4 +450,48 @@ class CartControllerTest extends ControllerTestSupport {
         .extractingPath("error")
         .isEqualTo("Bad Request");
   }
+
+  @Test
+  void shouldReturn400WhenInvalidUuidOnAddItem() throws Exception {
+    // given
+    var requestBody = jsonMapper.writeValueAsString(new AddToCartRequest(1L, 1));
+
+    // when/then
+    assertThat(
+            mvc.post()
+                .uri("/api/cart/items")
+                .header(SESSION_HEADER, "not-a-uuid")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .hasStatus(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
+  void shouldReturn400WhenInvalidUuidOnUpdateItem() throws Exception {
+    // given
+    var requestBody = jsonMapper.writeValueAsString(new UpdateCartItemRequest(3));
+
+    // when/then
+    assertThat(
+            mvc.put()
+                .uri("/api/cart/items/1")
+                .header(SESSION_HEADER, "not-a-uuid")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .hasStatus(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
+  void shouldReturn400WhenInvalidUuidOnRemoveItem() {
+    // when/then
+    assertThat(mvc.delete().uri("/api/cart/items/1").header(SESSION_HEADER, "not-a-uuid"))
+        .hasStatus(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
+  void shouldReturn400WhenInvalidUuidOnClearCart() {
+    // when/then
+    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, "not-a-uuid"))
+        .hasStatus(HttpStatus.BAD_REQUEST);
+  }
 }
