@@ -268,4 +268,41 @@ class CartServiceTest {
     assertThat(cart.getItems()).isEmpty();
     verify(cartRepository).save(cart);
   }
+
+  @Test
+  void shouldClearAllItemsFromCart() {
+    // given
+    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var item1 = CartItem.builder().id(1L).cart(cart).quantity(2).build();
+    var item2 = CartItem.builder().id(2L).cart(cart).quantity(3).build();
+    cart.getItems().add(item1);
+    cart.getItems().add(item2);
+    var updatedCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 0, BigDecimal.ZERO);
+
+    when(cartRepository.findBySessionId(SESSION_ID))
+        .thenReturn(Optional.of(cart))
+        .thenReturn(Optional.of(updatedCart));
+    when(cartMapper.toResponse(updatedCart)).thenReturn(expectedResponse);
+
+    // when
+    var result = cartService.clearCart(SESSION_ID);
+
+    // then
+    assertThat(cart.getItems()).isEmpty();
+    verify(cartRepository).save(cart);
+    assertThat(result.totalItems()).isZero();
+    assertThat(result.totalPrice()).isEqualTo(BigDecimal.ZERO);
+  }
+
+  @Test
+  void shouldThrowNotFoundWhenClearingNonExistentCart() {
+    // given
+    when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.empty());
+
+    // when/then
+    assertThatThrownBy(() -> cartService.clearCart(SESSION_ID))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessageContaining("Cart not found for session: " + SESSION_ID);
+  }
 }

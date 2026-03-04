@@ -3,10 +3,13 @@ import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { signal } from '@angular/core';
+import { of } from 'rxjs';
 import { CatalogComponent } from './catalog.component';
 import { SearchFilterBarComponent } from './search-filter-bar/search-filter-bar.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { PaginatedResponse, Product, Category } from '../../core/models/product.model';
+import { CartService } from '../../core/services/cart.service';
 
 describe('CatalogComponent', () => {
   const mockProducts: Product[] = [
@@ -417,5 +420,88 @@ describe('CatalogComponent', () => {
     const countEl = fixture.nativeElement.querySelector('[data-testid="product-count"]');
     expect(countEl).toBeFalsy();
     expect(fixture.nativeElement.textContent).toContain('No products found');
+  });
+
+  // ── Cart quantity integration ─────────────────────────────────────
+
+  describe('cart quantity on product cards', () => {
+    const mockCartItemsMap = signal(new Map<number, { cartItemId: number; quantity: number }>());
+
+    function createMockCartService() {
+      return {
+        cart: signal(null),
+        itemCount: signal(0),
+        loadCart: vi.fn(),
+        getCart: vi.fn().mockReturnValue(of({})),
+        addItem: vi.fn().mockReturnValue(of({})),
+        updateItem: vi.fn().mockReturnValue(of({})),
+        removeItem: vi.fn().mockReturnValue(of(undefined)),
+        clearCart: vi.fn().mockReturnValue(of({})),
+        cartItemsByProductId: mockCartItemsMap.asReadonly(),
+      };
+    }
+
+    let mockCartService: ReturnType<typeof createMockCartService>;
+
+    beforeEach(async () => {
+      mockCartItemsMap.set(new Map());
+      mockCartService = createMockCartService();
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [CatalogComponent],
+        providers: [
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          provideRouter([]),
+          { provide: CartService, useValue: mockCartService },
+        ],
+      }).compileComponents();
+
+      httpMock = TestBed.inject(HttpTestingController);
+    });
+
+    it('should pass cartQuantity 0 to product card when product not in cart', async () => {
+      // given — cart has no items for product 1
+      const fixture = TestBed.createComponent(CatalogComponent);
+      fixture.detectChanges();
+      await flushInitialRequests(fixture);
+
+      // when — reading the component's getCartQuantity
+      const qty = fixture.componentInstance.getCartQuantity(1);
+
+      // then — quantity is 0
+      expect(qty).toBe(0);
+    });
+
+    it('should call cartService.removeItem when removing last item from cart', async () => {
+      // given — product 1 has quantity 1 in cart
+      mockCartItemsMap.set(new Map([[1, { cartItemId: 10, quantity: 1 }]]));
+      const fixture = TestBed.createComponent(CatalogComponent);
+      fixture.detectChanges();
+      await flushInitialRequests(fixture);
+
+      // when — onRemoveFromCart is called for product 1
+      fixture.componentInstance.onRemoveFromCart(mockProducts[0]);
+
+      // then — removeItem is called (not updateItem)
+      expect(mockCartService.removeItem).toHaveBeenCalledWith(10);
+      expect(mockCartService.updateItem).not.toHaveBeenCalled();
+    });
+
+    it('should call cartService.updateItem when decreasing quantity above 1', async () => {
+      // given — product 1 has quantity 3 in cart
+      mockCartItemsMap.set(new Map([[1, { cartItemId: 10, quantity: 3 }]]));
+      const fixture = TestBed.createComponent(CatalogComponent);
+      fixture.detectChanges();
+      await flushInitialRequests(fixture);
+
+      // when — onRemoveFromCart is called for product 1
+      fixture.componentInstance.onRemoveFromCart(mockProducts[0]);
+
+      // then — updateItem is called with decremented quantity
+      expect(mockCartService.updateItem).toHaveBeenCalledWith(10, { quantity: 2 });
+      expect(mockCartService.removeItem).not.toHaveBeenCalled();
+    });
   });
 });

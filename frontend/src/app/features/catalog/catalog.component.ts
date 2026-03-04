@@ -92,7 +92,9 @@ import { environment } from '../../../environments/environment';
           @for (product of products(); track product.id) {
             <app-product-card
               [product]="product"
+              [cartQuantity]="getCartQuantity(product.id)"
               (addToCart)="onAddToCart($event)"
+              (removeFromCart)="onRemoveFromCart($event)"
             />
           }
         </div>
@@ -180,7 +182,21 @@ export class CatalogComponent {
 
   private readonly cartService = inject(CartService);
 
+  getCartQuantity(productId: number): number {
+    return this.cartService.cartItemsByProductId().get(productId)?.quantity ?? 0;
+  }
+
   onAddToCart(product: Product): void {
     this.cartService.addItem({ productId: product.id, quantity: 1 }).subscribe();
+  }
+
+  onRemoveFromCart(product: Product): void {
+    const entry = this.cartService.cartItemsByProductId().get(product.id);
+    if (!entry) return;
+    if (entry.quantity > 1) {
+      this.cartService.updateItem(entry.cartItemId, { quantity: entry.quantity - 1 }).subscribe();
+    } else {
+      this.cartService.removeItem(entry.cartItemId).subscribe();
+    }
   }
 }

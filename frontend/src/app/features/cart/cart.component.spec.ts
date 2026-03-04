@@ -45,6 +45,7 @@ describe('CartComponent', () => {
       removeItem: vi.fn().mockReturnValue(of(undefined)),
       addItem: vi.fn().mockReturnValue(of({})),
       getCart: vi.fn().mockReturnValue(of({})),
+      clearCart: vi.fn().mockReturnValue(of({})),
     };
   }
 
@@ -133,5 +134,38 @@ describe('CartComponent', () => {
 
     // then — loadCart was called
     expect(mockCartService.loadCart).toHaveBeenCalled();
+  });
+
+  // ── Clear Cart ────────────────────────────────────────────────────
+
+  it('should display Clear Cart button when cart has items', () => {
+    // given — a cart with items
+    const { fixture } = setup(mockCart);
+
+    // then — Clear Cart button is present
+    const clearBtn = fixture.nativeElement.querySelector('[data-testid="clear-cart"]');
+    expect(clearBtn).toBeTruthy();
+    expect(clearBtn.textContent).toContain('Clear Cart');
+  });
+
+  it('should not display Clear Cart button when cart is empty', () => {
+    // given — an empty cart
+    const { fixture } = setup(emptyCart);
+
+    // then — Clear Cart button is not present
+    const clearBtn = fixture.nativeElement.querySelector('[data-testid="clear-cart"]');
+    expect(clearBtn).toBeFalsy();
+  });
+
+  it('should call cartService.clearCart when Clear Cart clicked', () => {
+    // given — a cart with items
+    const { fixture, mockCartService } = setup(mockCart);
+
+    // when — clicking the Clear Cart button
+    const clearBtn = fixture.nativeElement.querySelector('[data-testid="clear-cart"]') as HTMLButtonElement;
+    clearBtn.click();
+
+    // then — clearCart is called
+    expect(mockCartService.clearCart).toHaveBeenCalled();
   });
 });

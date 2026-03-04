@@ -50,6 +50,21 @@ export class CartService {
     );
   }
 
+  clearCart(): Observable<Cart> {
+    return this.http.delete<Cart>(this.baseUrl, { headers: this.headers }).pipe(
+      tap(cart => this._cart.set(cart))
+    );
+  }
+
+  readonly cartItemsByProductId = computed(() => {
+    const cart = this._cart();
+    if (!cart) return new Map<number, { cartItemId: number; quantity: number }>();
+    return new Map(cart.items.map(item => [
+      item.product.id,
+      { cartItemId: item.id, quantity: item.quantity }
+    ]));
+  });
+
   loadCart(): void {
     this.getCart().subscribe();
   }

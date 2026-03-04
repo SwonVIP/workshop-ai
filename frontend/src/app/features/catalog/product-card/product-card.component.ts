@@ -37,18 +37,41 @@ import { Product } from '../../../core/models/product.model';
         <span class="text-lg font-bold text-card-foreground">
           {{ product().price | currency: 'CHF' : 'symbol' : '1.2-2' }}
         </span>
-        <button hlmBtn size="sm" (click)="onAddToCart()">
-          Add to Cart
-        </button>
+        @if (cartQuantity() > 0) {
+          <div class="flex items-center gap-1">
+            <button hlmBtn variant="outline" size="icon" class="h-8 w-8"
+                    data-testid="card-qty-decrease"
+                    (click)="onRemoveFromCart()">
+              <span class="text-sm">−</span>
+            </button>
+            <span data-testid="card-qty-value"
+                  class="text-sm font-semibold w-8 text-center">{{ cartQuantity() }}</span>
+            <button hlmBtn variant="outline" size="icon" class="h-8 w-8"
+                    data-testid="card-qty-increase"
+                    (click)="onAddToCart()">
+              <span class="text-sm">+</span>
+            </button>
+          </div>
+        } @else {
+          <button hlmBtn size="sm" (click)="onAddToCart()">
+            Add to Cart
+          </button>
+        }
       </div>
     </div>
   `,
 })
 export class ProductCardComponent {
   readonly product = input.required<Product>();
+  readonly cartQuantity = input<number>(0);
   readonly addToCart = output<Product>();
+  readonly removeFromCart = output<Product>();
 
   onAddToCart(): void {
     this.addToCart.emit(this.product());
+  }
+
+  onRemoveFromCart(): void {
+    this.removeFromCart.emit(this.product());
   }
 }

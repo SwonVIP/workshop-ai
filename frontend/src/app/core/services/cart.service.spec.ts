@@ -243,6 +243,62 @@ describe('CartService', () => {
     });
   });
 
+  // ── clearCart ──────────────────────────────────────────────────────
+
+  describe('clearCart', () => {
+    it('should send DELETE /api/cart with X-Cart-Session header on clearCart', () => {
+      // given — the service is ready
+      service.clearCart().subscribe();
+
+      // when — we inspect the outgoing request
+      const req = httpMock.expectOne(r => r.url === '/api/cart');
+
+      // then — method is DELETE and session header is present
+      expect(req.request.method).toBe('DELETE');
+      expect(req.request.headers.has('X-Cart-Session')).toBe(true);
+      req.flush(emptyCart);
+    });
+
+    it('should update cart signal after clearCart success', () => {
+      // given — cart signal is initially null
+      expect(service.cart()).toBeNull();
+
+      // when — clearCart succeeds
+      service.clearCart().subscribe();
+      httpMock.expectOne(r => r.url === '/api/cart').flush(emptyCart);
+
+      // then — cart signal holds the returned empty cart
+      expect(service.cart()).toEqual(emptyCart);
+    });
+  });
+
+  // ── cartItemsByProductId ──────────────────────────────────────────
+
+  describe('cartItemsByProductId', () => {
+    it('should build cartItemsByProductId map from cart items', () => {
+      // given — a cart is loaded with items
+      service.getCart().subscribe();
+      httpMock.expectOne(r => r.url === '/api/cart').flush(mockCart);
+
+      // when — reading cartItemsByProductId
+      const map = service.cartItemsByProductId();
+
+      // then — map contains entry for product 42 with cartItemId 10 and quantity 2
+      expect(map.size).toBe(1);
+      expect(map.get(42)).toEqual({ cartItemId: 10, quantity: 2 });
+    });
+
+    it('should return empty map when cart is null', () => {
+      // given — no cart loaded
+
+      // when — reading cartItemsByProductId
+      const map = service.cartItemsByProductId();
+
+      // then — map is empty
+      expect(map.size).toBe(0);
+    });
+  });
+
   // ── Error handling ────────────────────────────────────────────────
 
   describe('error handling', () => {

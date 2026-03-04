@@ -207,4 +207,37 @@ class CartControllerTest extends ControllerTestSupport {
                 .content(requestBody))
         .hasStatus(HttpStatus.BAD_REQUEST);
   }
+
+  @Test
+  void shouldReturn200WithEmptyCartWhenCleared() {
+    // given
+    var cartResponse = new CartResponse(1L, SESSION_ID, List.of(), 0, BigDecimal.ZERO);
+    when(cartService.clearCart(SESSION_ID)).thenReturn(cartResponse);
+
+    // when/then
+    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
+        .hasStatusOk()
+        .bodyJson()
+        .extractingPath("totalItems")
+        .isEqualTo(0);
+  }
+
+  @Test
+  void shouldReturn404WhenClearingNonExistentCart() {
+    // given
+    when(cartService.clearCart(SESSION_ID))
+        .thenThrow(new ResourceNotFoundException("Cart not found for session: " + SESSION_ID));
+
+    // when/then
+    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
+        .hasStatus(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturn400WhenClearCartMissingSessionHeader() {
+    // given — no X-Cart-Session header
+
+    // when/then
+    assertThat(mvc.delete().uri("/api/cart")).hasStatus(HttpStatus.BAD_REQUEST);
+  }
 }

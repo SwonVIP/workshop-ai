@@ -51,4 +51,9 @@ public class CartController {
     cartService.removeItem(sessionId, itemId);
     return ResponseEntity.noContent().build();
   }
+
+  @DeleteMapping
+  public ResponseEntity<CartResponse> clearCart(@RequestHeader("X-Cart-Session") String sessionId) {
+    return ResponseEntity.ok(cartService.clearCart(sessionId));
+  }
 }

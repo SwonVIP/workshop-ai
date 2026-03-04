@@ -152,4 +152,81 @@ describe('ProductCardComponent', () => {
     expect(desc).toBeTruthy();
     expect(desc.textContent.trim()).toBe('Great sound quality with noise cancellation');
   });
+
+  // ── Cart quantity stepper ─────────────────────────────────────────
+
+  it('should show Add to Cart button when cartQuantity is 0', () => {
+    // given — a product card with cartQuantity = 0 (default)
+    const fixture = createComponent();
+
+    // then — Add to Cart button is present
+    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
+    const addBtn = buttons.find(b => b.textContent?.includes('Add to Cart'));
+    expect(addBtn).toBeTruthy();
+
+    // and — stepper is not present
+    const stepper = fixture.nativeElement.querySelector('[data-testid="card-qty-value"]');
+    expect(stepper).toBeFalsy();
+  });
+
+  it('should show quantity stepper when cartQuantity is greater than 0', () => {
+    // given — a product card with cartQuantity = 3
+    const fixture = createComponent();
+    fixture.componentRef.setInput('cartQuantity', 3);
+    fixture.detectChanges();
+
+    // then — stepper is visible
+    const qtyValue = fixture.nativeElement.querySelector('[data-testid="card-qty-value"]');
+    expect(qtyValue).toBeTruthy();
+
+    // and — Add to Cart button is not present
+    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
+    const addBtn = buttons.find(b => b.textContent?.includes('Add to Cart'));
+    expect(addBtn).toBeFalsy();
+  });
+
+  it('should display cart quantity value in stepper', () => {
+    // given — a product card with cartQuantity = 5
+    const fixture = createComponent();
+    fixture.componentRef.setInput('cartQuantity', 5);
+    fixture.detectChanges();
+
+    // then — quantity value displays 5
+    const qtyValue = fixture.nativeElement.querySelector('[data-testid="card-qty-value"]');
+    expect(qtyValue.textContent.trim()).toBe('5');
+  });
+
+  it('should emit removeFromCart when minus button clicked', () => {
+    // given — a product card with cartQuantity > 0
+    const fixture = createComponent();
+    fixture.componentRef.setInput('cartQuantity', 2);
+    fixture.detectChanges();
+
+    // when — clicking the decrease button
+    const emitted: Product[] = [];
+    fixture.componentInstance.removeFromCart.subscribe((p: Product) => emitted.push(p));
+    const decreaseBtn = fixture.nativeElement.querySelector('[data-testid="card-qty-decrease"]') as HTMLButtonElement;
+    decreaseBtn.click();
+
+    // then — the product is emitted via removeFromCart
+    expect(emitted).toHaveLength(1);
+    expect(emitted[0].id).toBe(1);
+  });
+
+  it('should emit addToCart when plus button clicked in stepper mode', () => {
+    // given — a product card with cartQuantity > 0
+    const fixture = createComponent();
+    fixture.componentRef.setInput('cartQuantity', 2);
+    fixture.detectChanges();
+
+    // when — clicking the increase button
+    const emitted: Product[] = [];
+    fixture.componentInstance.addToCart.subscribe((p: Product) => emitted.push(p));
+    const increaseBtn = fixture.nativeElement.querySelector('[data-testid="card-qty-increase"]') as HTMLButtonElement;
+    increaseBtn.click();
+
+    // then — the product is emitted via addToCart
+    expect(emitted).toHaveLength(1);
+    expect(emitted[0].id).toBe(1);
+  });
 });

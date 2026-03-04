@@ -32,7 +32,13 @@ test.describe('Shopping Cart — Full User Journey', () => {
     await page.goto('/catalog');
     await addFirstProductToCart(page);
     await expect(page.getByTestId('cart-badge')).toContainText('1');
-    await addFirstProductToCart(page);
+    // Use stepper to add same product again (first card now shows stepper)
+    const firstCard = page.getByTestId('product-card').first();
+    const [resp] = await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      firstCard.getByTestId('card-qty-increase').click(),
+    ]);
+    expect(resp.status()).toBe(201);
     await expect(page.getByTestId('cart-badge')).toContainText('2');
   });
 
@@ -60,7 +66,13 @@ test.describe('Shopping Cart — Full User Journey', () => {
   test('should decrease item quantity on cart page', async ({ page }) => {
     await page.goto('/catalog');
     await addFirstProductToCart(page);
-    await addFirstProductToCart(page);
+    // Use stepper to add same product again (first card now shows stepper)
+    const firstCard = page.getByTestId('product-card').first();
+    const [addResp] = await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      firstCard.getByTestId('card-qty-increase').click(),
+    ]);
+    expect(addResp.status()).toBe(201);
     await navigateToCartWithItems(page);
     await expect(page.getByTestId('qty-value')).toHaveText('2');
     const [updateResp] = await Promise.all([
@@ -128,5 +140,58 @@ test.describe('Shopping Cart — Full User Journey', () => {
     await page.getByTestId('cart-trigger').click();
     await expect(page.getByTestId('cart-drawer')).toBeVisible();
     await expect(page.getByText('1 item in your cart')).toBeVisible();
+  });
+
+  test('should show quantity stepper on product card after adding to cart', async ({ page }) => {
+    await page.goto('/catalog');
+    await addFirstProductToCart(page);
+    const firstCard = page.getByTestId('product-card').first();
+    await expect(firstCard.getByTestId('card-qty-value')).toHaveText('1');
+    await expect(firstCard.getByTestId('card-qty-decrease')).toBeVisible();
+    await expect(firstCard.getByTestId('card-qty-increase')).toBeVisible();
+  });
+
+  test('should increment quantity from product card stepper', async ({ page }) => {
+    await page.goto('/catalog');
+    await addFirstProductToCart(page);
+    const firstCard = page.getByTestId('product-card').first();
+    await expect(firstCard.getByTestId('card-qty-value')).toHaveText('1');
+    const [resp] = await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      firstCard.getByTestId('card-qty-increase').click(),
+    ]);
+    expect(resp.status()).toBe(201);
+    await expect(firstCard.getByTestId('card-qty-value')).toHaveText('2');
+  });
+
+  test('should remove product from cart via product card stepper when quantity is 1', async ({ page }) => {
+    await page.goto('/catalog');
+    await addFirstProductToCart(page);
+    const firstCard = page.getByTestId('product-card').first();
+    await expect(firstCard.getByTestId('card-qty-value')).toHaveText('1');
+    const [resp] = await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'DELETE'),
+      firstCard.getByTestId('card-qty-decrease').click(),
+    ]);
+    expect(resp.status()).toBe(204);
+    await expect(firstCard.getByRole('button', { name: 'Add to Cart' })).toBeVisible();
+    await expect(page.getByTestId('cart-badge')).not.toBeVisible();
+  });
+
+  test('should clear all items from cart via Clear Cart button', async ({ page }) => {
+    await page.goto('/catalog');
+    await addFirstProductToCart(page);
+    await navigateToCartWithItems(page);
+    const [clearResp] = await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/api/cart') && resp.request().method() === 'DELETE' && !resp.url().includes('/items')),
+      page.getByTestId('clear-cart').click(),
+    ]);
+    expect(clearResp.status()).toBe(200);
+    await expect(page.getByText('Your cart is empty')).toBeVisible();
+  });
+
+  test('should not show Clear Cart button when cart is empty', async ({ page }) => {
+    await page.goto('/cart');
+    await expect(page.getByTestId('clear-cart')).not.toBeVisible();
   });
 });

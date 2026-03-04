@@ -2,13 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CartItemRowComponent } from './cart-item-row/cart-item-row.component';
 import { OrderSummaryComponent } from './order-summary/order-summary.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmH2, HlmMuted } from '@spartan-ng/helm/typography';
 import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CartItemRowComponent, OrderSummaryComponent, EmptyStateComponent, HlmH2, HlmMuted],
+  imports: [CartItemRowComponent, OrderSummaryComponent, EmptyStateComponent, HlmButton, HlmH2, HlmMuted],
   template: `
     <div>
       <h2 hlmH2 class="mb-1">Shopping Cart</h2>
@@ -16,6 +17,14 @@ import { CartService } from '../../core/services/cart.service';
 
       @if (cart(); as cartData) {
         @if (cartData.items.length > 0) {
+          <div class="flex items-center justify-between mb-6">
+            <p class="text-sm text-muted-foreground">{{ cartData.totalItems }} item{{ cartData.totalItems > 1 ? 's' : '' }} in your cart</p>
+            <button hlmBtn variant="outline" size="sm" data-testid="clear-cart"
+                    class="text-destructive hover:text-destructive"
+                    (click)="onClearCart()">
+              Clear Cart
+            </button>
+          </div>
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2">
               @for (item of cartData.items; track item.id) {
@@ -68,5 +77,9 @@ export class CartComponent implements OnInit {
 
   onRemove(itemId: number): void {
     this.cartService.removeItem(itemId).subscribe();
+  }
+
+  onClearCart(): void {
+    this.cartService.clearCart().subscribe();
   }
 }

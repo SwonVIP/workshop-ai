@@ -170,4 +170,34 @@ class CartRepositoryIT extends RepositoryTestSupport {
     // then
     assertThat(cartItemRepository.findById(itemId)).isEmpty();
   }
+
+  @Test
+  void shouldClearAllItemsWhenItemsListCleared() {
+    // given
+    var product1 = productRepository.findById(1L).orElseThrow();
+    var product2 = productRepository.findById(2L).orElseThrow();
+    var cart =
+        Cart.builder()
+            .sessionId("test-session-clear")
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
+    var savedCart = cartRepository.saveAndFlush(cart);
+
+    var item1 = CartItem.builder().cart(savedCart).product(product1).quantity(2).build();
+    var item2 = CartItem.builder().cart(savedCart).product(product2).quantity(3).build();
+    savedCart.getItems().add(item1);
+    savedCart.getItems().add(item2);
+    cartRepository.saveAndFlush(savedCart);
+    assertThat(savedCart.getItems()).hasSize(2);
+
+    // when
+    savedCart.getItems().clear();
+    cartRepository.saveAndFlush(savedCart);
+
+    // then
+    var reloaded = cartRepository.findBySessionId("test-session-clear");
+    assertThat(reloaded).isPresent();
+    assertThat(reloaded.get().getItems()).isEmpty();
+  }
 }

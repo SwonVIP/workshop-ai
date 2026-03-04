@@ -105,4 +105,17 @@ public class CartService {
     cart.getItems().remove(item);
     cartRepository.save(cart);
   }
+
+  @Transactional
+  public CartResponse clearCart(String sessionId) {
+    var cart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Cart not found for session: " + sessionId));
+    cart.getItems().clear();
+    cartRepository.save(cart);
+    var updatedCart = cartRepository.findBySessionId(sessionId).orElseThrow();
+    return cartMapper.toResponse(updatedCart);
+  }
 }
