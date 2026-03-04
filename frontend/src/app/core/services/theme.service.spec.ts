@@ -33,7 +33,7 @@ describe('ThemeService', () => {
   function fireSystemThemeChange(prefersDark: boolean) {
     const listeners = matchMediaListeners.get('(prefers-color-scheme: dark)') ?? [];
     const event = { matches: prefersDark } as MediaQueryListEvent;
-    listeners.forEach(cb => cb(event));
+    listeners.forEach((cb) => cb(event));
   }
 
   beforeEach(() => {

@@ -51,11 +51,7 @@ describe('CatalogComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CatalogComponent],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([]),
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -76,14 +72,12 @@ describe('CatalogComponent', () => {
   async function flushInitialRequests(
     fixture: ReturnType<typeof TestBed.createComponent<CatalogComponent>>,
     productsData: PaginatedResponse<Product> = mockResponse,
-    categoriesData: Category[] = mockCategories
+    categoriesData: Category[] = mockCategories,
   ) {
     const catReq = httpMock.expectOne('/api/products/categories');
     catReq.flush(categoriesData);
 
-    const prodReq = httpMock.expectOne(
-      (req) => req.urlWithParams.includes('/api/products?')
-    );
+    const prodReq = httpMock.expectOne((req) => req.urlWithParams.includes('/api/products?'));
     prodReq.flush(productsData);
 
     await fixture.whenStable();
@@ -133,9 +127,10 @@ describe('CatalogComponent', () => {
 
     // and — products request with page=0 and size=12
     const prodReq = httpMock.expectOne(
-      (req) => req.urlWithParams.includes('/api/products?') &&
-               urlContains(req.urlWithParams, 'page=0') &&
-               urlContains(req.urlWithParams, 'size=12')
+      (req) =>
+        req.urlWithParams.includes('/api/products?') &&
+        urlContains(req.urlWithParams, 'page=0') &&
+        urlContains(req.urlWithParams, 'size=12'),
     );
     expect(prodReq.request.method).toBe('GET');
     prodReq.flush(mockResponse);
@@ -153,9 +148,7 @@ describe('CatalogComponent', () => {
     catReq.flush(mockCategories);
 
     // cleanup
-    httpMock.expectOne(
-      (req) => req.urlWithParams.includes('/api/products?')
-    ).flush(mockResponse);
+    httpMock.expectOne((req) => req.urlWithParams.includes('/api/products?')).flush(mockResponse);
     await fixture.whenStable();
   });
 
@@ -229,8 +222,9 @@ describe('CatalogComponent', () => {
 
     // then — a new products request is made with category param
     const req = httpMock.expectOne(
-      (r) => r.urlWithParams.includes('/api/products?') &&
-             urlContains(r.urlWithParams, 'category=Electronics')
+      (r) =>
+        r.urlWithParams.includes('/api/products?') &&
+        urlContains(r.urlWithParams, 'category=Electronics'),
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
@@ -250,9 +244,10 @@ describe('CatalogComponent', () => {
 
     // then — page resets to 0
     const req = httpMock.expectOne(
-      (r) => r.urlWithParams.includes('/api/products?') &&
-             urlContains(r.urlWithParams, 'page=0') &&
-             urlContains(r.urlWithParams, 'search=shoes')
+      (r) =>
+        r.urlWithParams.includes('/api/products?') &&
+        urlContains(r.urlWithParams, 'page=0') &&
+        urlContains(r.urlWithParams, 'search=shoes'),
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
@@ -282,8 +277,7 @@ describe('CatalogComponent', () => {
 
     // then — products are fetched for page 1
     const req = httpMock.expectOne(
-      (r) => r.urlWithParams.includes('/api/products?') &&
-             urlContains(r.urlWithParams, 'page=1')
+      (r) => r.urlWithParams.includes('/api/products?') && urlContains(r.urlWithParams, 'page=1'),
     );
     expect(req.request.method).toBe('GET');
     req.flush(multiPageResponse);
@@ -341,12 +335,9 @@ describe('CatalogComponent', () => {
 
     // when — the products API returns an error
     httpMock.expectOne('/api/products/categories').flush(mockCategories);
-    httpMock.expectOne(
-      (r) => r.urlWithParams.includes('/api/products?')
-    ).flush(
-      'Server error',
-      { status: 500, statusText: 'Internal Server Error' }
-    );
+    httpMock
+      .expectOne((r) => r.urlWithParams.includes('/api/products?'))
+      .flush('Server error', { status: 500, statusText: 'Internal Server Error' });
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -387,8 +378,7 @@ describe('CatalogComponent', () => {
     fixture.detectChanges();
 
     const req = httpMock.expectOne(
-      (r) => r.urlWithParams.includes('/api/products?') &&
-             urlContains(r.urlWithParams, 'page=1')
+      (r) => r.urlWithParams.includes('/api/products?') && urlContains(r.urlWithParams, 'page=1'),
     );
     req.flush(page2Response);
     await fixture.whenStable();
@@ -435,8 +425,9 @@ describe('CatalogComponent', () => {
 
     // then — the products request URL contains sort=price,desc
     const req = httpMock.expectOne(
-      (r) => r.urlWithParams.includes('/api/products?') &&
-             urlContains(r.urlWithParams, 'sort=price,desc')
+      (r) =>
+        r.urlWithParams.includes('/api/products?') &&
+        urlContains(r.urlWithParams, 'sort=price,desc'),
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);

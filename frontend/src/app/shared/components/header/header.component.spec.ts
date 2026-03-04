@@ -105,10 +105,7 @@ describe('HeaderComponent interactive methods', () => {
 
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
-      providers: [
-        provideRouter([]),
-        { provide: CartService, useValue: mockCartService },
-      ],
+      providers: [provideRouter([]), { provide: CartService, useValue: mockCartService }],
     })
       .overrideComponent(HeaderComponent, {
         remove: { imports: SHEET_IMPORTS },

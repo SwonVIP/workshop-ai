@@ -14,7 +14,12 @@ describe('SearchFilterBarComponent', () => {
     vi.useRealTimers();
   });
 
-  function createComponent(categories = [{ id: 1, name: 'Electronics', description: '' }, { id: 2, name: 'Books', description: '' }]) {
+  function createComponent(
+    categories = [
+      { id: 1, name: 'Electronics', description: '' },
+      { id: 2, name: 'Books', description: '' },
+    ],
+  ) {
     const fixture = TestBed.createComponent(SearchFilterBarComponent);
     fixture.componentRef.setInput('categories', categories);
     fixture.detectChanges();
@@ -55,7 +60,7 @@ describe('SearchFilterBarComponent', () => {
     vi.advanceTimersByTime(100); // less than debounce
 
     // then — no filter emitted yet from search
-    const searchEmissions = emitted.filter(f => f.search === 'head');
+    const searchEmissions = emitted.filter((f) => f.search === 'head');
     expect(searchEmissions.length).toBe(0);
 
     // cleanup — let remaining timer fire

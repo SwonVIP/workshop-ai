@@ -89,23 +89,46 @@ describe('PaginationComponent', () => {
   });
 
   it.each([
-    { totalPages: 10, currentPage: 0, expectedPages: [0, 1, 2, 3, 4], description: 'first page shows first 5' },
-    { totalPages: 10, currentPage: 5, expectedPages: [3, 4, 5, 6, 7], description: 'middle page centers window' },
-    { totalPages: 10, currentPage: 9, expectedPages: [5, 6, 7, 8, 9], description: 'last page shows last 5' },
-    { totalPages: 3, currentPage: 1, expectedPages: [0, 1, 2], description: 'small total shows all pages' },
-  ])('should display $description when totalPages=$totalPages and currentPage=$currentPage', ({ totalPages, currentPage, expectedPages }) => {
-    // given — pagination with specific totalPages and currentPage
-    const fixture = TestBed.createComponent(PaginationComponent);
-    fixture.componentRef.setInput('totalPages', totalPages);
-    fixture.componentRef.setInput('currentPage', currentPage);
-    fixture.detectChanges();
+    {
+      totalPages: 10,
+      currentPage: 0,
+      expectedPages: [0, 1, 2, 3, 4],
+      description: 'first page shows first 5',
+    },
+    {
+      totalPages: 10,
+      currentPage: 5,
+      expectedPages: [3, 4, 5, 6, 7],
+      description: 'middle page centers window',
+    },
+    {
+      totalPages: 10,
+      currentPage: 9,
+      expectedPages: [5, 6, 7, 8, 9],
+      description: 'last page shows last 5',
+    },
+    {
+      totalPages: 3,
+      currentPage: 1,
+      expectedPages: [0, 1, 2],
+      description: 'small total shows all pages',
+    },
+  ])(
+    'should display $description when totalPages=$totalPages and currentPage=$currentPage',
+    ({ totalPages, currentPage, expectedPages }) => {
+      // given — pagination with specific totalPages and currentPage
+      const fixture = TestBed.createComponent(PaginationComponent);
+      fixture.componentRef.setInput('totalPages', totalPages);
+      fixture.componentRef.setInput('currentPage', currentPage);
+      fixture.detectChanges();
 
-    // when — visiblePages is computed
-    const visiblePages = fixture.componentInstance.visiblePages();
+      // when — visiblePages is computed
+      const visiblePages = fixture.componentInstance.visiblePages();
 
-    // then — the sliding window matches expected pages
-    expect(visiblePages).toEqual(expectedPages);
-  });
+      // then — the sliding window matches expected pages
+      expect(visiblePages).toEqual(expectedPages);
+    },
+  );
 
   it('should not emit pageChange when clicking previous on first page', () => {
     // given — pagination on first page

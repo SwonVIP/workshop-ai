@@ -50,7 +50,7 @@ test.describe('Product Catalog — Browsing & Discovery', () => {
 
     // then — products are shown or empty state appears
     await expect(
-      page.locator('[data-testid="product-card"], [data-testid="empty-state"]').first()
+      page.locator('[data-testid="product-card"], [data-testid="empty-state"]').first(),
     ).toBeVisible();
 
     // and — if products exist, at least one card is visible
@@ -76,8 +76,14 @@ test.describe('Product Catalog — Browsing & Discovery', () => {
     await expect(cards.first()).toBeVisible();
 
     // and — first product price ≤ second product price (sort order verified)
-    const firstPriceText = await cards.nth(0).locator('[data-testid="product-price"]').textContent();
-    const secondPriceText = await cards.nth(1).locator('[data-testid="product-price"]').textContent();
+    const firstPriceText = await cards
+      .nth(0)
+      .locator('[data-testid="product-price"]')
+      .textContent();
+    const secondPriceText = await cards
+      .nth(1)
+      .locator('[data-testid="product-price"]')
+      .textContent();
     const firstPrice = parseFloat(firstPriceText!.replace(/[^0-9.]/g, ''));
     const secondPrice = parseFloat(secondPriceText!.replace(/[^0-9.]/g, ''));
     expect(firstPrice).toBeLessThanOrEqual(secondPrice);
@@ -86,7 +92,7 @@ test.describe('Product Catalog — Browsing & Discovery', () => {
   test('should navigate to the next page when Next button is clicked', async ({ page }) => {
     // when — user clicks Next to see more products
     const [resp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/products') && resp.status() === 200),
+      page.waitForResponse((resp) => resp.url().includes('/api/products') && resp.status() === 200),
       page.getByRole('button', { name: /next/i }).click(),
     ]);
     expect(resp.status()).toBe(200);

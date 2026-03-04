@@ -77,7 +77,9 @@ describe('CartItemRowComponent', () => {
     fixture.componentInstance.quantityChange.subscribe((e) => emitted.push(e));
 
     // when — the increase button is clicked
-    const increaseBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-testid="qty-increase"]');
+    const increaseBtn: HTMLButtonElement = fixture.nativeElement.querySelector(
+      '[data-testid="qty-increase"]',
+    );
     increaseBtn.click();
 
     // then — quantityChange is emitted with incremented quantity
@@ -92,7 +94,9 @@ describe('CartItemRowComponent', () => {
     fixture.componentInstance.quantityChange.subscribe((e) => emitted.push(e));
 
     // when — the decrease button is clicked
-    const decreaseBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-testid="qty-decrease"]');
+    const decreaseBtn: HTMLButtonElement = fixture.nativeElement.querySelector(
+      '[data-testid="qty-decrease"]',
+    );
     decreaseBtn.click();
 
     // then — quantityChange is emitted with decremented quantity
@@ -107,7 +111,9 @@ describe('CartItemRowComponent', () => {
     fixture.componentInstance.remove.subscribe((id) => emitted.push(id));
 
     // when — the remove button is clicked
-    const removeBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-testid="remove-item"]');
+    const removeBtn: HTMLButtonElement = fixture.nativeElement.querySelector(
+      '[data-testid="remove-item"]',
+    );
     removeBtn.click();
 
     // then — remove is emitted with item id

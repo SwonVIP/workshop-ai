@@ -59,5 +59,4 @@ describe('App', () => {
     expect(fixture.nativeElement.querySelector('app-header')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('app-footer')).toBeTruthy();
   });
-
 });

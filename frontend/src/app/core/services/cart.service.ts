@@ -27,42 +27,41 @@ export class CartService {
   }
 
   getCart(): Observable<Cart> {
-    return this.http.get<Cart>(this.baseUrl, { headers: this.headers }).pipe(
-      tap(cart => this._cart.set(cart))
-    );
+    return this.http
+      .get<Cart>(this.baseUrl, { headers: this.headers })
+      .pipe(tap((cart) => this._cart.set(cart)));
   }
 
   addItem(request: AddToCartRequest): Observable<Cart> {
-    return this.http.post<Cart>(`${this.baseUrl}/items`, request, { headers: this.headers }).pipe(
-      tap(cart => this._cart.set(cart))
-    );
+    return this.http
+      .post<Cart>(`${this.baseUrl}/items`, request, { headers: this.headers })
+      .pipe(tap((cart) => this._cart.set(cart)));
   }
 
   updateItem(itemId: number, request: UpdateCartItemRequest): Observable<Cart> {
-    return this.http.put<Cart>(`${this.baseUrl}/items/${itemId}`, request, { headers: this.headers }).pipe(
-      tap(cart => this._cart.set(cart))
-    );
+    return this.http
+      .put<Cart>(`${this.baseUrl}/items/${itemId}`, request, { headers: this.headers })
+      .pipe(tap((cart) => this._cart.set(cart)));
   }
 
   removeItem(itemId: number): Observable<Cart> {
-    return this.http.delete<void>(`${this.baseUrl}/items/${itemId}`, { headers: this.headers }).pipe(
-      switchMap(() => this.getCart())
-    );
+    return this.http
+      .delete<void>(`${this.baseUrl}/items/${itemId}`, { headers: this.headers })
+      .pipe(switchMap(() => this.getCart()));
   }
 
   clearCart(): Observable<Cart> {
-    return this.http.delete<Cart>(this.baseUrl, { headers: this.headers }).pipe(
-      tap(cart => this._cart.set(cart))
-    );
+    return this.http
+      .delete<Cart>(this.baseUrl, { headers: this.headers })
+      .pipe(tap((cart) => this._cart.set(cart)));
   }
 
   readonly cartItemsByProductId = computed(() => {
     const cart = this._cart();
     if (!cart) return new Map<number, { cartItemId: number; quantity: number }>();
-    return new Map(cart.items.map(item => [
-      item.product.id,
-      { cartItemId: item.id, quantity: item.quantity }
-    ]));
+    return new Map(
+      cart.items.map((item) => [item.product.id, { cartItemId: item.id, quantity: item.quantity }]),
+    );
   });
 
   loadCart(): void {

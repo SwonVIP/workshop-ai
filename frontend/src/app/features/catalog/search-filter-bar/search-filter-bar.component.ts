@@ -23,10 +23,21 @@ interface SortOption {
     <div class="rounded-lg border border-border bg-card p-4">
       <div class="flex flex-col md:flex-row gap-3 items-start md:items-center">
         <div class="relative flex-1 min-w-[200px]">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          <svg
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
-          <input hlmInput
+          <input
+            hlmInput
             type="text"
             placeholder="Search products..."
             [value]="searchTerm()"
@@ -157,17 +168,13 @@ export class SearchFilterBarComponent {
       filter.category = category;
     }
 
-    const priceRange = this.priceRanges.find(
-      (r) => r.value === this.selectedPriceRange()
-    );
+    const priceRange = this.priceRanges.find((r) => r.value === this.selectedPriceRange());
     if (priceRange && priceRange.value) {
       filter.minPrice = priceRange.min;
       filter.maxPrice = priceRange.max;
     }
 
-    const sortOption = this.sortOptions.find(
-      (s) => s.value === this.selectedSort()
-    );
+    const sortOption = this.sortOptions.find((s) => s.value === this.selectedSort());
     if (sortOption && sortOption.value) {
       filter.sort = sortOption.sort;
       filter.direction = sortOption.direction;

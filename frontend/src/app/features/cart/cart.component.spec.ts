@@ -54,10 +54,7 @@ describe('CartComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [CartComponent],
-      providers: [
-        provideRouter([]),
-        { provide: CartService, useValue: mockCartService },
-      ],
+      providers: [provideRouter([]), { provide: CartService, useValue: mockCartService }],
     });
 
     const fixture = TestBed.createComponent(CartComponent);
@@ -163,7 +160,9 @@ describe('CartComponent', () => {
     const { fixture, mockCartService } = setup(mockCart);
 
     // when — clicking the Clear Cart button
-    const clearBtn = fixture.nativeElement.querySelector('[data-testid="clear-cart"]') as HTMLButtonElement;
+    const clearBtn = fixture.nativeElement.querySelector(
+      '[data-testid="clear-cart"]',
+    ) as HTMLButtonElement;
     clearBtn.click();
 
     // then — clearCart is called exactly once

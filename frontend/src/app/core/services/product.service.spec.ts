@@ -2,12 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { ProductService } from './product.service';
-import {
-  Product,
-  Category,
-  PaginatedResponse,
-  ProductFilter,
-} from '../models/product.model';
+import { Product, Category, PaginatedResponse, ProductFilter } from '../models/product.model';
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -63,9 +58,7 @@ describe('ProductService', () => {
         expect(result).toEqual(mockPage);
       });
 
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.method).toBe('GET');
       expect(req.request.params.get('page')).toBe('0');
       expect(req.request.params.get('size')).toBe('12');
@@ -82,9 +75,7 @@ describe('ProductService', () => {
       service.getProducts(filter, page, size).subscribe();
 
       // Then
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.params.get('category')).toBe('Electronics');
       req.flush(mockPage);
     });
@@ -99,9 +90,7 @@ describe('ProductService', () => {
       service.getProducts(filter, page, size).subscribe();
 
       // Then
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.params.get('search')).toBe('mouse');
       req.flush(mockPage);
     });
@@ -116,9 +105,7 @@ describe('ProductService', () => {
       service.getProducts(filter, page, size).subscribe();
 
       // Then
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.params.get('minPrice')).toBe('10');
       expect(req.request.params.get('maxPrice')).toBe('50');
       req.flush(mockPage);
@@ -134,9 +121,7 @@ describe('ProductService', () => {
       service.getProducts(filter, page, size).subscribe();
 
       // Then
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.params.get('sort')).toBe('price,desc');
       req.flush(mockPage);
     });
@@ -151,9 +136,7 @@ describe('ProductService', () => {
       service.getProducts(filter, page, size).subscribe();
 
       // Then
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.params.get('sort')).toBe('name,asc');
       req.flush(mockPage);
     });
@@ -174,9 +157,7 @@ describe('ProductService', () => {
       service.getProducts(filter, page, size).subscribe();
 
       // Then
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.params.get('category')).toBeNull();
       expect(req.request.params.get('search')).toBeNull();
       expect(req.request.params.get('minPrice')).toBeNull();
@@ -197,9 +178,7 @@ describe('ProductService', () => {
       service.getProducts(filter, page, size).subscribe();
 
       // Then
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/products'
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/products');
       expect(req.request.params.get('minPrice')).toBe('0');
       req.flush(mockPage);
     });
@@ -212,28 +191,39 @@ describe('ProductService', () => {
       service.getProducts(filter, 0, 12).subscribe();
 
       // then — maxPrice=0 is included in query params
-      const req = httpMock.expectOne(r => r.url === '/api/products' && r.params.get('maxPrice') === '0');
+      const req = httpMock.expectOne(
+        (r) => r.url === '/api/products' && r.params.get('maxPrice') === '0',
+      );
       expect(req.request.method).toBe('GET');
       req.flush(mockPage);
     });
 
     it('should include all filter params when all filters are provided', () => {
       // given — a filter with all fields set
-      const filter: ProductFilter = { category: 'Electronics', search: 'headphones', minPrice: 50, maxPrice: 200, sort: 'price', direction: 'desc' };
+      const filter: ProductFilter = {
+        category: 'Electronics',
+        search: 'headphones',
+        minPrice: 50,
+        maxPrice: 200,
+        sort: 'price',
+        direction: 'desc',
+      };
 
       // when — requesting products
       service.getProducts(filter, 1, 24).subscribe();
 
       // then — all params are present
-      const req = httpMock.expectOne(r =>
-        r.url === '/api/products'
-        && r.params.get('category') === 'Electronics'
-        && r.params.get('search') === 'headphones'
-        && r.params.get('minPrice') === '50'
-        && r.params.get('maxPrice') === '200'
-        && r.params.get('sort') === 'price,desc'
-        && r.params.get('page') === '1'
-        && r.params.get('size') === '24');
+      const req = httpMock.expectOne(
+        (r) =>
+          r.url === '/api/products' &&
+          r.params.get('category') === 'Electronics' &&
+          r.params.get('search') === 'headphones' &&
+          r.params.get('minPrice') === '50' &&
+          r.params.get('maxPrice') === '200' &&
+          r.params.get('sort') === 'price,desc' &&
+          r.params.get('page') === '1' &&
+          r.params.get('size') === '24',
+      );
       expect(req.request.method).toBe('GET');
       req.flush(mockPage);
     });
@@ -246,7 +236,7 @@ describe('ProductService', () => {
       service.getProducts(filter, 0, 12).subscribe();
 
       // then — sort param is NOT included
-      const req = httpMock.expectOne(r => r.url === '/api/products' && !r.params.has('sort'));
+      const req = httpMock.expectOne((r) => r.url === '/api/products' && !r.params.has('sort'));
       expect(req.request.method).toBe('GET');
       req.flush(mockPage);
     });
@@ -283,7 +273,7 @@ describe('ProductService', () => {
 
       // when — the request fails with 500
       httpMock
-        .expectOne(r => r.url === '/api/products')
+        .expectOne((r) => r.url === '/api/products')
         .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
 
       // then — the error propagates to the subscriber with status and statusText
@@ -315,7 +305,7 @@ describe('ProductService', () => {
 
       // when — the request fails with a network error
       httpMock
-        .expectOne(r => r.url === '/api/products')
+        .expectOne((r) => r.url === '/api/products')
         .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
 
       // then — the error propagates to the subscriber with status 0

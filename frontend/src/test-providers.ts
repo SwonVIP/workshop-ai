@@ -16,7 +16,4 @@ if (typeof window.matchMedia !== 'function') {
     }) as MediaQueryList;
 }
 
-export default [
-  provideHttpClient(),
-  provideHttpClientTesting(),
-];
+export default [provideHttpClient(), provideHttpClientTesting()];

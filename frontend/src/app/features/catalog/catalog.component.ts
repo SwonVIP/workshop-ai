@@ -63,13 +63,27 @@ import { environment } from '../../../environments/environment';
         </div>
       } @else if (productsResource.error()) {
         <div data-testid="error-state" class="flex flex-col items-center py-16 text-center">
-          <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-            <svg class="w-8 h-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+          <div
+            class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-destructive"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
             </svg>
           </div>
           <p class="text-lg font-semibold text-foreground mb-2">Something went wrong</p>
-          <p class="text-sm text-muted-foreground">Unable to load products. Please try again later.</p>
+          <p class="text-sm text-muted-foreground">
+            Unable to load products. Please try again later.
+          </p>
         </div>
       } @else if (products().length === 0) {
         <app-empty-state
@@ -135,25 +149,21 @@ export class CatalogComponent {
     return url;
   });
 
-  readonly productsResource = httpResource<PaginatedResponse<Product>>(
-    this.productsUrl,
-    {
-      defaultValue: {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size: this.pageSize,
-        number: 0,
-        first: true,
-        last: true,
-      },
-    }
-  );
+  readonly productsResource = httpResource<PaginatedResponse<Product>>(this.productsUrl, {
+    defaultValue: {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+      size: this.pageSize,
+      number: 0,
+      first: true,
+      last: true,
+    },
+  });
 
-  readonly categoriesResource = httpResource<Category[]>(
-    () => `${this.baseUrl}/categories`,
-    { defaultValue: [] }
-  );
+  readonly categoriesResource = httpResource<Category[]>(() => `${this.baseUrl}/categories`, {
+    defaultValue: [],
+  });
 
   readonly categories = computed(() => this.categoriesResource.value());
   readonly products = computed(() => this.productsResource.value().content);

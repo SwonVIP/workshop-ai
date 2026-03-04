@@ -36,7 +36,11 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
     await page.locator('[data-testid="cart-drawer"]').waitFor({ state: 'visible', timeout: 5000 });
 
     // then — empty state messages are displayed (parameterized)
-    const emptyMessages = ['Your cart is empty', 'No items yet', 'Add products from the catalog'] as const;
+    const emptyMessages = [
+      'Your cart is empty',
+      'No items yet',
+      'Add products from the catalog',
+    ] as const;
     for (const message of emptyMessages) {
       await expect(page.getByText(message)).toBeVisible();
     }
@@ -69,7 +73,9 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
     await page.reload();
     await page.waitForSelector('[data-testid="product-card"]');
     const [addResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+      ),
       page.getByRole('button', { name: 'Add to Cart' }).first().click(),
     ]);
     expect(addResp.status()).toBe(201);
@@ -79,7 +85,9 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
 
     // when — user clicks the + button in the drawer
     const [updateResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT',
+      ),
       page.getByTestId('drawer-qty-increase').click(),
     ]);
 
@@ -94,20 +102,26 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
     await page.reload();
     await page.waitForSelector('[data-testid="product-card"]');
     await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+      ),
       page.getByRole('button', { name: 'Add to Cart' }).first().click(),
     ]);
     await page.getByTestId('cart-trigger').click();
     await page.getByTestId('cart-drawer').waitFor({ state: 'visible' });
     await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT',
+      ),
       page.getByTestId('drawer-qty-increase').click(),
     ]);
     await expect(page.getByTestId('drawer-qty-value')).toHaveText('2');
 
     // when — user clicks the − button in the drawer
     const [decResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT',
+      ),
       page.getByTestId('drawer-qty-decrease').click(),
     ]);
 
@@ -122,7 +136,9 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
     await page.reload();
     await page.waitForSelector('[data-testid="product-card"]');
     await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+      ),
       page.getByRole('button', { name: 'Add to Cart' }).first().click(),
     ]);
     await page.getByTestId('cart-trigger').click();
@@ -130,7 +146,9 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
 
     // when — user clicks the remove button on the item
     const [deleteResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'DELETE'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'DELETE',
+      ),
       page.getByTestId('drawer-remove-item').click(),
     ]);
 
@@ -145,7 +163,9 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
     await page.reload();
     await page.waitForSelector('[data-testid="product-card"]');
     await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+      ),
       page.getByRole('button', { name: 'Add to Cart' }).first().click(),
     ]);
     await page.getByTestId('cart-trigger').click();
@@ -153,7 +173,12 @@ test.describe('Cart Drawer — Sheet Overlay Behaviors', () => {
 
     // when — user clicks Clear Cart
     const [clearResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart') && resp.request().method() === 'DELETE' && !resp.url().includes('/items')),
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes('/api/cart') &&
+          resp.request().method() === 'DELETE' &&
+          !resp.url().includes('/items'),
+      ),
       page.getByTestId('drawer-clear-cart').click(),
     ]);
 

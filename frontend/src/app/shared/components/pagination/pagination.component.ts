@@ -6,29 +6,39 @@ import { HlmButton } from '@spartan-ng/helm/button';
   imports: [HlmButton],
   template: `
     <nav class="flex items-center justify-center gap-1.5 mt-8" data-testid="pagination">
-      <button hlmBtn variant="ghost" size="sm"
+      <button
+        hlmBtn
+        variant="ghost"
+        size="sm"
         aria-label="Previous page"
         [disabled]="isFirstPage()"
-        (click)="previousPage()">
+        (click)="previousPage()"
+      >
         &larr; Previous
       </button>
 
       @for (page of visiblePages(); track page) {
-        <button hlmBtn
+        <button
+          hlmBtn
           [variant]="page === currentPage() ? 'default' : 'outline'"
           size="icon"
           class="w-9 h-9 text-sm"
           [attr.aria-label]="'Go to page ' + (page + 1)"
           [attr.aria-current]="page === currentPage() ? 'page' : null"
-          (click)="goToPage(page)">
+          (click)="goToPage(page)"
+        >
           {{ page + 1 }}
         </button>
       }
 
-      <button hlmBtn variant="ghost" size="sm"
+      <button
+        hlmBtn
+        variant="ghost"
+        size="sm"
         aria-label="Next page"
         [disabled]="isLastPage()"
-        (click)="nextPage()">
+        (click)="nextPage()"
+      >
         Next &rarr;
       </button>
     </nav>

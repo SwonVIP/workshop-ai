@@ -8,7 +8,14 @@ import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-cart',
-  imports: [CartItemRowComponent, OrderSummaryComponent, EmptyStateComponent, HlmButton, HlmH2, HlmMuted],
+  imports: [
+    CartItemRowComponent,
+    OrderSummaryComponent,
+    EmptyStateComponent,
+    HlmButton,
+    HlmH2,
+    HlmMuted,
+  ],
   template: `
     <div>
       <h2 hlmH2 class="mb-1">Shopping Cart</h2>
@@ -17,10 +24,17 @@ import { CartService } from '../../core/services/cart.service';
       @if (cart(); as cartData) {
         @if (cartData.items.length > 0) {
           <div class="flex items-center justify-between mb-6">
-            <p class="text-sm text-muted-foreground">{{ cartData.totalItems }} item{{ cartData.totalItems > 1 ? 's' : '' }} in your cart</p>
-            <button hlmBtn variant="outline" size="sm" data-testid="clear-cart"
-                    class="text-destructive hover:text-destructive"
-                    (click)="onClearCart()">
+            <p class="text-sm text-muted-foreground">
+              {{ cartData.totalItems }} item{{ cartData.totalItems > 1 ? 's' : '' }} in your cart
+            </p>
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              data-testid="clear-cart"
+              class="text-destructive hover:text-destructive"
+              (click)="onClearCart()"
+            >
               Clear Cart
             </button>
           </div>

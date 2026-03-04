@@ -1,8 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { CartService } from './cart.service';
 import { Cart, AddToCartRequest, UpdateCartItemRequest } from '../models/cart.model';
@@ -64,7 +61,7 @@ describe('CartService', () => {
       expect(stored).toBeDefined();
       expect(stored).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
 
-      httpMock.expectOne(req => req.url === '/api/cart').flush(mockCart);
+      httpMock.expectOne((req) => req.url === '/api/cart').flush(mockCart);
     });
 
     it('should reuse existing session UUID from localStorage', () => {
@@ -76,7 +73,7 @@ describe('CartService', () => {
       service.getCart().subscribe();
 
       // then — the header carries the pre-existing id
-      const req = httpMock.expectOne(r => r.url === '/api/cart');
+      const req = httpMock.expectOne((r) => r.url === '/api/cart');
       expect(req.request.headers.get('X-Cart-Session')).toBe(existingId);
       req.flush(mockCart);
 
@@ -93,7 +90,7 @@ describe('CartService', () => {
       service.getCart().subscribe();
 
       // when — we inspect the outgoing request
-      const req = httpMock.expectOne(r => r.url === '/api/cart');
+      const req = httpMock.expectOne((r) => r.url === '/api/cart');
 
       // then — method is GET and session header is present
       expect(req.request.method).toBe('GET');
@@ -109,7 +106,7 @@ describe('CartService', () => {
       service.addItem(body).subscribe();
 
       // then — POST to /api/cart/items with correct body and header
-      const req = httpMock.expectOne(r => r.url === '/api/cart/items');
+      const req = httpMock.expectOne((r) => r.url === '/api/cart/items');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(body);
       expect(req.request.headers.has('X-Cart-Session')).toBe(true);
@@ -125,7 +122,7 @@ describe('CartService', () => {
       service.updateItem(itemId, body).subscribe();
 
       // then — PUT to /api/cart/items/10 with correct body and header
-      const req = httpMock.expectOne(r => r.url === '/api/cart/items/10');
+      const req = httpMock.expectOne((r) => r.url === '/api/cart/items/10');
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(body);
       expect(req.request.headers.has('X-Cart-Session')).toBe(true);
@@ -140,13 +137,13 @@ describe('CartService', () => {
       service.removeItem(itemId).subscribe();
 
       // then — DELETE to /api/cart/items/10 with header
-      const req = httpMock.expectOne(r => r.url === '/api/cart/items/10');
+      const req = httpMock.expectOne((r) => r.url === '/api/cart/items/10');
       expect(req.request.method).toBe('DELETE');
       expect(req.request.headers.has('X-Cart-Session')).toBe(true);
       req.flush(null);
 
       // and — a follow-up GET /api/cart is issued to refresh
-      httpMock.expectOne(r => r.url === '/api/cart').flush(emptyCart);
+      httpMock.expectOne((r) => r.url === '/api/cart').flush(emptyCart);
     });
   });
 
@@ -159,7 +156,7 @@ describe('CartService', () => {
 
       // when — getCart succeeds
       service.getCart().subscribe();
-      httpMock.expectOne(r => r.url === '/api/cart').flush(mockCart);
+      httpMock.expectOne((r) => r.url === '/api/cart').flush(mockCart);
 
       // then — cart signal holds the returned cart
       expect(service.cart()).toEqual(mockCart);
@@ -171,7 +168,7 @@ describe('CartService', () => {
 
       // when — addItem succeeds
       service.addItem({ productId: 42, quantity: 1 }).subscribe();
-      httpMock.expectOne(r => r.url === '/api/cart/items').flush(mockCart);
+      httpMock.expectOne((r) => r.url === '/api/cart/items').flush(mockCart);
 
       // then — cart signal holds the returned cart
       expect(service.cart()).toEqual(mockCart);
@@ -183,7 +180,7 @@ describe('CartService', () => {
 
       // when — updateItem succeeds
       service.updateItem(10, { quantity: 3 }).subscribe();
-      httpMock.expectOne(r => r.url === '/api/cart/items/10').flush(mockCart);
+      httpMock.expectOne((r) => r.url === '/api/cart/items/10').flush(mockCart);
 
       // then — cart signal holds the returned cart
       expect(service.cart()).toEqual(mockCart);
@@ -195,10 +192,10 @@ describe('CartService', () => {
 
       // when — removeItem succeeds and triggers getCart refresh
       service.removeItem(10).subscribe();
-      httpMock.expectOne(r => r.url === '/api/cart/items/10').flush(null);
+      httpMock.expectOne((r) => r.url === '/api/cart/items/10').flush(null);
 
       // then — a GET /api/cart is issued to refresh
-      const getReq = httpMock.expectOne(r => r.url === '/api/cart');
+      const getReq = httpMock.expectOne((r) => r.url === '/api/cart');
       expect(getReq.request.method).toBe('GET');
       getReq.flush(emptyCart);
 
@@ -214,7 +211,7 @@ describe('CartService', () => {
       service.loadCart();
 
       // then — a GET /api/cart is issued
-      const req = httpMock.expectOne(r => r.url === '/api/cart');
+      const req = httpMock.expectOne((r) => r.url === '/api/cart');
       expect(req.request.method).toBe('GET');
       req.flush(mockCart);
 
@@ -234,7 +231,7 @@ describe('CartService', () => {
     it('should compute itemCount from cart totalItems', () => {
       // given — a cart is loaded with totalItems = 2
       service.getCart().subscribe();
-      httpMock.expectOne(r => r.url === '/api/cart').flush(mockCart);
+      httpMock.expectOne((r) => r.url === '/api/cart').flush(mockCart);
 
       // when — reading itemCount
 
@@ -251,7 +248,7 @@ describe('CartService', () => {
       service.clearCart().subscribe();
 
       // when — we inspect the outgoing request
-      const req = httpMock.expectOne(r => r.url === '/api/cart');
+      const req = httpMock.expectOne((r) => r.url === '/api/cart');
 
       // then — method is DELETE and session header is present
       expect(req.request.method).toBe('DELETE');
@@ -265,7 +262,7 @@ describe('CartService', () => {
 
       // when — clearCart succeeds
       service.clearCart().subscribe();
-      httpMock.expectOne(r => r.url === '/api/cart').flush(emptyCart);
+      httpMock.expectOne((r) => r.url === '/api/cart').flush(emptyCart);
 
       // then — cart signal holds the returned empty cart
       expect(service.cart()).toEqual(emptyCart);
@@ -278,7 +275,7 @@ describe('CartService', () => {
     it('should build cartItemsByProductId map from cart items', () => {
       // given — a cart is loaded with items
       service.getCart().subscribe();
-      httpMock.expectOne(r => r.url === '/api/cart').flush(mockCart);
+      httpMock.expectOne((r) => r.url === '/api/cart').flush(mockCart);
 
       // when — reading cartItemsByProductId
       const map = service.cartItemsByProductId();
@@ -309,7 +306,7 @@ describe('CartService', () => {
 
       // when — the request fails with 500
       httpMock
-        .expectOne(r => r.url === '/api/cart')
+        .expectOne((r) => r.url === '/api/cart')
         .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
 
       // then — the error propagates to the subscriber with status and statusText
@@ -325,7 +322,7 @@ describe('CartService', () => {
 
       // when — the request fails with 500
       httpMock
-        .expectOne(r => r.url === '/api/cart/items')
+        .expectOne((r) => r.url === '/api/cart/items')
         .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
 
       // then — the error propagates to the subscriber with status and statusText
@@ -341,7 +338,7 @@ describe('CartService', () => {
 
       // when — the request fails with 404
       httpMock
-        .expectOne(r => r.url === '/api/cart/items/999')
+        .expectOne((r) => r.url === '/api/cart/items/999')
         .flush('Not Found', { status: 404, statusText: 'Not Found' });
 
       // then — the error propagates to the subscriber with status and statusText
@@ -357,7 +354,7 @@ describe('CartService', () => {
 
       // when — the request fails with a network error
       httpMock
-        .expectOne(r => r.url === '/api/cart')
+        .expectOne((r) => r.url === '/api/cart')
         .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
 
       // then — the error propagates to the subscriber with status 0

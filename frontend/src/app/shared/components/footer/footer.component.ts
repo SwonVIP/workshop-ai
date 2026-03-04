@@ -12,10 +12,16 @@ import { RouterLink } from '@angular/router';
             &copy; {{ currentYear }} Workshop Store. All rights reserved.
           </p>
           <nav class="flex gap-6 text-sm">
-            <a routerLink="/catalog" class="text-muted-foreground hover:text-foreground transition-colors">
+            <a
+              routerLink="/catalog"
+              class="text-muted-foreground hover:text-foreground transition-colors"
+            >
               Catalog
             </a>
-            <a routerLink="/cart" class="text-muted-foreground hover:text-foreground transition-colors">
+            <a
+              routerLink="/cart"
+              class="text-muted-foreground hover:text-foreground transition-colors"
+            >
               Cart
             </a>
           </nav>

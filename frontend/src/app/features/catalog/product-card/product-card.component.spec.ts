@@ -59,10 +59,10 @@ describe('ProductCardComponent', () => {
     const fixture = createComponent();
 
     // then — the Add to Cart button is present with correct label
-    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
-    const addToCartButton = buttons.find(
-      (b) => b.textContent?.includes('Add to Cart')
+    const buttons: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll('button'),
     );
+    const addToCartButton = buttons.find((b) => b.textContent?.includes('Add to Cart'));
     expect(addToCartButton).toBeInstanceOf(HTMLButtonElement);
     expect(addToCartButton!.textContent!.trim()).toContain('Add to Cart');
   });
@@ -75,9 +75,11 @@ describe('ProductCardComponent', () => {
     const emitted: Product[] = [];
     fixture.componentInstance.addToCart.subscribe((p: Product) => emitted.push(p));
 
-    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
-    const addToCartButton = buttons.find(
-      (b) => b.textContent?.includes('Add to Cart')
+    const buttons: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll('button'),
+    );
+    const addToCartButton = buttons.find((b) =>
+      b.textContent?.includes('Add to Cart'),
     ) as HTMLButtonElement;
     addToCartButton.click();
 
@@ -162,8 +164,10 @@ describe('ProductCardComponent', () => {
     const fixture = createComponent();
 
     // then — Add to Cart button is present with correct label
-    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
-    const addBtn = buttons.find(b => b.textContent?.includes('Add to Cart'));
+    const buttons: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll('button'),
+    );
+    const addBtn = buttons.find((b) => b.textContent?.includes('Add to Cart'));
     expect(addBtn).toBeInstanceOf(HTMLButtonElement);
 
     // and — stepper is not present
@@ -183,8 +187,10 @@ describe('ProductCardComponent', () => {
     expect(qtyValue.textContent.trim()).toBe('3');
 
     // and — Add to Cart button is not present
-    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
-    const addBtn = buttons.find(b => b.textContent?.includes('Add to Cart'));
+    const buttons: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll('button'),
+    );
+    const addBtn = buttons.find((b) => b.textContent?.includes('Add to Cart'));
     expect(addBtn).toBeFalsy();
   });
 
@@ -208,7 +214,9 @@ describe('ProductCardComponent', () => {
     // when — clicking the decrease button
     const emitted: Product[] = [];
     fixture.componentInstance.removeFromCart.subscribe((p: Product) => emitted.push(p));
-    const decreaseBtn = fixture.nativeElement.querySelector('[data-testid="card-qty-decrease"]') as HTMLButtonElement;
+    const decreaseBtn = fixture.nativeElement.querySelector(
+      '[data-testid="card-qty-decrease"]',
+    ) as HTMLButtonElement;
     decreaseBtn.click();
 
     // then — the product is emitted via removeFromCart
@@ -225,7 +233,9 @@ describe('ProductCardComponent', () => {
     // when — clicking the increase button
     const emitted: Product[] = [];
     fixture.componentInstance.addToCart.subscribe((p: Product) => emitted.push(p));
-    const increaseBtn = fixture.nativeElement.querySelector('[data-testid="card-qty-increase"]') as HTMLButtonElement;
+    const increaseBtn = fixture.nativeElement.querySelector(
+      '[data-testid="card-qty-increase"]',
+    ) as HTMLButtonElement;
     increaseBtn.click();
 
     // then — the product is emitted via addToCart

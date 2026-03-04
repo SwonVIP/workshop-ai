@@ -1,12 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {
-  PaginatedResponse,
-  Product,
-  ProductFilter,
-  Category,
-} from '../models/product.model';
+import { PaginatedResponse, Product, ProductFilter, Category } from '../models/product.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -17,23 +12,15 @@ export class ProductService {
   getProducts(
     filter: ProductFilter,
     page: number,
-    size: number
+    size: number,
   ): Observable<PaginatedResponse<Product>> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
 
     if (filter.category) params = params.set('category', filter.category);
     if (filter.search) params = params.set('search', filter.search);
-    if (filter.minPrice != null)
-      params = params.set('minPrice', filter.minPrice.toString());
-    if (filter.maxPrice != null)
-      params = params.set('maxPrice', filter.maxPrice.toString());
-    if (filter.sort)
-      params = params.set(
-        'sort',
-        `${filter.sort},${filter.direction ?? 'asc'}`
-      );
+    if (filter.minPrice != null) params = params.set('minPrice', filter.minPrice.toString());
+    if (filter.maxPrice != null) params = params.set('maxPrice', filter.maxPrice.toString());
+    if (filter.sort) params = params.set('sort', `${filter.sort},${filter.direction ?? 'asc'}`);
 
     return this.http.get<PaginatedResponse<Product>>(this.baseUrl, { params });
   }

@@ -3,7 +3,9 @@ import { test, expect, Page } from '@playwright/test';
 async function addFirstProductToCart(page: Page): Promise<void> {
   await page.waitForSelector('[data-testid="product-card"]');
   const [response] = await Promise.all([
-    page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+    page.waitForResponse(
+      (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+    ),
     page.getByRole('button', { name: 'Add to Cart' }).first().click(),
   ]);
   expect(response.status()).toBe(201);
@@ -35,7 +37,9 @@ test.describe('Shopping Cart — Full User Journey', () => {
     // Use stepper to add same product again (first card now shows stepper)
     const firstCard = page.getByTestId('product-card').first();
     const [resp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+      ),
       firstCard.getByTestId('card-qty-increase').click(),
     ]);
     expect(resp.status()).toBe(201);
@@ -56,7 +60,9 @@ test.describe('Shopping Cart — Full User Journey', () => {
     await navigateToCartWithItems(page);
     await expect(page.getByTestId('qty-value')).toHaveText('1');
     const [updateResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT',
+      ),
       page.getByTestId('qty-increase').click(),
     ]);
     expect(updateResp.status()).toBe(200);
@@ -69,14 +75,18 @@ test.describe('Shopping Cart — Full User Journey', () => {
     // Use stepper to add same product again (first card now shows stepper)
     const firstCard = page.getByTestId('product-card').first();
     const [addResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+      ),
       firstCard.getByTestId('card-qty-increase').click(),
     ]);
     expect(addResp.status()).toBe(201);
     await navigateToCartWithItems(page);
     await expect(page.getByTestId('qty-value')).toHaveText('2');
     const [updateResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'PUT',
+      ),
       page.getByTestId('qty-decrease').click(),
     ]);
     expect(updateResp.status()).toBe(200);
@@ -95,7 +105,9 @@ test.describe('Shopping Cart — Full User Journey', () => {
     await addFirstProductToCart(page);
     await navigateToCartWithItems(page);
     const [deleteResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'DELETE'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'DELETE',
+      ),
       page.getByTestId('remove-item').click(),
     ]);
     expect(deleteResp.status()).toBe(204);
@@ -170,20 +182,26 @@ test.describe('Shopping Cart — Full User Journey', () => {
     const firstCard = page.getByTestId('product-card').first();
     await expect(firstCard.getByTestId('card-qty-value')).toHaveText('1');
     const [resp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items') && resp.request().method() === 'POST',
+      ),
       firstCard.getByTestId('card-qty-increase').click(),
     ]);
     expect(resp.status()).toBe(201);
     await expect(firstCard.getByTestId('card-qty-value')).toHaveText('2');
   });
 
-  test('should remove product from cart via product card stepper when quantity is 1', async ({ page }) => {
+  test('should remove product from cart via product card stepper when quantity is 1', async ({
+    page,
+  }) => {
     await page.goto('/catalog');
     await addFirstProductToCart(page);
     const firstCard = page.getByTestId('product-card').first();
     await expect(firstCard.getByTestId('card-qty-value')).toHaveText('1');
     const [resp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart/items/') && resp.request().method() === 'DELETE'),
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/cart/items/') && resp.request().method() === 'DELETE',
+      ),
       firstCard.getByTestId('card-qty-decrease').click(),
     ]);
     expect(resp.status()).toBe(204);
@@ -196,7 +214,12 @@ test.describe('Shopping Cart — Full User Journey', () => {
     await addFirstProductToCart(page);
     await navigateToCartWithItems(page);
     const [clearResp] = await Promise.all([
-      page.waitForResponse(resp => resp.url().includes('/api/cart') && resp.request().method() === 'DELETE' && !resp.url().includes('/items')),
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes('/api/cart') &&
+          resp.request().method() === 'DELETE' &&
+          !resp.url().includes('/items'),
+      ),
       page.getByTestId('clear-cart').click(),
     ]);
     expect(clearResp.status()).toBe(200);

@@ -8,7 +8,9 @@ test.describe('Dark Mode', () => {
     await page.reload();
   });
 
-  test('should toggle dark class on html element when theme toggle is clicked', async ({ page }) => {
+  test('should toggle dark class on html element when theme toggle is clicked', async ({
+    page,
+  }) => {
     await page.goto('/');
 
     // Initially, html should not have 'dark' class (system default in test env = light)

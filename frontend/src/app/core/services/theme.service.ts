@@ -17,7 +17,7 @@ export class ThemeService {
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   private readonly systemPrefersDark = signal(
-    this.isBrowser ? window.matchMedia('(prefers-color-scheme: dark)').matches : false
+    this.isBrowser ? window.matchMedia('(prefers-color-scheme: dark)').matches : false,
   );
 
   readonly currentTheme = signal<ThemePreference>(this.loadTheme());

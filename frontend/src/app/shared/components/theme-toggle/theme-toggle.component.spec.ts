@@ -48,7 +48,9 @@ describe('ThemeToggleComponent', () => {
     const fixture = createComponent();
 
     // then — moon icon is visible
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-moon"]')).toBeInstanceOf(SVGElement);
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-moon"]')).toBeInstanceOf(
+      SVGElement,
+    );
     expect(fixture.nativeElement.querySelector('[data-testid="icon-sun"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('[data-testid="icon-monitor"]')).toBeNull();
   });
@@ -60,7 +62,9 @@ describe('ThemeToggleComponent', () => {
     const fixture = createComponent();
 
     // then — sun icon is visible
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-sun"]')).toBeInstanceOf(SVGElement);
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-sun"]')).toBeInstanceOf(
+      SVGElement,
+    );
     expect(fixture.nativeElement.querySelector('[data-testid="icon-moon"]')).toBeNull();
   });
 
@@ -70,7 +74,9 @@ describe('ThemeToggleComponent', () => {
     const fixture = createComponent();
 
     // then — monitor icon is visible
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-monitor"]')).toBeInstanceOf(SVGElement);
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-monitor"]')).toBeInstanceOf(
+      SVGElement,
+    );
   });
 
   it('should call toggleTheme when button is clicked', () => {
