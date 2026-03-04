@@ -47,7 +47,7 @@ describe('CartItemRowComponent', () => {
 
     // then — the quantity value is displayed
     const qtyEl = fixture.nativeElement.querySelector('[data-testid="qty-value"]');
-    expect(qtyEl).toBeTruthy();
+    expect(qtyEl).toBeInstanceOf(HTMLElement);
     expect(qtyEl.textContent.trim()).toBe('2');
   });
 

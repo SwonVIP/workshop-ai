@@ -56,6 +56,7 @@ class CartServiceTest {
 
     // then
     assertThat(result.id()).isEqualTo(1L);
+    assertThat(result.sessionId()).isEqualTo(SESSION_ID);
     assertThat(result.items()).isEmpty();
     assertThat(result.totalItems()).isZero();
     assertThat(result.totalPrice()).isEqualTo(BigDecimal.ZERO);
@@ -75,6 +76,10 @@ class CartServiceTest {
 
     // then
     assertThat(result.id()).isEqualTo(1L);
+    assertThat(result.sessionId()).isEqualTo(SESSION_ID);
+    assertThat(result.items()).isEmpty();
+    assertThat(result.totalItems()).isZero();
+    assertThat(result.totalPrice()).isEqualTo(BigDecimal.ZERO);
     verify(cartRepository, never()).save(any(Cart.class));
   }
 
@@ -100,6 +105,9 @@ class CartServiceTest {
 
     // then
     assertThat(result.totalItems()).isEqualTo(1);
+    assertThat(result.sessionId()).isEqualTo(SESSION_ID);
+    assertThat(result.totalPrice()).isEqualByComparingTo(new BigDecimal("89.99"));
+    assertThat(result.id()).isEqualTo(1L);
     verify(cartRepository).save(cart);
   }
 
@@ -123,10 +131,13 @@ class CartServiceTest {
 
     // when
     var request = new ch.migrosonline.workshop.model.AddToCartRequest(10L, 3);
-    cartService.addItem(SESSION_ID, request);
+    var result = cartService.addItem(SESSION_ID, request);
 
     // then
     assertThat(existingItem.getQuantity()).isEqualTo(5);
+    assertThat(result.totalItems()).isEqualTo(5);
+    assertThat(result.totalPrice()).isEqualByComparingTo(new BigDecimal("449.95"));
+    assertThat(result.sessionId()).isEqualTo(SESSION_ID);
   }
 
   @Test
@@ -164,7 +175,10 @@ class CartServiceTest {
     var result = cartService.addItem(SESSION_ID, request);
 
     // then
-    assertThat(result).isNotNull();
+    assertThat(result.id()).isEqualTo(1L);
+    assertThat(result.sessionId()).isEqualTo(SESSION_ID);
+    assertThat(result.totalItems()).isEqualTo(1);
+    assertThat(result.totalPrice()).isEqualByComparingTo(new BigDecimal("89.99"));
     verify(cartRepository, atLeastOnce()).save(any(Cart.class));
   }
 
@@ -188,6 +202,9 @@ class CartServiceTest {
 
     // then
     assertThat(item.getQuantity()).isEqualTo(7);
+    assertThat(result.totalItems()).isEqualTo(7);
+    assertThat(result.sessionId()).isEqualTo(SESSION_ID);
+    assertThat(result.id()).isEqualTo(1L);
     verify(cartItemRepository).save(item);
   }
 
@@ -237,6 +254,7 @@ class CartServiceTest {
 
     // then
     assertThat(cart.getItems()).doesNotContain(item);
+    assertThat(cart.getItems()).isEmpty();
     verify(cartRepository).save(cart);
   }
 
@@ -266,6 +284,8 @@ class CartServiceTest {
 
     // then
     assertThat(cart.getItems()).isEmpty();
+    assertThat(cart.getItems()).hasSize(0);
+    assertThat(cart.getSessionId()).isEqualTo(SESSION_ID);
     verify(cartRepository).save(cart);
   }
 
@@ -293,6 +313,9 @@ class CartServiceTest {
     verify(cartRepository).save(cart);
     assertThat(result.totalItems()).isZero();
     assertThat(result.totalPrice()).isEqualTo(BigDecimal.ZERO);
+    assertThat(result.sessionId()).isEqualTo(SESSION_ID);
+    assertThat(result.id()).isEqualTo(1L);
+    assertThat(result.items()).isEmpty();
   }
 
   @Test

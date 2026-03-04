@@ -303,9 +303,10 @@ describe('ProductService', () => {
         .expectOne(r => r.url === '/api/products')
         .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status and statusText
+      expect(error).toBeDefined();
       expect(error.status).toBe(500);
+      expect(error.statusText).toBe('Internal Server Error');
     });
 
     it('should propagate HTTP 404 error to subscriber on getProductById', () => {
@@ -318,9 +319,10 @@ describe('ProductService', () => {
         .expectOne('/api/products/999')
         .flush('Not Found', { status: 404, statusText: 'Not Found' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status and statusText
+      expect(error).toBeDefined();
       expect(error.status).toBe(404);
+      expect(error.statusText).toBe('Not Found');
     });
 
     it('should propagate HTTP 500 error to subscriber on getCategories', () => {
@@ -333,9 +335,10 @@ describe('ProductService', () => {
         .expectOne('/api/products/categories')
         .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status and statusText
+      expect(error).toBeDefined();
       expect(error.status).toBe(500);
+      expect(error.statusText).toBe('Internal Server Error');
     });
 
     it('should propagate network error (status 0) to subscriber on getProducts', () => {
@@ -348,9 +351,10 @@ describe('ProductService', () => {
         .expectOne(r => r.url === '/api/products')
         .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status 0
+      expect(error).toBeDefined();
       expect(error.status).toBe(0);
+      expect(error.statusText).toBe('Unknown Error');
     });
   });
 });

@@ -34,6 +34,8 @@ class CartRepositoryIT extends RepositoryTestSupport {
     // then
     assertThat(result).isPresent();
     assertThat(result.get().getSessionId()).isEqualTo("test-session-1");
+    assertThat(result.get().getId()).isNotNull();
+    assertThat(result.get().getItems()).isEmpty();
   }
 
   @Test
@@ -68,9 +70,12 @@ class CartRepositoryIT extends RepositoryTestSupport {
 
     // then
     assertThat(result).isPresent();
+    assertThat(result.get().getSessionId()).isEqualTo("test-session-items");
     assertThat(result.get().getItems()).hasSize(1);
-    assertThat(result.get().getItems().getFirst().getProduct().getName())
-        .isEqualTo("Wireless Bluetooth Headphones");
+    var retrievedItem = result.get().getItems().getFirst();
+    assertThat(retrievedItem.getQuantity()).isEqualTo(2);
+    assertThat(retrievedItem.getProduct().getName()).isEqualTo("Wireless Bluetooth Headphones");
+    assertThat(retrievedItem.getProduct().getId()).isEqualTo(1L);
   }
 
   @Test
@@ -95,6 +100,9 @@ class CartRepositoryIT extends RepositoryTestSupport {
     // then
     assertThat(result).isPresent();
     assertThat(result.get().getQuantity()).isEqualTo(1);
+    assertThat(result.get().getProduct().getId()).isEqualTo(product.getId());
+    assertThat(result.get().getProduct().getName()).isEqualTo("Wireless Bluetooth Headphones");
+    assertThat(result.get().getCart().getId()).isEqualTo(savedCart.getId());
   }
 
   @Test
@@ -132,8 +140,11 @@ class CartRepositoryIT extends RepositoryTestSupport {
     cartRepository.saveAndFlush(savedCart);
 
     var cartId = savedCart.getId();
-    var itemId = savedCart.getItems().getFirst().getId();
+    var retrievedItem = savedCart.getItems().getFirst();
+    var itemId = retrievedItem.getId();
     assertThat(itemId).isNotNull();
+    assertThat(retrievedItem.getQuantity()).isEqualTo(1);
+    assertThat(retrievedItem.getProduct().getId()).isEqualTo(1L);
 
     // when
     cartRepository.delete(savedCart);
@@ -160,8 +171,11 @@ class CartRepositoryIT extends RepositoryTestSupport {
     savedCart.getItems().add(item);
     cartRepository.saveAndFlush(savedCart);
 
-    var itemId = savedCart.getItems().getFirst().getId();
+    var orphanItem = savedCart.getItems().getFirst();
+    var itemId = orphanItem.getId();
     assertThat(itemId).isNotNull();
+    assertThat(orphanItem.getQuantity()).isEqualTo(1);
+    assertThat(orphanItem.getProduct().getId()).isEqualTo(1L);
 
     // when
     savedCart.getItems().removeFirst();
@@ -190,6 +204,8 @@ class CartRepositoryIT extends RepositoryTestSupport {
     savedCart.getItems().add(item2);
     cartRepository.saveAndFlush(savedCart);
     assertThat(savedCart.getItems()).hasSize(2);
+    assertThat(savedCart.getItems().get(0).getQuantity()).isEqualTo(2);
+    assertThat(savedCart.getItems().get(1).getQuantity()).isEqualTo(3);
 
     // when
     savedCart.getItems().clear();
@@ -198,6 +214,7 @@ class CartRepositoryIT extends RepositoryTestSupport {
     // then
     var reloaded = cartRepository.findBySessionId("test-session-clear");
     assertThat(reloaded).isPresent();
+    assertThat(reloaded.get().getSessionId()).isEqualTo("test-session-clear");
     assertThat(reloaded.get().getItems()).isEmpty();
   }
 }

@@ -40,9 +40,31 @@ class CartMapperTest {
     var response = mapper.toResponse(cart);
 
     // then
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.sessionId()).isEqualTo("sess-1");
     assertThat(response.totalItems()).isEqualTo(5);
     assertThat(response.totalPrice()).isEqualByComparingTo(new BigDecimal("95.00"));
     assertThat(response.items()).hasSize(2);
+
+    // verify first item fields
+    var firstItem = response.items().get(0);
+    assertThat(firstItem.id()).isEqualTo(1L);
+    assertThat(firstItem.quantity()).isEqualTo(2);
+    assertThat(firstItem.subtotal()).isEqualByComparingTo(new BigDecimal("20.00"));
+    assertThat(firstItem.product().id()).isEqualTo(1L);
+    assertThat(firstItem.product().name()).isEqualTo("Widget");
+    assertThat(firstItem.product().price()).isEqualByComparingTo(new BigDecimal("10.00"));
+    assertThat(firstItem.product().imageUrl()).isEqualTo("img1.png");
+
+    // verify second item fields
+    var secondItem = response.items().get(1);
+    assertThat(secondItem.id()).isEqualTo(2L);
+    assertThat(secondItem.quantity()).isEqualTo(3);
+    assertThat(secondItem.subtotal()).isEqualByComparingTo(new BigDecimal("75.00"));
+    assertThat(secondItem.product().id()).isEqualTo(2L);
+    assertThat(secondItem.product().name()).isEqualTo("Gadget");
+    assertThat(secondItem.product().price()).isEqualByComparingTo(new BigDecimal("25.00"));
+    assertThat(secondItem.product().imageUrl()).isEqualTo("img2.png");
   }
 
   @Test
@@ -62,7 +84,13 @@ class CartMapperTest {
     var response = mapper.toCartItemResponse(item);
 
     // then
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.quantity()).isEqualTo(3);
     assertThat(response.subtotal()).isEqualByComparingTo(new BigDecimal("89.97"));
+    assertThat(response.product().id()).isEqualTo(1L);
+    assertThat(response.product().name()).isEqualTo("Shoes");
+    assertThat(response.product().price()).isEqualByComparingTo(new BigDecimal("29.99"));
+    assertThat(response.product().imageUrl()).isEqualTo("shoes.png");
   }
 
   @Test
@@ -74,6 +102,8 @@ class CartMapperTest {
     var response = mapper.toResponse(cart);
 
     // then
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.sessionId()).isEqualTo("sess-3");
     assertThat(response.totalItems()).isZero();
     assertThat(response.totalPrice()).isEqualByComparingTo(BigDecimal.ZERO);
     assertThat(response.items()).isEmpty();
@@ -96,6 +126,9 @@ class CartMapperTest {
     var response = mapper.toCartItemResponse(item);
 
     // then
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.quantity()).isEqualTo(1);
+    assertThat(response.subtotal()).isEqualByComparingTo(new BigDecimal("59.99"));
     assertThat(response.product().id()).isEqualTo(42L);
     assertThat(response.product().name()).isEqualTo("Bluetooth Speaker");
     assertThat(response.product().price()).isEqualByComparingTo(new BigDecimal("59.99"));
@@ -124,5 +157,16 @@ class CartMapperTest {
     assertThat(response.totalPrice()).isEqualByComparingTo(new BigDecimal("15.00"));
     assertThat(response.items()).hasSize(1);
     assertThat(response.sessionId()).isEqualTo("sess-5");
+    assertThat(response.id()).isEqualTo(1L);
+
+    // verify single item content
+    var singleItem = response.items().getFirst();
+    assertThat(singleItem.id()).isEqualTo(1L);
+    assertThat(singleItem.quantity()).isEqualTo(1);
+    assertThat(singleItem.subtotal()).isEqualByComparingTo(new BigDecimal("15.00"));
+    assertThat(singleItem.product().id()).isEqualTo(1L);
+    assertThat(singleItem.product().name()).isEqualTo("Book");
+    assertThat(singleItem.product().price()).isEqualByComparingTo(new BigDecimal("15.00"));
+    assertThat(singleItem.product().imageUrl()).isEqualTo("book.png");
   }
 }

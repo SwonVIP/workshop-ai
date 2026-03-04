@@ -96,14 +96,15 @@ describe('CartComponent', () => {
     // given — a cart with products
     const { fixture } = setup(mockCart);
 
-    // then — order summary displays correct total
+    // then — order summary displays correct total with currency
     const totalEl = fixture.nativeElement.querySelector('[data-testid="cart-total"]');
-    expect(totalEl).toBeTruthy();
+    expect(totalEl).toBeInstanceOf(HTMLElement);
+    expect(totalEl.textContent).toContain('CHF');
     expect(totalEl.textContent).toContain('179.96');
 
     const countEl = fixture.nativeElement.querySelector('[data-testid="cart-item-count"]');
-    expect(countEl).toBeTruthy();
-    expect(countEl.textContent).toContain('4');
+    expect(countEl).toBeInstanceOf(HTMLElement);
+    expect(countEl.textContent.trim()).toBe('4 items');
   });
 
   it('should call cartService.updateItem when quantity changes', () => {
@@ -132,8 +133,8 @@ describe('CartComponent', () => {
     // given/when — the component initializes
     const { mockCartService } = setup(mockCart);
 
-    // then — loadCart was called
-    expect(mockCartService.loadCart).toHaveBeenCalled();
+    // then — loadCart was called exactly once
+    expect(mockCartService.loadCart).toHaveBeenCalledTimes(1);
   });
 
   // ── Clear Cart ────────────────────────────────────────────────────
@@ -142,10 +143,10 @@ describe('CartComponent', () => {
     // given — a cart with items
     const { fixture } = setup(mockCart);
 
-    // then — Clear Cart button is present
+    // then — Clear Cart button is present with correct label
     const clearBtn = fixture.nativeElement.querySelector('[data-testid="clear-cart"]');
-    expect(clearBtn).toBeTruthy();
-    expect(clearBtn.textContent).toContain('Clear Cart');
+    expect(clearBtn).toBeInstanceOf(HTMLButtonElement);
+    expect(clearBtn.textContent.trim()).toContain('Clear Cart');
   });
 
   it('should not display Clear Cart button when cart is empty', () => {
@@ -165,7 +166,7 @@ describe('CartComponent', () => {
     const clearBtn = fixture.nativeElement.querySelector('[data-testid="clear-cart"]') as HTMLButtonElement;
     clearBtn.click();
 
-    // then — clearCart is called
-    expect(mockCartService.clearCart).toHaveBeenCalled();
+    // then — clearCart is called exactly once
+    expect(mockCartService.clearCart).toHaveBeenCalledTimes(1);
   });
 });

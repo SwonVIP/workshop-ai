@@ -40,8 +40,8 @@ describe('ProductCardComponent', () => {
 
     // then — the category badge is visible with correct data-testid
     const badge = fixture.nativeElement.querySelector('[data-testid="category-badge"]');
-    expect(badge).toBeTruthy();
-    expect(badge.textContent).toContain('Electronics');
+    expect(badge).toBeInstanceOf(HTMLElement);
+    expect(badge.textContent.trim()).toBe('Electronics');
   });
 
   it('should display the product image', () => {
@@ -50,7 +50,7 @@ describe('ProductCardComponent', () => {
 
     // then — the image element renders with the correct src
     const img = fixture.nativeElement.querySelector('img');
-    expect(img).toBeTruthy();
+    expect(img).toBeInstanceOf(HTMLImageElement);
     expect(img.getAttribute('src')).toBe('https://placehold.co/400x300');
   });
 
@@ -58,12 +58,13 @@ describe('ProductCardComponent', () => {
     // given — a product card
     const fixture = createComponent();
 
-    // then — the Add to Cart button is present
+    // then — the Add to Cart button is present with correct label
     const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
     const addToCartButton = buttons.find(
       (b) => b.textContent?.includes('Add to Cart')
     );
-    expect(addToCartButton).toBeTruthy();
+    expect(addToCartButton).toBeInstanceOf(HTMLButtonElement);
+    expect(addToCartButton!.textContent!.trim()).toContain('Add to Cart');
   });
 
   it('should emit addToCart event when Add to Cart button clicked', () => {
@@ -94,10 +95,11 @@ describe('ProductCardComponent', () => {
     };
     const fixture = createComponent(longDescProduct);
 
-    // then — the description element has line-clamp-2 class
+    // then — the description element has line-clamp-2 class and shows the long text
     const desc = fixture.nativeElement.querySelector('[data-testid="product-description"]');
-    expect(desc).toBeTruthy();
-    expect(desc.classList.contains('line-clamp-2')).toBe(true);
+    expect(desc).toBeInstanceOf(HTMLElement);
+    expect(desc.classList).toContain('line-clamp-2');
+    expect(desc.textContent.trim()).toBe('A'.repeat(500));
   });
 
   it('should have data-testid="product-card" on the root element', () => {
@@ -106,7 +108,7 @@ describe('ProductCardComponent', () => {
 
     // then — root element has the correct data-testid
     const card = fixture.nativeElement.querySelector('[data-testid="product-card"]');
-    expect(card).toBeTruthy();
+    expect(card).toBeInstanceOf(HTMLElement);
   });
 
   it('should display price in CHF format', () => {
@@ -149,7 +151,7 @@ describe('ProductCardComponent', () => {
 
     // then — description text is visible
     const desc = fixture.nativeElement.querySelector('[data-testid="product-description"]');
-    expect(desc).toBeTruthy();
+    expect(desc).toBeInstanceOf(HTMLParagraphElement);
     expect(desc.textContent.trim()).toBe('Great sound quality with noise cancellation');
   });
 
@@ -159,10 +161,10 @@ describe('ProductCardComponent', () => {
     // given — a product card with cartQuantity = 0 (default)
     const fixture = createComponent();
 
-    // then — Add to Cart button is present
+    // then — Add to Cart button is present with correct label
     const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
     const addBtn = buttons.find(b => b.textContent?.includes('Add to Cart'));
-    expect(addBtn).toBeTruthy();
+    expect(addBtn).toBeInstanceOf(HTMLButtonElement);
 
     // and — stepper is not present
     const stepper = fixture.nativeElement.querySelector('[data-testid="card-qty-value"]');
@@ -175,9 +177,10 @@ describe('ProductCardComponent', () => {
     fixture.componentRef.setInput('cartQuantity', 3);
     fixture.detectChanges();
 
-    // then — stepper is visible
+    // then — stepper is visible with correct quantity
     const qtyValue = fixture.nativeElement.querySelector('[data-testid="card-qty-value"]');
-    expect(qtyValue).toBeTruthy();
+    expect(qtyValue).toBeInstanceOf(HTMLElement);
+    expect(qtyValue.textContent.trim()).toBe('3');
 
     // and — Add to Cart button is not present
     const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));

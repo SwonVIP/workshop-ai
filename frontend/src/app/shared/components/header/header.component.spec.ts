@@ -53,10 +53,10 @@ describe('HeaderComponent', () => {
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
 
-    // then — catalog link exists
+    // then — catalog link exists with correct text and href
     const catalogLink = fixture.nativeElement.querySelector('a[href="/catalog"]');
-    expect(catalogLink).toBeTruthy();
-    expect(catalogLink.textContent).toContain('Catalog');
+    expect(catalogLink).toBeInstanceOf(HTMLAnchorElement);
+    expect(catalogLink.textContent.trim()).toContain('Catalog');
   });
 
   it('shouldRenderSheetTriggerElementWhenRendered', () => {
@@ -66,7 +66,7 @@ describe('HeaderComponent', () => {
 
     // then — hlm-sheet element exists in DOM
     const sheet = fixture.nativeElement.querySelector('hlm-sheet');
-    expect(sheet).toBeTruthy();
+    expect(sheet).toBeInstanceOf(HTMLElement);
   });
 
   it('shouldHaveFixedPositionWhenRendered', () => {
@@ -76,7 +76,7 @@ describe('HeaderComponent', () => {
 
     // then — header element has fixed class
     const header = fixture.nativeElement.querySelector('header');
-    expect(header).toBeTruthy();
+    expect(header).toBeInstanceOf(HTMLElement);
     expect(header.classList).toContain('fixed');
   });
 });

@@ -17,10 +17,11 @@ class ErrorResponseJackson3Test {
     // when — serializing with Jackson 3 JsonMapper
     var json = mapper.writeValueAsString(response);
 
-    // then — all fields are present in the JSON
-    assertThat(json).contains("\"status\":404");
-    assertThat(json).contains("\"error\":\"Not Found\"");
-    assertThat(json).contains("\"message\":\"Product not found\"");
+    // then — roundtrip deserialize and verify each field
+    var deserialized = mapper.readValue(json, ErrorResponse.class);
+    assertThat(deserialized.status()).isEqualTo(404);
+    assertThat(deserialized.error()).isEqualTo("Not Found");
+    assertThat(deserialized.message()).isEqualTo("Product not found");
   }
 
   @Test
@@ -60,9 +61,11 @@ class ErrorResponseJackson3Test {
     // when
     var json = mapper.writeValueAsString(response);
 
-    // then — null field is serialized as JSON null
-    assertThat(json).contains("\"message\":null");
-    assertThat(json).contains("\"status\":400");
+    // then — roundtrip deserialize and verify null message preserved
+    var deserialized = mapper.readValue(json, ErrorResponse.class);
+    assertThat(deserialized.status()).isEqualTo(400);
+    assertThat(deserialized.error()).isEqualTo("Bad Request");
+    assertThat(deserialized.message()).isNull();
   }
 
   @Test
@@ -72,17 +75,12 @@ class ErrorResponseJackson3Test {
         """
         {"status":422,"error":"Unprocessable Entity","message":"Invalid input","extra":"unknown"}""";
 
-    // when/then — Jackson 3 default behavior: unknown fields cause an error
-    // Document: by default Jackson 3 does NOT ignore unknown properties
-    try {
-      var response = mapper.readValue(json, ErrorResponse.class);
-      // If we reach here, Jackson 3 ignored unknown fields
-      assertThat(response.status()).isEqualTo(422);
-      assertThat(response.error()).isEqualTo("Unprocessable Entity");
-      assertThat(response.message()).isEqualTo("Invalid input");
-    } catch (Exception e) {
-      // If Jackson 3 rejects unknown fields, document this behavior
-      assertThat(e).hasMessageContaining("extra");
-    }
+    // when — Jackson 3 ignores unknown fields by default
+    var response = mapper.readValue(json, ErrorResponse.class);
+
+    // then — known fields are correctly mapped, unknown field is silently ignored
+    assertThat(response.status()).isEqualTo(422);
+    assertThat(response.error()).isEqualTo("Unprocessable Entity");
+    assertThat(response.message()).isEqualTo("Invalid input");
   }
 }

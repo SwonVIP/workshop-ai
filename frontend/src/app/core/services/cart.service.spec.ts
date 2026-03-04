@@ -59,10 +59,10 @@ describe('CartService', () => {
       // when — a request is made (triggers getSessionId)
       service.getCart().subscribe();
 
-      // then — a UUID was stored in localStorage
+      // then — a UUID was stored in localStorage matching UUID v4 format
       const stored = localStorage.getItem('cart-session-id');
-      expect(stored).toBeTruthy();
-      expect(stored!.length).toBeGreaterThan(0);
+      expect(stored).toBeDefined();
+      expect(stored).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
 
       httpMock.expectOne(req => req.url === '/api/cart').flush(mockCart);
     });
@@ -312,9 +312,10 @@ describe('CartService', () => {
         .expectOne(r => r.url === '/api/cart')
         .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status and statusText
+      expect(error).toBeDefined();
       expect(error.status).toBe(500);
+      expect(error.statusText).toBe('Internal Server Error');
     });
 
     it('should propagate HTTP 500 error on addItem to subscriber', () => {
@@ -327,9 +328,10 @@ describe('CartService', () => {
         .expectOne(r => r.url === '/api/cart/items')
         .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status and statusText
+      expect(error).toBeDefined();
       expect(error.status).toBe(500);
+      expect(error.statusText).toBe('Internal Server Error');
     });
 
     it('should propagate HTTP 404 error on removeItem to subscriber', () => {
@@ -342,9 +344,10 @@ describe('CartService', () => {
         .expectOne(r => r.url === '/api/cart/items/999')
         .flush('Not Found', { status: 404, statusText: 'Not Found' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status and statusText
+      expect(error).toBeDefined();
       expect(error.status).toBe(404);
+      expect(error.statusText).toBe('Not Found');
     });
 
     it('should propagate network error (status 0) on getCart to subscriber', () => {
@@ -357,9 +360,10 @@ describe('CartService', () => {
         .expectOne(r => r.url === '/api/cart')
         .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
 
-      // then — the error propagates to the subscriber
-      expect(error).toBeTruthy();
+      // then — the error propagates to the subscriber with status 0
+      expect(error).toBeDefined();
       expect(error.status).toBe(0);
+      expect(error.statusText).toBe('Unknown Error');
     });
   });
 });

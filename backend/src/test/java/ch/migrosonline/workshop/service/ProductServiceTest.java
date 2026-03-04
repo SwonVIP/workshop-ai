@@ -66,7 +66,16 @@ class ProductServiceTest {
     // then
     assertThat(result.getContent()).hasSize(1);
     assertThat(result.getContent().getFirst().name()).isEqualTo("Headphones");
+    assertThat(result.getContent().getFirst().id()).isEqualTo(1L);
+    assertThat(result.getContent().getFirst().description()).isEqualTo("Wireless");
+    assertThat(result.getContent().getFirst().price())
+        .isEqualByComparingTo(new BigDecimal("89.99"));
+    assertThat(result.getContent().getFirst().imageUrl())
+        .isEqualTo("https://placehold.co/400x300?text=Headphones");
     assertThat(result.getContent().getFirst().category().name()).isEqualTo("Electronics");
+    assertThat(result.getContent().getFirst().category().id()).isEqualTo(1L);
+    assertThat(result.getContent().getFirst().category().description()).isEqualTo("Gadgets");
+    assertThat(result.getTotalElements()).isEqualTo(1L);
   }
 
   @Test
@@ -91,7 +100,12 @@ class ProductServiceTest {
     // then
     assertThat(result.id()).isEqualTo(42L);
     assertThat(result.name()).isEqualTo("Smart Watch");
-    assertThat(result.price()).isEqualTo(new BigDecimal("199.99"));
+    assertThat(result.description()).isEqualTo("Fitness tracker");
+    assertThat(result.price()).isEqualByComparingTo(new BigDecimal("199.99"));
+    assertThat(result.imageUrl()).isEqualTo("https://placehold.co/400x300?text=Smart+Watch");
+    assertThat(result.category().name()).isEqualTo("Electronics");
+    assertThat(result.category().id()).isEqualTo(1L);
+    assertThat(result.category().description()).isEqualTo("Gadgets");
   }
 
   @Test
@@ -120,7 +134,11 @@ class ProductServiceTest {
     // then
     assertThat(result).hasSize(2);
     assertThat(result.getFirst().name()).isEqualTo("Books");
+    assertThat(result.getFirst().id()).isEqualTo(4L);
+    assertThat(result.getFirst().description()).isEqualTo("Reading");
     assertThat(result.get(1).name()).isEqualTo("Electronics");
+    assertThat(result.get(1).id()).isEqualTo(1L);
+    assertThat(result.get(1).description()).isEqualTo("Gadgets");
   }
 
   @Test
@@ -169,12 +187,16 @@ class ProductServiceTest {
         .thenReturn(new PageImpl<>(List.of(product), pageable, 1));
 
     // when
-    productService.getProducts(
-        "Electronics", "head", new BigDecimal("50.00"), new BigDecimal("100.00"), pageable);
+    var result =
+        productService.getProducts(
+            "Electronics", "head", new BigDecimal("50.00"), new BigDecimal("100.00"), pageable);
 
     // then — verify the spec was captured (composed from all 4 filters)
     verify(productRepository).findAll(specCaptor.capture(), eq(pageable));
     assertThat(specCaptor.getValue()).isNotNull();
+    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent().getFirst().name()).isEqualTo("Headphones");
+    assertThat(result.getTotalElements()).isEqualTo(1L);
   }
 
   @Test

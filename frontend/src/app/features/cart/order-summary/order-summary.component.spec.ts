@@ -22,9 +22,10 @@ describe('OrderSummaryComponent', () => {
     // given — an order summary with total price 179.98
     const fixture = createComponent(2, 179.98);
 
-    // then — total price is displayed
+    // then — total price is displayed with CHF currency
     const totalEl = fixture.nativeElement.querySelector('[data-testid="cart-total"]');
-    expect(totalEl).toBeTruthy();
+    expect(totalEl).toBeInstanceOf(HTMLElement);
+    expect(totalEl.textContent).toContain('CHF');
     expect(totalEl.textContent).toContain('179.98');
   });
 
@@ -32,10 +33,10 @@ describe('OrderSummaryComponent', () => {
     // given — an order summary with 2 items
     const fixture = createComponent(2, 179.98);
 
-    // then — item count is displayed
+    // then — item count is displayed with exact text
     const countEl = fixture.nativeElement.querySelector('[data-testid="cart-item-count"]');
-    expect(countEl).toBeTruthy();
-    expect(countEl.textContent).toContain('2');
+    expect(countEl).toBeInstanceOf(HTMLElement);
+    expect(countEl.textContent.trim()).toBe('2 items');
   });
 
   it('should display singular "item" when count is 1', () => {
@@ -62,8 +63,8 @@ describe('OrderSummaryComponent', () => {
 
     // then — the checkout button links to /checkout
     const checkoutLink = fixture.nativeElement.querySelector('[data-testid="checkout-button"]');
-    expect(checkoutLink).toBeTruthy();
-    expect(checkoutLink.textContent).toContain('Go to Checkout');
+    expect(checkoutLink).toBeInstanceOf(HTMLAnchorElement);
+    expect(checkoutLink.textContent.trim()).toContain('Go to Checkout');
     expect(checkoutLink.getAttribute('href')).toBe('/checkout');
   });
 });

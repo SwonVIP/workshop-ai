@@ -27,7 +27,7 @@ class ProductRepositoryIT extends RepositoryTestSupport {
 
     // then
     assertThat(page.getContent()).hasSize(10);
-    assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(50);
+    assertThat(page.getTotalElements()).isEqualTo(50);
   }
 
   @Test
@@ -113,6 +113,15 @@ class ProductRepositoryIT extends RepositoryTestSupport {
     // then
     assertThat(categories).hasSize(6);
     assertThat(categories).extracting("name").isSorted();
+    assertThat(categories)
+        .extracting("name")
+        .containsExactly(
+            "Books",
+            "Clothing",
+            "Electronics",
+            "Food & Beverages",
+            "Home & Garden",
+            "Sports & Outdoors");
   }
 
   @Test
@@ -139,7 +148,14 @@ class ProductRepositoryIT extends RepositoryTestSupport {
 
     // then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Wireless Bluetooth Headphones");
+    var product = result.get();
+    assertThat(product.getName()).isEqualTo("Wireless Bluetooth Headphones");
+    assertThat(product.getDescription())
+        .isEqualTo("Premium noise-cancelling over-ear headphones with 30h battery");
+    assertThat(product.getPrice()).isEqualByComparingTo(new BigDecimal("89.99"));
+    assertThat(product.getImageUrl())
+        .isEqualTo("https://placehold.co/400x300?text=Wireless+Bluetooth+Headphones");
+    assertThat(product.getCategory().getName()).isEqualTo("Electronics");
   }
 
   @Test
@@ -164,7 +180,7 @@ class ProductRepositoryIT extends RepositoryTestSupport {
 
     // then
     assertThat(page.getContent()).isEmpty();
-    assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(50);
+    assertThat(page.getTotalElements()).isEqualTo(50);
   }
 
   @Test
@@ -244,6 +260,6 @@ class ProductRepositoryIT extends RepositoryTestSupport {
     var page = productRepository.findAll(spec, pageable);
 
     // then
-    assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(50);
+    assertThat(page.getTotalElements()).isEqualTo(50);
   }
 }

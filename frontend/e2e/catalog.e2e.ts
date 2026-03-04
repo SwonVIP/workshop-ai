@@ -57,6 +57,14 @@ test.describe('Product Catalog — Browsing & Discovery', () => {
     const cards = page.locator('[data-testid="product-card"]');
     const count = await cards.count();
     expect(count).toBeGreaterThan(0);
+
+    // and — all displayed prices fall within CHF 50–100
+    for (const card of await cards.all()) {
+      const priceText = await card.locator('.text-lg.font-bold').textContent();
+      const price = parseFloat(priceText!.replace(/[^0-9.]/g, ''));
+      expect(price).toBeGreaterThanOrEqual(50);
+      expect(price).toBeLessThanOrEqual(100);
+    }
   });
 
   test('should sort products when sort option changes', async ({ page }) => {
@@ -64,15 +72,27 @@ test.describe('Product Catalog — Browsing & Discovery', () => {
     await page.locator('[data-testid="sort-filter"]').selectOption('price-asc');
 
     // then — verify products are visible
-    await expect(page.locator('[data-testid="product-card"]').first()).toBeVisible();
+    const cards = page.locator('[data-testid="product-card"]');
+    await expect(cards.first()).toBeVisible();
+
+    // and — first product price ≤ second product price (sort order verified)
+    const firstPriceText = await cards.nth(0).locator('.text-lg.font-bold').textContent();
+    const secondPriceText = await cards.nth(1).locator('.text-lg.font-bold').textContent();
+    const firstPrice = parseFloat(firstPriceText!.replace(/[^0-9.]/g, ''));
+    const secondPrice = parseFloat(secondPriceText!.replace(/[^0-9.]/g, ''));
+    expect(firstPrice).toBeLessThanOrEqual(secondPrice);
   });
 
   test('should navigate to the next page when Next button is clicked', async ({ page }) => {
-    // when — user wants to see more products
-    await page.getByRole('button', { name: /next/i }).click();
+    // when — user clicks Next to see more products
+    const [resp] = await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/api/products') && resp.status() === 200),
+      page.getByRole('button', { name: /next/i }).click(),
+    ]);
+    expect(resp.status()).toBe(200);
 
-    // then — wait for the page to load
-    await expect(page.locator('[data-testid="product-card"]').first()).toBeVisible();
+    // then — product count label reflects page 2 range (starting at 13)
+    await expect(page.locator('[data-testid="product-count"]')).toContainText(/Showing 13-/);
   });
 
   test('should disable Previous button on the first page', async ({ page }) => {

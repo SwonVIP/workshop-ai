@@ -25,13 +25,13 @@ test.describe('Shopping Cart — Full User Journey', () => {
     await page.goto('/catalog');
     await addFirstProductToCart(page);
     await expect(page.getByTestId('cart-badge')).toBeVisible();
-    await expect(page.getByTestId('cart-badge')).toContainText('1');
+    await expect(page.getByTestId('cart-badge')).toHaveText('1');
   });
 
   test('should add same product twice and increment quantity', async ({ page }) => {
     await page.goto('/catalog');
     await addFirstProductToCart(page);
-    await expect(page.getByTestId('cart-badge')).toContainText('1');
+    await expect(page.getByTestId('cart-badge')).toHaveText('1');
     // Use stepper to add same product again (first card now shows stepper)
     const firstCard = page.getByTestId('product-card').first();
     const [resp] = await Promise.all([
@@ -39,7 +39,7 @@ test.describe('Shopping Cart — Full User Journey', () => {
       firstCard.getByTestId('card-qty-increase').click(),
     ]);
     expect(resp.status()).toBe(201);
-    await expect(page.getByTestId('cart-badge')).toContainText('2');
+    await expect(page.getByTestId('cart-badge')).toHaveText('2');
   });
 
   test('should display cart items on cart page after adding product', async ({ page }) => {
@@ -126,12 +126,12 @@ test.describe('Shopping Cart — Full User Journey', () => {
   test('should persist cart across page navigation', async ({ page }) => {
     await page.goto('/catalog');
     await addFirstProductToCart(page);
-    await expect(page.getByTestId('cart-badge')).toContainText('1');
+    await expect(page.getByTestId('cart-badge')).toHaveText('1');
     await navigateToCartWithItems(page);
     await expect(page.getByTestId('cart-item-row')).toHaveCount(1);
     await page.goto('/catalog');
     await page.waitForSelector('[data-testid="product-card"]');
-    await expect(page.getByTestId('cart-badge')).toContainText('1');
+    await expect(page.getByTestId('cart-badge')).toHaveText('1');
   });
 
   test('should show cart items in header drawer after adding product', async ({ page }) => {

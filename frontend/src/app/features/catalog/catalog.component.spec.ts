@@ -119,10 +119,8 @@ describe('CatalogComponent', () => {
 
     // then — the count label is displayed with correct range via data-testid
     const countEl = fixture.nativeElement.querySelector('[data-testid="product-count"]');
-    expect(countEl).toBeTruthy();
-    expect(countEl.textContent).toContain('Showing');
-    expect(countEl.textContent).toContain('1-2');
-    expect(countEl.textContent).toContain('of 2');
+    expect(countEl).not.toBeNull();
+    expect(countEl.textContent.trim()).toContain('Showing 1-2 of 2 products');
   });
 
   it('should fetch products via httpResource on initialization', async () => {
@@ -139,7 +137,7 @@ describe('CatalogComponent', () => {
                urlContains(req.urlWithParams, 'page=0') &&
                urlContains(req.urlWithParams, 'size=12')
     );
-    expect(prodReq).toBeTruthy();
+    expect(prodReq.request.method).toBe('GET');
     prodReq.flush(mockResponse);
     await fixture.whenStable();
   });
@@ -151,7 +149,7 @@ describe('CatalogComponent', () => {
 
     // then — categories request is made
     const catReq = httpMock.expectOne('/api/products/categories');
-    expect(catReq).toBeTruthy();
+    expect(catReq.request.method).toBe('GET');
     catReq.flush(mockCategories);
 
     // cleanup
@@ -188,7 +186,7 @@ describe('CatalogComponent', () => {
 
     // then — loading indicator is visible in the DOM
     const loadingEl = fixture.nativeElement.querySelector('[data-testid="loading-indicator"]');
-    expect(loadingEl).toBeTruthy();
+    expect(loadingEl).toBeInstanceOf(HTMLElement);
 
     // cleanup — flush pending requests
     await flushInitialRequests(fixture);
@@ -202,8 +200,8 @@ describe('CatalogComponent', () => {
 
     // then — the grid container has responsive classes
     const grid = fixture.nativeElement.querySelector('[data-testid="product-grid"]');
-    expect(grid).toBeTruthy();
-    expect(grid.classList.contains('grid')).toBe(true);
+    expect(grid).toBeInstanceOf(HTMLElement);
+    expect(grid.classList).toContain('grid');
   });
 
   it('should render the search filter bar', async () => {
@@ -214,7 +212,8 @@ describe('CatalogComponent', () => {
 
     // then — the search filter bar is present
     const filterBar = fixture.debugElement.query(By.directive(SearchFilterBarComponent));
-    expect(filterBar).toBeTruthy();
+    expect(filterBar).not.toBeNull();
+    expect(filterBar.componentInstance).toBeInstanceOf(SearchFilterBarComponent);
   });
 
   it('should refetch products when filter changes are received', async () => {
@@ -233,7 +232,7 @@ describe('CatalogComponent', () => {
       (r) => r.urlWithParams.includes('/api/products?') &&
              urlContains(r.urlWithParams, 'category=Electronics')
     );
-    expect(req).toBeTruthy();
+    expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
     await fixture.whenStable();
   });
@@ -255,7 +254,7 @@ describe('CatalogComponent', () => {
              urlContains(r.urlWithParams, 'page=0') &&
              urlContains(r.urlWithParams, 'search=shoes')
     );
-    expect(req).toBeTruthy();
+    expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
     await fixture.whenStable();
   });
@@ -286,7 +285,7 @@ describe('CatalogComponent', () => {
       (r) => r.urlWithParams.includes('/api/products?') &&
              urlContains(r.urlWithParams, 'page=1')
     );
-    expect(req).toBeTruthy();
+    expect(req.request.method).toBe('GET');
     req.flush(multiPageResponse);
     await fixture.whenStable();
   });
@@ -320,7 +319,8 @@ describe('CatalogComponent', () => {
 
     // then — pagination component is rendered
     const pagination = fixture.debugElement.query(By.directive(PaginationComponent));
-    expect(pagination).toBeTruthy();
+    expect(pagination).not.toBeNull();
+    expect(pagination.componentInstance).toBeInstanceOf(PaginationComponent);
   });
 
   it('should hide pagination when there is only one page', async () => {
@@ -352,8 +352,9 @@ describe('CatalogComponent', () => {
 
     // then — error state is displayed
     const errorEl = fixture.nativeElement.querySelector('[data-testid="error-state"]');
-    expect(errorEl).toBeTruthy();
+    expect(errorEl).toBeInstanceOf(HTMLElement);
     expect(errorEl.textContent).toContain('Something went wrong');
+    expect(errorEl.textContent).toContain('Unable to load products');
   });
 
   it('should display correct range 13-24 on page 2 of 50 products', async () => {
@@ -395,9 +396,8 @@ describe('CatalogComponent', () => {
 
     // then — range shows 13-24
     const countEl = fixture.nativeElement.querySelector('[data-testid="product-count"]');
-    expect(countEl).toBeTruthy();
-    expect(countEl.textContent).toContain('13-24');
-    expect(countEl.textContent).toContain('of 50');
+    expect(countEl).not.toBeNull();
+    expect(countEl.textContent.trim()).toContain('Showing 13-24 of 50 products');
   });
 
   it('should display 0 products when totalElements is 0', async () => {
