@@ -180,14 +180,20 @@ export class HeaderComponent {
   cart = this.cartService.cart;
 
   onUpdateQuantity(itemId: number, quantity: number): void {
-    this.cartService.updateItem(itemId, { quantity }).subscribe();
+    this.cartService.updateItem(itemId, { quantity }).subscribe({
+      error: (err: unknown) => console.error('Failed to update cart item', err),
+    });
   }
 
   onRemoveItem(itemId: number): void {
-    this.cartService.removeItem(itemId).subscribe();
+    this.cartService.removeItem(itemId).subscribe({
+      error: (err: unknown) => console.error('Failed to remove cart item', err),
+    });
   }
 
   onClearCart(): void {
-    this.cartService.clearCart().subscribe();
+    this.cartService.clearCart().subscribe({
+      error: (err: unknown) => console.error('Failed to clear cart', err),
+    });
   }
 }

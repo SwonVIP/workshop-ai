@@ -65,11 +65,10 @@ class GlobalExceptionHandlerTest {
     // then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody()).isNotNull();
-    assertThat(response.getBody().get("status")).isEqualTo(400);
-    assertThat(response.getBody().get("error")).isEqualTo("Validation Failed");
-    @SuppressWarnings("unchecked")
-    var fieldErrors = (java.util.Map<String, String>) response.getBody().get("fieldErrors");
-    assertThat(fieldErrors).containsEntry("name", "must not be blank");
+    assertThat(response.getBody().status()).isEqualTo(400);
+    assertThat(response.getBody().error()).isEqualTo("Validation Failed");
+    assertThat(response.getBody().message()).isEqualTo("Request validation failed");
+    assertThat(response.getBody().fieldErrors()).containsEntry("name", "must not be blank");
   }
 
   @Test
@@ -86,9 +85,7 @@ class GlobalExceptionHandlerTest {
 
     // then — falls back to "invalid"
     assertThat(response.getBody()).isNotNull();
-    @SuppressWarnings("unchecked")
-    var fieldErrors = (java.util.Map<String, String>) response.getBody().get("fieldErrors");
-    assertThat(fieldErrors).containsEntry("price", "invalid");
+    assertThat(response.getBody().fieldErrors()).containsEntry("price", "invalid");
   }
 
   @Test
@@ -106,9 +103,7 @@ class GlobalExceptionHandlerTest {
 
     // then — merge function keeps first
     assertThat(response.getBody()).isNotNull();
-    @SuppressWarnings("unchecked")
-    var fieldErrors = (java.util.Map<String, String>) response.getBody().get("fieldErrors");
-    assertThat(fieldErrors).containsEntry("name", "must not be blank");
+    assertThat(response.getBody().fieldErrors()).containsEntry("name", "must not be blank");
   }
 
   @Test

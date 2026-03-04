@@ -252,23 +252,6 @@ describe('ProductService', () => {
     });
   });
 
-  describe('getProductById', () => {
-    it('should fetch a single product by its ID', () => {
-      // Given
-      const productId = 42;
-
-      // When
-      service.getProductById(productId).subscribe((result) => {
-        // Then
-        expect(result).toEqual(mockProduct);
-      });
-
-      const req = httpMock.expectOne('/api/products/42');
-      expect(req.request.method).toBe('GET');
-      req.flush(mockProduct);
-    });
-  });
-
   describe('getCategories', () => {
     it('should fetch all categories', () => {
       // Given
@@ -307,22 +290,6 @@ describe('ProductService', () => {
       expect(error).toBeDefined();
       expect(error.status).toBe(500);
       expect(error.statusText).toBe('Internal Server Error');
-    });
-
-    it('should propagate HTTP 404 error to subscriber on getProductById', () => {
-      // given — the product does not exist
-      let error: any;
-      service.getProductById(999).subscribe({ error: (e) => (error = e) });
-
-      // when — the request fails with 404
-      httpMock
-        .expectOne('/api/products/999')
-        .flush('Not Found', { status: 404, statusText: 'Not Found' });
-
-      // then — the error propagates to the subscriber with status and statusText
-      expect(error).toBeDefined();
-      expect(error.status).toBe(404);
-      expect(error.statusText).toBe('Not Found');
     });
 
     it('should propagate HTTP 500 error to subscriber on getCategories', () => {

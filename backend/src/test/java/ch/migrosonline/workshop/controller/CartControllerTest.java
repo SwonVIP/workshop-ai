@@ -26,7 +26,7 @@ class CartControllerTest extends ControllerTestSupport {
 
   @MockitoBean private CartService cartService;
 
-  private static final String SESSION_ID = "test-session-123";
+  private static final String SESSION_ID = "550e8400-e29b-41d4-a716-446655440000";
   private static final String SESSION_HEADER = "X-Cart-Session";
 
   @Test
@@ -74,6 +74,16 @@ class CartControllerTest extends ControllerTestSupport {
         .bodyJson()
         .extractingPath("error")
         .isEqualTo("Bad Request");
+  }
+
+  @Test
+  void shouldReturn400WhenSessionIdIsNotValidUuid() {
+    // given — an invalid (non-UUID) session ID
+    var invalidSessionId = "not-a-valid-uuid";
+
+    // when/then
+    assertThat(mvc.get().uri("/api/cart").header(SESSION_HEADER, invalidSessionId))
+        .hasStatus(HttpStatus.BAD_REQUEST);
   }
 
   @Test

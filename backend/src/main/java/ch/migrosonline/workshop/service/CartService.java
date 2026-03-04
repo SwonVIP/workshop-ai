@@ -28,27 +28,24 @@ public class CartService {
   private final ProductRepository productRepository;
   private final CartMapper cartMapper;
 
+  private Cart findOrCreateCart(String sessionId) {
+    return cartRepository
+        .findBySessionId(sessionId)
+        .orElseGet(
+            () ->
+                cartRepository.save(
+                    Cart.builder().sessionId(sessionId).items(new ArrayList<>()).build()));
+  }
+
   @Transactional
   public CartResponse getCart(String sessionId) {
-    var cart =
-        cartRepository
-            .findBySessionId(sessionId)
-            .orElseGet(
-                () ->
-                    cartRepository.save(
-                        Cart.builder().sessionId(sessionId).items(new ArrayList<>()).build()));
+    var cart = findOrCreateCart(sessionId);
     return cartMapper.toResponse(cart);
   }
 
   @Transactional
   public CartResponse addItem(String sessionId, AddToCartRequest request) {
-    var cart =
-        cartRepository
-            .findBySessionId(sessionId)
-            .orElseGet(
-                () ->
-                    cartRepository.save(
-                        Cart.builder().sessionId(sessionId).items(new ArrayList<>()).build()));
+    var cart = findOrCreateCart(sessionId);
     var product =
         productRepository
             .findById(request.productId())

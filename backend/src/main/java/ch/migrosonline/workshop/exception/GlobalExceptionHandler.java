@@ -1,7 +1,7 @@
 package ch.migrosonline.workshop.exception;
 
 import ch.migrosonline.workshop.model.ErrorResponse;
-import java.util.Map;
+import ch.migrosonline.workshop.model.ValidationErrorResponse;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestControllerAdvice
@@ -24,7 +25,8 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+  public ResponseEntity<ValidationErrorResponse> handleValidation(
+      MethodArgumentNotValidException ex) {
     var fieldErrors =
         ex.getBindingResult().getFieldErrors().stream()
             .collect(
@@ -33,14 +35,10 @@ public class GlobalExceptionHandler {
                     fe -> fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "invalid",
                     (a, b) -> a));
     var body =
-        Map.<String, Object>of(
-            "error",
+        new ValidationErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
             "Validation Failed",
-            "message",
             "Request validation failed",
-            "status",
-            400,
-            "fieldErrors",
             fieldErrors);
     return ResponseEntity.badRequest().body(body);
   }
@@ -53,6 +51,13 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.getReasonPhrase(),
             ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  public ResponseEntity<ErrorResponse> handleResponseStatus(ResponseStatusException ex) {
+    var status = HttpStatus.valueOf(ex.getStatusCode().value());
+    var body = new ErrorResponse(status.value(), status.getReasonPhrase(), ex.getReason());
+    return ResponseEntity.status(status).body(body);
   }
 
   @ExceptionHandler(Exception.class)

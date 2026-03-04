@@ -38,7 +38,7 @@ describe('ThemeToggleComponent', () => {
   it('should render a button with theme-toggle test id when rendered', () => {
     const fixture = createComponent();
     const button = fixture.nativeElement.querySelector('[data-testid="theme-toggle"]');
-    expect(button).toBeTruthy();
+    expect(button).toBeInstanceOf(HTMLElement);
   });
 
   it('should display moon icon when currentTheme is light', () => {
@@ -48,9 +48,9 @@ describe('ThemeToggleComponent', () => {
     const fixture = createComponent();
 
     // then — moon icon is visible
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-moon"]')).toBeTruthy();
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-sun"]')).toBeFalsy();
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-monitor"]')).toBeFalsy();
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-moon"]')).toBeInstanceOf(SVGElement);
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-sun"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-monitor"]')).toBeNull();
   });
 
   it('should display sun icon when currentTheme is dark', () => {
@@ -60,8 +60,8 @@ describe('ThemeToggleComponent', () => {
     const fixture = createComponent();
 
     // then — sun icon is visible
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-sun"]')).toBeTruthy();
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-moon"]')).toBeFalsy();
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-sun"]')).toBeInstanceOf(SVGElement);
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-moon"]')).toBeNull();
   });
 
   it('should display monitor icon when currentTheme is system', () => {
@@ -70,7 +70,7 @@ describe('ThemeToggleComponent', () => {
     const fixture = createComponent();
 
     // then — monitor icon is visible
-    expect(fixture.nativeElement.querySelector('[data-testid="icon-monitor"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('[data-testid="icon-monitor"]')).toBeInstanceOf(SVGElement);
   });
 
   it('should call toggleTheme when button is clicked', () => {
@@ -88,6 +88,6 @@ describe('ThemeToggleComponent', () => {
   it('should have accessible aria-label when rendered', () => {
     const fixture = createComponent();
     const button = fixture.nativeElement.querySelector('[data-testid="theme-toggle"]');
-    expect(button.getAttribute('aria-label')).toBeTruthy();
+    expect(button.getAttribute('aria-label')).toEqual(expect.any(String));
   });
 });

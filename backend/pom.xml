@@ -21,8 +21,7 @@
         <java.version>21</java.version>
         <springdoc.version>3.0.2</springdoc.version>
         <testcontainers.version>1.20.4</testcontainers.version>
-        <datafaker.version>2.5.0</datafaker.version>
-        <wiremock-spring-boot.version>3.10.0</wiremock-spring-boot.version>
+
         <spotless.version>2.44.5</spotless.version>
         <checkstyle.version>3.6.0</checkstyle.version>
         <pitest.version>1.19.1</pitest.version>
@@ -135,18 +134,7 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>net.datafaker</groupId>
-            <artifactId>datafaker</artifactId>
-            <version>${datafaker.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.wiremock.integrations</groupId>
-            <artifactId>wiremock-spring-boot</artifactId>
-            <version>${wiremock-spring-boot.version}</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

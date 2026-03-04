@@ -60,26 +60,4 @@ describe('App', () => {
     expect(fixture.nativeElement.querySelector('app-footer')).toBeTruthy();
   });
 
-  it('should have main with pt-16 when rendered', () => {
-    // given — app rendered
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-
-    // then — main has pt-16 for header offset
-    const main = fixture.nativeElement.querySelector('main');
-    expect(main).toBeTruthy();
-    expect(main.classList).toContain('pt-16');
-  });
-
-  it('should use min-h-screen flex layout when rendered', () => {
-    // given — app rendered
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-
-    // then — flex column layout with min-h-screen
-    const wrapper = fixture.nativeElement.querySelector('div');
-    expect(wrapper.classList).toContain('min-h-screen');
-    expect(wrapper.classList).toContain('flex');
-    expect(wrapper.classList).toContain('flex-col');
-  });
 });

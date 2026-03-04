@@ -38,10 +38,6 @@ export class ProductService {
     return this.http.get<PaginatedResponse<Product>>(this.baseUrl, { params });
   }
 
-  getProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.baseUrl}/${id}`);
-  }
-
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.baseUrl}/categories`);
   }

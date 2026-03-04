@@ -33,7 +33,7 @@ describe('EmptyStateComponent', () => {
     fixture.detectChanges();
 
     const link = fixture.nativeElement.querySelector('a[href="/catalog"]');
-    expect(link).toBeTruthy();
+    expect(link).toBeInstanceOf(HTMLAnchorElement);
     expect(link.textContent).toContain('Browse Catalog');
   });
 
@@ -50,6 +50,6 @@ describe('EmptyStateComponent', () => {
     fixture.detectChanges();
 
     const svg = fixture.nativeElement.querySelector('svg');
-    expect(svg).toBeTruthy();
+    expect(svg).toBeInstanceOf(SVGElement);
   });
 });

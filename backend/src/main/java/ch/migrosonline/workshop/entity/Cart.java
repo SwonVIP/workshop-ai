@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,6 +45,17 @@ public class Cart {
   @Setter
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
+
+  @PrePersist
+  void onCreate() {
+    this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  @PreUpdate
+  void onUpdate() {
+    this.updatedAt = LocalDateTime.now();
+  }
 
   @Override
   public boolean equals(Object o) {

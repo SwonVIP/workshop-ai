@@ -18,7 +18,12 @@ public final class ProductSpecs {
     return search == null
         ? Specification.unrestricted()
         : (root, query, cb) ->
-            cb.like(cb.lower(root.get("name")), "%" + search.toLowerCase() + "%");
+            cb.like(
+                cb.lower(root.get("name")), "%" + escapeLikePattern(search.toLowerCase()) + "%");
+  }
+
+  private static String escapeLikePattern(String input) {
+    return input.replace("[", "[[]").replace("%", "[%]").replace("_", "[_]");
   }
 
   public static Specification<Product> priceAtLeast(BigDecimal minPrice) {

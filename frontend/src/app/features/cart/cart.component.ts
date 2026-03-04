@@ -71,14 +71,20 @@ export class CartComponent implements OnInit {
   }
 
   onQuantityChange(event: { itemId: number; quantity: number }): void {
-    this.cartService.updateItem(event.itemId, { quantity: event.quantity }).subscribe();
+    this.cartService.updateItem(event.itemId, { quantity: event.quantity }).subscribe({
+      error: (err: unknown) => console.error('Failed to update cart item', err),
+    });
   }
 
   onRemove(itemId: number): void {
-    this.cartService.removeItem(itemId).subscribe();
+    this.cartService.removeItem(itemId).subscribe({
+      error: (err: unknown) => console.error('Failed to remove cart item', err),
+    });
   }
 
   onClearCart(): void {
-    this.cartService.clearCart().subscribe();
+    this.cartService.clearCart().subscribe({
+      error: (err: unknown) => console.error('Failed to clear cart', err),
+    });
   }
 }

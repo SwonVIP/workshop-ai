@@ -37,6 +37,7 @@ interface SortOption {
 
         <select
           data-testid="category-filter"
+          aria-label="Filter by category"
           [value]="selectedCategory()"
           (change)="onCategoryChange($event)"
           class="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
@@ -49,6 +50,7 @@ interface SortOption {
 
         <select
           data-testid="price-filter"
+          aria-label="Filter by price range"
           [value]="selectedPriceRange()"
           (change)="onPriceRangeChange($event)"
           class="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
@@ -60,6 +62,7 @@ interface SortOption {
 
         <select
           data-testid="sort-filter"
+          aria-label="Sort products"
           [value]="selectedSort()"
           (change)="onSortChange($event)"
           class="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"

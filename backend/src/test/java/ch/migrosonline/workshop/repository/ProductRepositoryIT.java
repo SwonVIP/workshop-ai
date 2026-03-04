@@ -247,6 +247,22 @@ class ProductRepositoryIT extends RepositoryTestSupport {
   }
 
   @Test
+  void shouldReturnNoProductsWhenSearchContainsLikeWildcards() {
+    // given — searching with LIKE meta-characters should NOT match everything
+    var specPercent = Specification.where(ProductSpecs.nameContains("%"));
+    var specUnderscore = Specification.where(ProductSpecs.nameContains("_"));
+    var pageable = PageRequest.of(0, 100);
+
+    // when
+    var pagePercent = productRepository.findAll(specPercent, pageable);
+    var pageUnderscore = productRepository.findAll(specUnderscore, pageable);
+
+    // then — no products have literal % or _ in their name
+    assertThat(pagePercent.getContent()).isEmpty();
+    assertThat(pageUnderscore.getContent()).isEmpty();
+  }
+
+  @Test
   void shouldReturnAllProductsWhenAllSpecsAreUnrestricted() {
     // given
     Specification<Product> spec =

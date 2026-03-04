@@ -185,16 +185,22 @@ export class CatalogComponent {
   }
 
   onAddToCart(product: Product): void {
-    this.cartService.addItem({ productId: product.id, quantity: 1 }).subscribe();
+    this.cartService.addItem({ productId: product.id, quantity: 1 }).subscribe({
+      error: (err: unknown) => console.error('Failed to add item to cart', err),
+    });
   }
 
   onRemoveFromCart(product: Product): void {
     const entry = this.cartService.cartItemsByProductId().get(product.id);
     if (!entry) return;
     if (entry.quantity > 1) {
-      this.cartService.updateItem(entry.cartItemId, { quantity: entry.quantity - 1 }).subscribe();
+      this.cartService.updateItem(entry.cartItemId, { quantity: entry.quantity - 1 }).subscribe({
+        error: (err: unknown) => console.error('Failed to update cart item', err),
+      });
     } else {
-      this.cartService.removeItem(entry.cartItemId).subscribe();
+      this.cartService.removeItem(entry.cartItemId).subscribe({
+        error: (err: unknown) => console.error('Failed to remove cart item', err),
+      });
     }
   }
 }

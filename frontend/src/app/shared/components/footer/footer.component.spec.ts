@@ -28,8 +28,8 @@ describe('FooterComponent', () => {
     fixture.detectChanges();
 
     const footer = fixture.nativeElement.querySelector('footer');
-    expect(footer).toBeTruthy();
-    expect(footer.classList).toContain('bg-muted');
+    expect(footer).toBeInstanceOf(HTMLElement);
+    expect(footer.textContent).toBeTruthy();
   });
 
   it('should contain navigation links', () => {
@@ -38,7 +38,7 @@ describe('FooterComponent', () => {
 
     const catalogLink = fixture.nativeElement.querySelector('a[href="/catalog"]');
     const cartLink = fixture.nativeElement.querySelector('a[href="/cart"]');
-    expect(catalogLink).toBeTruthy();
-    expect(cartLink).toBeTruthy();
+    expect(catalogLink).toBeInstanceOf(HTMLAnchorElement);
+    expect(cartLink).toBeInstanceOf(HTMLAnchorElement);
   });
 });

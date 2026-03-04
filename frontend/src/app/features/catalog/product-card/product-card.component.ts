@@ -41,6 +41,7 @@ import { Product } from '../../../core/models/product.model';
           <div class="flex items-center gap-1">
             <button hlmBtn variant="outline" size="icon" class="h-8 w-8"
                     data-testid="card-qty-decrease"
+                    aria-label="Decrease quantity"
                     (click)="onRemoveFromCart()">
               <span class="text-sm">−</span>
             </button>
@@ -48,6 +49,7 @@ import { Product } from '../../../core/models/product.model';
                   class="text-sm font-semibold w-8 text-center">{{ cartQuantity() }}</span>
             <button hlmBtn variant="outline" size="icon" class="h-8 w-8"
                     data-testid="card-qty-increase"
+                    aria-label="Increase quantity"
                     (click)="onAddToCart()">
               <span class="text-sm">+</span>
             </button>
