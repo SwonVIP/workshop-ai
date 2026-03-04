@@ -4,6 +4,9 @@ import { ProductCardComponent } from './product-card/product-card.component';
 import { SearchFilterBarComponent } from './search-filter-bar/search-filter-bar.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
+import { HlmH2 } from '@spartan-ng/helm/typography';
+import { HlmMuted } from '@spartan-ng/helm/typography';
 import {
   Product,
   ProductFilter,
@@ -19,10 +22,14 @@ import { environment } from '../../../environments/environment';
     SearchFilterBarComponent,
     PaginationComponent,
     EmptyStateComponent,
+    HlmSkeleton,
+    HlmH2,
+    HlmMuted,
   ],
   template: `
-    <div class="max-w-[var(--max-width-content)] mx-auto px-4 py-8">
-      <h1 class="text-2xl font-bold text-neutral-900 mb-6">Product Catalog</h1>
+    <div>
+      <h2 hlmH2 class="mb-1">Product Catalog</h2>
+      <p hlmMuted class="mb-6">Browse our selection of quality products</p>
 
       <div class="mb-6">
         <app-search-filter-bar
@@ -32,13 +39,36 @@ import { environment } from '../../../environments/environment';
       </div>
 
       @if (productsResource.isLoading()) {
-        <div data-testid="loading-indicator" class="flex justify-center items-center py-16">
-          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+        <div data-testid="loading-indicator" class="space-y-6">
+          <div class="flex items-center justify-between">
+            <div hlmSkeleton class="h-5 w-48"></div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @for (i of skeletonCards; track i) {
+              <div class="rounded-xl border border-border bg-card overflow-hidden">
+                <div hlmSkeleton class="h-48 w-full rounded-none"></div>
+                <div class="p-4 space-y-3">
+                  <div hlmSkeleton class="h-5 w-16 rounded-full"></div>
+                  <div hlmSkeleton class="h-5 w-3/4"></div>
+                  <div hlmSkeleton class="h-4 w-full"></div>
+                  <div class="flex items-center justify-between pt-2">
+                    <div hlmSkeleton class="h-6 w-20"></div>
+                    <div hlmSkeleton class="h-8 w-24 rounded-md"></div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
         </div>
       } @else if (productsResource.error()) {
         <div data-testid="error-state" class="flex flex-col items-center py-16 text-center">
-          <p class="text-lg font-semibold text-red-600 mb-2">Something went wrong</p>
-          <p class="text-sm text-neutral-500">Unable to load products. Please try again later.</p>
+          <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+          </div>
+          <p class="text-lg font-semibold text-foreground mb-2">Something went wrong</p>
+          <p class="text-sm text-muted-foreground">Unable to load products. Please try again later.</p>
         </div>
       } @else if (products().length === 0) {
         <app-empty-state
@@ -49,7 +79,7 @@ import { environment } from '../../../environments/environment';
         />
       } @else {
         <div class="flex items-center justify-between mb-4">
-          <p class="text-sm text-neutral-500" data-testid="product-count">
+          <p class="text-sm text-muted-foreground" data-testid="product-count">
             Showing {{ rangeStart() }}-{{ rangeEnd() }} of {{ totalElements() }} products
           </p>
         </div>
@@ -80,6 +110,8 @@ import { environment } from '../../../environments/environment';
 export class CatalogComponent {
   private readonly baseUrl = `${environment.apiBaseUrl}/products`;
   private readonly pageSize = 12;
+
+  readonly skeletonCards = Array.from({ length: 8 }, (_, i) => i);
 
   readonly filter = signal<ProductFilter>({});
 

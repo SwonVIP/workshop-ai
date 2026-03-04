@@ -76,7 +76,7 @@ describe('PaginationComponent', () => {
     expect(spy).toHaveBeenCalledWith(2);
   });
 
-  it('should highlight current page', () => {
+  it('should highlight current page with default variant', () => {
     const fixture = TestBed.createComponent(PaginationComponent);
     fixture.componentRef.setInput('totalPages', 3);
     fixture.componentRef.setInput('currentPage', 1);
@@ -84,6 +84,7 @@ describe('PaginationComponent', () => {
 
     const buttons = fixture.nativeElement.querySelectorAll('button');
     // buttons: [Prev, Page1, Page2, Page3, Next] — Page2 (index 2) should be active
+    // Spartan hlmBtn default variant applies bg-primary
     expect(buttons[2].classList).toContain('bg-primary');
   });
 });

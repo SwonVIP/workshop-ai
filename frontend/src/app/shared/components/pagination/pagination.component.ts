@@ -1,27 +1,29 @@
 import { Component, computed, input, output } from '@angular/core';
+import { HlmButton } from '@spartan-ng/helm/button';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
+  imports: [HlmButton],
   template: `
-    <nav class="flex items-center justify-center gap-2 mt-8" data-testid="pagination">
-      <button
-        class="px-3 py-1.5 text-sm rounded-md border border-neutral-200 text-neutral-700 hover:bg-neutral-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    <nav class="flex items-center justify-center gap-1.5 mt-8" data-testid="pagination">
+      <button hlmBtn variant="ghost" size="sm"
         [disabled]="isFirstPage()"
         (click)="previousPage()">
         &larr; Previous
       </button>
+
       @for (page of visiblePages(); track page) {
-        <button
-          [class]="page === currentPage()
-            ? 'px-3 py-1.5 text-sm rounded-md bg-primary text-white'
-            : 'px-3 py-1.5 text-sm rounded-md border border-neutral-200 text-neutral-700 hover:bg-neutral-100 transition-colors'"
+        <button hlmBtn
+          [variant]="page === currentPage() ? 'default' : 'outline'"
+          size="icon"
+          class="w-9 h-9 text-sm"
           (click)="goToPage(page)">
           {{ page + 1 }}
         </button>
       }
-      <button
-        class="px-3 py-1.5 text-sm rounded-md border border-neutral-200 text-neutral-700 hover:bg-neutral-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+
+      <button hlmBtn variant="ghost" size="sm"
         [disabled]="isLastPage()"
         (click)="nextPage()">
         Next &rarr;

@@ -1,50 +1,45 @@
 import { Component, input, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmBadge } from '@spartan-ng/helm/badge';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { Product } from '../../../core/models/product.model';
 
 @Component({
   selector: 'app-product-card',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, HlmButton, HlmBadge, ...HlmCardImports],
   template: `
-    <div
-      data-testid="product-card"
-      class="group flex flex-col bg-white rounded-lg border border-neutral-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-    >
-      <div class="relative overflow-hidden">
+    <div hlmCard data-testid="product-card"
+         class="group overflow-hidden transition-shadow hover:shadow-md">
+      <div class="relative aspect-[4/3] overflow-hidden">
         <img
           [src]="product().imageUrl"
           [alt]="product().name"
-          class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <span
-          data-testid="category-badge"
-          class="absolute top-2 left-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-light text-primary"
-        >
+        <span data-testid="category-badge" hlmBadge variant="secondary"
+              class="absolute top-3 left-3">
           {{ product().category.name }}
         </span>
       </div>
-      <div class="flex flex-col flex-1 p-4">
-        <h3 class="text-base font-semibold text-neutral-900 mb-1">
+
+      <div hlmCardContent class="flex flex-col flex-1">
+        <h3 class="text-base font-semibold text-card-foreground line-clamp-1 mb-1">
           {{ product().name }}
         </h3>
-        <p
-          data-testid="product-description"
-          class="text-sm text-neutral-500 mb-3 line-clamp-2"
-        >
+        <p data-testid="product-description"
+           class="text-sm text-muted-foreground line-clamp-2">
           {{ product().description }}
         </p>
-        <div class="mt-auto flex items-center justify-between">
-          <span class="text-lg font-bold text-neutral-900">
-            {{ product().price | currency: 'CHF' : 'symbol' : '1.2-2' }}
-          </span>
-          <button
-            type="button"
-            class="inline-flex items-center justify-center text-sm font-medium rounded-md px-3 py-1.5 bg-primary text-white hover:bg-primary-hover transition-colors cursor-pointer"
-            (click)="onAddToCart()"
-          >
-            Add to Cart
-          </button>
-        </div>
+      </div>
+
+      <div hlmCardFooter class="flex items-center justify-between">
+        <span class="text-lg font-bold text-card-foreground">
+          {{ product().price | currency: 'CHF' : 'symbol' : '1.2-2' }}
+        </span>
+        <button hlmBtn size="sm" (click)="onAddToCart()">
+          Add to Cart
+        </button>
       </div>
     </div>
   `,

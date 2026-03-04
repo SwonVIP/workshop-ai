@@ -23,13 +23,13 @@ describe('FooterComponent', () => {
     expect(fixture.nativeElement.textContent).toContain(year);
   });
 
-  it('should have a footer element with dark background', () => {
+  it('should have a footer element with muted background', () => {
     const fixture = TestBed.createComponent(FooterComponent);
     fixture.detectChanges();
 
     const footer = fixture.nativeElement.querySelector('footer');
     expect(footer).toBeTruthy();
-    expect(footer.classList).toContain('bg-neutral-900');
+    expect(footer.classList).toContain('bg-muted');
   });
 
   it('should contain navigation links', () => {

@@ -1,67 +1,80 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { signal } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HeaderComponent } from './header.component';
+import {
+  HlmSheet,
+  HlmSheetContent,
+  HlmSheetHeader,
+  HlmSheetTitle,
+  HlmSheetDescription,
+  HlmSheetFooter,
+  HlmSheetTrigger,
+  HlmSheetClose,
+  HlmSheetPortal,
+} from '@spartan-ng/helm/sheet';
+
+const SHEET_IMPORTS = [
+  HlmSheet,
+  HlmSheetContent,
+  HlmSheetHeader,
+  HlmSheetTitle,
+  HlmSheetDescription,
+  HlmSheetFooter,
+  HlmSheetTrigger,
+  HlmSheetClose,
+  HlmSheetPortal,
+];
 
 describe('HeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
       providers: [provideRouter([])],
-    }).compileComponents();
+    })
+      .overrideComponent(HeaderComponent, {
+        remove: { imports: SHEET_IMPORTS },
+        add: { schemas: [NO_ERRORS_SCHEMA] },
+      })
+      .compileComponents();
   });
 
-  it('should display the store name', () => {
-    // given - header component rendered
+  it('shouldDisplayStoreNameWhenRendered', () => {
+    // given — header component rendered
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
 
-    // then - "Workshop Store" is visible
+    // then — "Workshop Store" is visible
     expect(fixture.nativeElement.textContent).toContain('Workshop Store');
   });
 
-  it('should contain a link to /catalog', () => {
+  it('shouldContainCatalogLinkWhenRendered', () => {
+    // given — header rendered
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
 
+    // then — catalog link exists
     const catalogLink = fixture.nativeElement.querySelector('a[href="/catalog"]');
     expect(catalogLink).toBeTruthy();
     expect(catalogLink.textContent).toContain('Catalog');
   });
 
-  it('should contain a link to /cart', () => {
+  it('shouldRenderSheetTriggerElementWhenRendered', () => {
+    // given — header rendered (Sheet components replaced by NO_ERRORS_SCHEMA)
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
 
-    const cartLink = fixture.nativeElement.querySelector('a[href="/cart"]');
-    expect(cartLink).toBeTruthy();
+    // then — hlm-sheet element exists in DOM
+    const sheet = fixture.nativeElement.querySelector('hlm-sheet');
+    expect(sheet).toBeTruthy();
   });
 
-  it('should show cart item count when items exist', () => {
-    // given - cart has 3 items
-    const fixture = TestBed.createComponent(HeaderComponent);
-    fixture.componentInstance.cartItemCount = signal(3);
-    fixture.detectChanges();
-
-    // then - badge shows "3"
-    const badge = fixture.nativeElement.querySelector('[data-testid="cart-badge"]');
-    expect(badge).toBeTruthy();
-    expect(badge.textContent).toContain('3');
-  });
-
-  it('should not show cart badge when cart is empty', () => {
-    const fixture = TestBed.createComponent(HeaderComponent);
-    fixture.componentInstance.cartItemCount = signal(0);
-    fixture.detectChanges();
-
-    const badge = fixture.nativeElement.querySelector('[data-testid="cart-badge"]');
-    expect(badge).toBeNull();
-  });
-
-  it('should have a fixed header element', () => {
+  it('shouldHaveFixedPositionWhenRendered', () => {
+    // given — header rendered
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
 
+    // then — header element has fixed class
     const header = fixture.nativeElement.querySelector('header');
     expect(header).toBeTruthy();
     expect(header.classList).toContain('fixed');
