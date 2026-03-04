@@ -35,7 +35,7 @@ import { CartService } from '../../core/services/cart.service';
                 />
               }
             </div>
-            <div>
+            <div class="lg:sticky lg:top-24">
               <app-order-summary
                 [totalItems]="cartData.totalItems"
                 [totalPrice]="cartData.totalPrice"
