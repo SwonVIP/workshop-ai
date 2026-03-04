@@ -13,11 +13,11 @@ The scaffold provides a working **Product Catalog** + **Shopping Cart**. Worksho
 | Styling | Tailwind CSS | 3.4.19 |
 | Backend | Spring Boot | 4.0.3 |
 | Database | SQL Server | 2022 (Docker) |
-| Java | JDK | 21+ |
+| Java | JDK | 25 |
 
 ## Prerequisites
 
-- **Java 21+** (JDK)
+- **Java 25+** (JDK)
 - **Node.js 22+** with npm
 - **Docker** (for SQL Server 2022)
 - **Maven 3.9+**

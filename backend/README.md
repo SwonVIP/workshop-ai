@@ -4,7 +4,7 @@ Spring Boot 4.0.3 REST API for the e-commerce workshop scaffold.
 
 ## Prerequisites
 
-- Java 21+
+- Java 25+
 - Maven 3.9+
 - Docker (for SQL Server 2022)
 
@@ -81,8 +81,8 @@ mvn spotless:apply          # Auto-fix
 # Static analysis (Checkstyle — severity: error)
 mvn checkstyle:check
 
-# Mutation testing (PIT — requires JDK 21, incompatible with JDK 25)
-mvn org.pitest:pitest-maven:mutationCoverage
+# Mutation testing (PIT — incompatible with JDK 25, needs JDK 21 override)
+JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn org.pitest:pitest-maven:mutationCoverage
 ```
 
 ## Architecture
@@ -122,4 +122,4 @@ src/test/java/ch/migrosonline/workshop/
 - **Caffeine cache** on categories (1h TTL)
 - **`@PrePersist`/`@PreUpdate`** for audit timestamps
 - **UUID session validation** on cart endpoints
-- **Virtual threads** enabled (`spring.threads.virtual.enabled=true`)
+- **Java 25** with virtual threads enabled (`spring.threads.virtual.enabled=true`)
