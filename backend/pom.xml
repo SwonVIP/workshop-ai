@@ -24,8 +24,8 @@
 
         <spotless.version>2.44.5</spotless.version>
         <checkstyle.version>3.6.0</checkstyle.version>
-        <pitest.version>1.19.1</pitest.version>
-        <pitest-junit5.version>1.2.1</pitest-junit5.version>
+        <pitest.version>1.22.0</pitest.version>
+        <pitest-junit5.version>1.2.3</pitest-junit5.version>
         <jacoco.version>0.8.14</jacoco.version>
     </properties>
 
@@ -279,10 +279,7 @@
                     <excludedTestClasses>
                         <excludedTestClass>*IT</excludedTestClass>
                     </excludedTestClasses>
-                    <jvmArgs>
-                        <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
-                    </jvmArgs>
+                    <failWhenNoMutations>false</failWhenNoMutations>
                 </configuration>
                 <dependencies>
                     <dependency>
