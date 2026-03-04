@@ -27,13 +27,14 @@ public class CartController {
   private final CartService cartService;
 
   @GetMapping
-  public ResponseEntity<CartResponse> getCart(@RequestHeader("X-Cart-Session") UUID sessionId) {
+  public ResponseEntity<CartResponse> getCart(
+      @RequestHeader("X-CartEntity-Session") UUID sessionId) {
     return ResponseEntity.ok(cartService.getCart(sessionId.toString()));
   }
 
   @PostMapping("/items")
   public ResponseEntity<CartResponse> addItem(
-      @RequestHeader("X-Cart-Session") UUID sessionId,
+      @RequestHeader("X-CartEntity-Session") UUID sessionId,
       @Valid @RequestBody AddToCartRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(cartService.addItem(sessionId.toString(), request));
@@ -41,7 +42,7 @@ public class CartController {
 
   @PutMapping("/items/{itemId}")
   public ResponseEntity<CartResponse> updateItem(
-      @RequestHeader("X-Cart-Session") UUID sessionId,
+      @RequestHeader("X-CartEntity-Session") UUID sessionId,
       @PathVariable Long itemId,
       @Valid @RequestBody UpdateCartItemRequest request) {
     return ResponseEntity.ok(cartService.updateItemQuantity(sessionId.toString(), itemId, request));
@@ -49,13 +50,14 @@ public class CartController {
 
   @DeleteMapping("/items/{itemId}")
   public ResponseEntity<Void> removeItem(
-      @RequestHeader("X-Cart-Session") UUID sessionId, @PathVariable Long itemId) {
+      @RequestHeader("X-CartEntity-Session") UUID sessionId, @PathVariable Long itemId) {
     cartService.removeItem(sessionId.toString(), itemId);
     return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping
-  public ResponseEntity<CartResponse> clearCart(@RequestHeader("X-Cart-Session") UUID sessionId) {
+  public ResponseEntity<CartResponse> clearCart(
+      @RequestHeader("X-CartEntity-Session") UUID sessionId) {
     return ResponseEntity.ok(cartService.clearCart(sessionId.toString()));
   }
 }

@@ -23,7 +23,7 @@ export class CartService {
   }
 
   private get headers(): HttpHeaders {
-    return new HttpHeaders({ 'X-Cart-Session': this.getSessionId() });
+    return new HttpHeaders({ 'X-CartEntity-Session': this.getSessionId() });
   }
 
   getCart(): Observable<Cart> {

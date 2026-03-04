@@ -80,9 +80,6 @@ mvn spotless:apply          # Auto-fix
 
 # Static analysis (Checkstyle — severity: error)
 mvn checkstyle:check
-
-# Mutation testing (PIT)
-mvn initialize pitest:mutationCoverage
 ```
 
 ## Architecture
@@ -92,7 +89,7 @@ src/main/java/ch/migrosonline/workshop/
 ├── config/          # WebConfig (CORS), CacheConfig (Caffeine)
 ├── controller/      # REST controllers (ProductController, CartController)
 ├── entity/          # JPA entities (Product, Category, Cart, CartItem)
-├── exception/       # GlobalExceptionHandler, ResourceNotFoundException
+├── exception/       # GlobalExceptionHandler
 ├── mapper/          # CartMapper (entity → DTO)
 ├── model/           # Records: request/response DTOs
 ├── repository/      # Spring Data repos + ProductSpecs (JPA Specifications)

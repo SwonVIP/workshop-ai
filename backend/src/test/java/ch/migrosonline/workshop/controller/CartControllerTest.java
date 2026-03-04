@@ -27,7 +27,7 @@ class CartControllerTest extends ControllerTestSupport {
   @MockitoBean private CartService cartService;
 
   private static final String SESSION_ID = "550e8400-e29b-41d4-a716-446655440000";
-  private static final String SESSION_HEADER = "X-Cart-Session";
+  private static final String SESSION_HEADER = "X-CartEntity-Session";
 
   @Test
   void shouldReturnCartWhenValidSessionHeaderProvided() {

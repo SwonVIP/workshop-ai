@@ -74,7 +74,7 @@ describe('CartService', () => {
 
       // then — the header carries the pre-existing id
       const req = httpMock.expectOne((r) => r.url === '/api/cart');
-      expect(req.request.headers.get('X-Cart-Session')).toBe(existingId);
+      expect(req.request.headers.get('X-CartEntity-Session')).toBe(existingId);
       req.flush(mockCart);
 
       // and localStorage still holds the same id
@@ -85,7 +85,7 @@ describe('CartService', () => {
   // ── HTTP requests + headers ───────────────────────────────────────
 
   describe('HTTP requests and headers', () => {
-    it('should send GET /api/cart with X-Cart-Session header', () => {
+    it('should send GET /api/cart with X-CartEntity-Session header', () => {
       // given — the service is ready
       service.getCart().subscribe();
 
@@ -94,11 +94,11 @@ describe('CartService', () => {
 
       // then — method is GET and session header is present
       expect(req.request.method).toBe('GET');
-      expect(req.request.headers.has('X-Cart-Session')).toBe(true);
+      expect(req.request.headers.has('X-CartEntity-Session')).toBe(true);
       req.flush(mockCart);
     });
 
-    it('should send POST /api/cart/items with body and X-Cart-Session header', () => {
+    it('should send POST /api/cart/items with body and X-CartEntity-Session header', () => {
       // given — an add-to-cart request
       const body: AddToCartRequest = { productId: 42, quantity: 1 };
 
@@ -109,11 +109,11 @@ describe('CartService', () => {
       const req = httpMock.expectOne((r) => r.url === '/api/cart/items');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(body);
-      expect(req.request.headers.has('X-Cart-Session')).toBe(true);
+      expect(req.request.headers.has('X-CartEntity-Session')).toBe(true);
       req.flush(mockCart);
     });
 
-    it('should send PUT /api/cart/items/{id} with body and X-Cart-Session header', () => {
+    it('should send PUT /api/cart/items/{id} with body and X-CartEntity-Session header', () => {
       // given — an update request
       const body: UpdateCartItemRequest = { quantity: 5 };
       const itemId = 10;
@@ -125,11 +125,11 @@ describe('CartService', () => {
       const req = httpMock.expectOne((r) => r.url === '/api/cart/items/10');
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(body);
-      expect(req.request.headers.has('X-Cart-Session')).toBe(true);
+      expect(req.request.headers.has('X-CartEntity-Session')).toBe(true);
       req.flush(mockCart);
     });
 
-    it('should send DELETE /api/cart/items/{id} with X-Cart-Session header', () => {
+    it('should send DELETE /api/cart/items/{id} with X-CartEntity-Session header', () => {
       // given — an item id to remove
       const itemId = 10;
 
@@ -139,7 +139,7 @@ describe('CartService', () => {
       // then — DELETE to /api/cart/items/10 with header
       const req = httpMock.expectOne((r) => r.url === '/api/cart/items/10');
       expect(req.request.method).toBe('DELETE');
-      expect(req.request.headers.has('X-Cart-Session')).toBe(true);
+      expect(req.request.headers.has('X-CartEntity-Session')).toBe(true);
       req.flush(null);
 
       // and — a follow-up GET /api/cart is issued to refresh
@@ -243,7 +243,7 @@ describe('CartService', () => {
   // ── clearCart ──────────────────────────────────────────────────────
 
   describe('clearCart', () => {
-    it('should send DELETE /api/cart with X-Cart-Session header on clearCart', () => {
+    it('should send DELETE /api/cart with X-CartEntity-Session header on clearCart', () => {
       // given — the service is ready
       service.clearCart().subscribe();
 
@@ -252,7 +252,7 @@ describe('CartService', () => {
 
       // then — method is DELETE and session header is present
       expect(req.request.method).toBe('DELETE');
-      expect(req.request.headers.has('X-Cart-Session')).toBe(true);
+      expect(req.request.headers.has('X-CartEntity-Session')).toBe(true);
       req.flush(emptyCart);
     });
 
