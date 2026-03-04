@@ -11,12 +11,12 @@ import static org.mockito.Mockito.when;
 import ch.migrosonline.workshop.entity.CartEntity;
 import ch.migrosonline.workshop.entity.CartItemEntity;
 import ch.migrosonline.workshop.entity.ProductEntity;
-import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.mapper.CartMapper;
 import ch.migrosonline.workshop.model.CartResponse;
 import ch.migrosonline.workshop.repository.CartItemRepository;
 import ch.migrosonline.workshop.repository.CartRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -155,7 +155,7 @@ class CartServiceTest {
     // when/then
     var request = new ch.migrosonline.workshop.model.AddToCartRequest(999L, 1);
     assertThatThrownBy(() -> cartService.addItem(SESSION_ID, request))
-        .isInstanceOf(ResourceNotFoundException.class)
+        .isInstanceOf(EntityNotFoundException.class)
         .hasMessageContaining("Product not found with id: 999");
   }
 
@@ -225,7 +225,7 @@ class CartServiceTest {
     // when/then
     var request = new ch.migrosonline.workshop.model.UpdateCartItemRequest(3);
     assertThatThrownBy(() -> cartService.updateItemQuantity(SESSION_ID, 999L, request))
-        .isInstanceOf(ResourceNotFoundException.class)
+        .isInstanceOf(EntityNotFoundException.class)
         .hasMessageContaining("Cart item not found with id: 999");
   }
 
@@ -242,7 +242,7 @@ class CartServiceTest {
     // when/then
     var request = new ch.migrosonline.workshop.model.UpdateCartItemRequest(3);
     assertThatThrownBy(() -> cartService.updateItemQuantity(SESSION_ID, 5L, request))
-        .isInstanceOf(ResourceNotFoundException.class)
+        .isInstanceOf(EntityNotFoundException.class)
         .hasMessageContaining("Cart item not found with id: 5");
   }
 
@@ -272,7 +272,7 @@ class CartServiceTest {
 
     // when/then
     assertThatThrownBy(() -> cartService.removeItem(SESSION_ID, 5L))
-        .isInstanceOf(ResourceNotFoundException.class)
+        .isInstanceOf(EntityNotFoundException.class)
         .hasMessageContaining("Cart not found for session: " + SESSION_ID);
   }
 
@@ -333,7 +333,7 @@ class CartServiceTest {
 
     // when/then
     assertThatThrownBy(() -> cartService.clearCart(SESSION_ID))
-        .isInstanceOf(ResourceNotFoundException.class)
+        .isInstanceOf(EntityNotFoundException.class)
         .hasMessageContaining("Cart not found for session: " + SESSION_ID);
   }
 
@@ -349,7 +349,7 @@ class CartServiceTest {
 
     // when/then
     assertThatThrownBy(() -> cartService.removeItem(SESSION_ID, 5L))
-        .isInstanceOf(ResourceNotFoundException.class)
+        .isInstanceOf(EntityNotFoundException.class)
         .hasMessageContaining("Cart item not found with id: 5");
   }
 }

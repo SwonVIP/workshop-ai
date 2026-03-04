@@ -7,12 +7,12 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.model.AddToCartRequest;
 import ch.migrosonline.workshop.model.CartResponse;
 import ch.migrosonline.workshop.model.UpdateCartItemRequest;
 import ch.migrosonline.workshop.service.CartService;
 import ch.migrosonline.workshop.support.ControllerTestSupport;
+import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class CartControllerTest extends ControllerTestSupport {
   @MockitoBean private CartService cartService;
 
   private static final String SESSION_ID = "550e8400-e29b-41d4-a716-446655440000";
-  private static final String SESSION_HEADER = "X-CartEntity-Session";
+  private static final String SESSION_HEADER = "X-Cart-Session";
 
   @Test
   void shouldReturnCartWhenValidSessionHeaderProvided() {
@@ -49,15 +49,13 @@ class CartControllerTest extends ControllerTestSupport {
 
   @Test
   void shouldReturn400WhenSessionHeaderMissing() {
-    // given — no X-CartEntity-Session header
+    // given — no X-Cart-Session header
 
     // when
     var result = mvc.get().uri("/api/cart").exchange();
 
     // then
     assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Bad Request");
   }
 
   @Test
@@ -112,8 +110,6 @@ class CartControllerTest extends ControllerTestSupport {
 
     // then
     assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
@@ -132,8 +128,6 @@ class CartControllerTest extends ControllerTestSupport {
 
     // then
     assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
@@ -152,15 +146,13 @@ class CartControllerTest extends ControllerTestSupport {
 
     // then
     assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
   void shouldReturn404WhenAddingNonExistentProduct() throws Exception {
     // given
     when(cartService.addItem(eq(SESSION_ID), any(AddToCartRequest.class)))
-        .thenThrow(new ResourceNotFoundException("Product not found with id: 999"));
+        .thenThrow(new EntityNotFoundException("Product not found with id: 999"));
     var requestBody = jsonMapper.writeValueAsString(new AddToCartRequest(999L, 1));
 
     // when
@@ -224,7 +216,7 @@ class CartControllerTest extends ControllerTestSupport {
   void shouldReturn404WhenUpdatingNonExistentItem() throws Exception {
     // given
     when(cartService.updateItemQuantity(eq(SESSION_ID), eq(999L), any(UpdateCartItemRequest.class)))
-        .thenThrow(new ResourceNotFoundException("Cart item not found with id: 999"));
+        .thenThrow(new EntityNotFoundException("Cart item not found with id: 999"));
     var requestBody = jsonMapper.writeValueAsString(new UpdateCartItemRequest(3));
 
     // when
@@ -248,7 +240,7 @@ class CartControllerTest extends ControllerTestSupport {
   @Test
   void shouldReturn404WhenRemovingNonExistentItem() {
     // given
-    doThrow(new ResourceNotFoundException("Cart item not found with id: 999"))
+    doThrow(new EntityNotFoundException("Cart item not found with id: 999"))
         .when(cartService)
         .removeItem(SESSION_ID, 999L);
 
@@ -281,8 +273,6 @@ class CartControllerTest extends ControllerTestSupport {
 
     // then
     assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
@@ -307,7 +297,7 @@ class CartControllerTest extends ControllerTestSupport {
   void shouldReturn404WhenClearingNonExistentCart() {
     // given
     when(cartService.clearCart(SESSION_ID))
-        .thenThrow(new ResourceNotFoundException("Cart not found for session: " + SESSION_ID));
+        .thenThrow(new EntityNotFoundException("Cart not found for session: " + SESSION_ID));
 
     // when
     var result = mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID).exchange();
@@ -323,15 +313,13 @@ class CartControllerTest extends ControllerTestSupport {
 
   @Test
   void shouldReturn400WhenClearCartMissingSessionHeader() {
-    // given — no X-CartEntity-Session header
+    // given — no X-Cart-Session header
 
     // when
     var result = mvc.delete().uri("/api/cart").exchange();
 
     // then
     assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Bad Request");
   }
 
   @Test

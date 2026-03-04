@@ -2,12 +2,12 @@ package ch.migrosonline.workshop.service;
 
 import static ch.migrosonline.workshop.config.CacheConfig.CATEGORIES_CACHE;
 
-import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.model.CategoryResponse;
 import ch.migrosonline.workshop.model.ProductResponse;
 import ch.migrosonline.workshop.repository.CategoryRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
 import ch.migrosonline.workshop.repository.ProductSpecs;
+import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class ProductService {
     return productRepository
         .findById(id)
         .map(ProductResponse::from)
-        .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+        .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
   }
 
   @Cacheable(CATEGORIES_CACHE)

@@ -9,9 +9,9 @@ import static org.mockito.Mockito.when;
 
 import ch.migrosonline.workshop.entity.CategoryEntity;
 import ch.migrosonline.workshop.entity.ProductEntity;
-import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.repository.CategoryRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collections;
@@ -111,13 +111,13 @@ class ProductServiceTest {
   }
 
   @Test
-  void shouldThrowResourceNotFoundExceptionWhenProductNotFound() {
+  void shouldThrowEntityNotFoundExceptionWhenProductNotFound() {
     // given
     when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
     // when/then
     assertThatThrownBy(() -> productService.getProduct(999L))
-        .isInstanceOf(ResourceNotFoundException.class)
+        .isInstanceOf(EntityNotFoundException.class)
         .hasMessageContaining("Product with id 999 not found");
   }
 

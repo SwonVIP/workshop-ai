@@ -2,7 +2,6 @@ package ch.migrosonline.workshop.service;
 
 import ch.migrosonline.workshop.entity.CartEntity;
 import ch.migrosonline.workshop.entity.CartItemEntity;
-import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.mapper.CartMapper;
 import ch.migrosonline.workshop.model.AddToCartRequest;
 import ch.migrosonline.workshop.model.CartResponse;
@@ -10,6 +9,7 @@ import ch.migrosonline.workshop.model.UpdateCartItemRequest;
 import ch.migrosonline.workshop.repository.CartItemRepository;
 import ch.migrosonline.workshop.repository.CartRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public class CartService {
         productRepository
             .findById(request.productId())
             .orElseThrow(
-                () -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MSG + request.productId()));
+                () -> new EntityNotFoundException(PRODUCT_NOT_FOUND_MSG + request.productId()));
     var existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
     if (existingItem.isPresent()) {
       existingItem.get().setQuantity(existingItem.get().getQuantity() + request.quantity());
@@ -61,7 +61,10 @@ public class CartService {
     }
     cartRepository.save(cart);
     // Re-fetch with @EntityGraph to ensure product data is loaded
-    var updatedCart = cartRepository.findBySessionId(sessionId).orElseThrow();
+    var updatedCart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseThrow(() -> new EntityNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     return cartMapper.toResponse(updatedCart);
   }
 
@@ -71,17 +74,20 @@ public class CartService {
     var cart =
         cartRepository
             .findBySessionId(sessionId)
-            .orElseThrow(() -> new ResourceNotFoundException(CART_NOT_FOUND_MSG + sessionId));
+            .orElseThrow(() -> new EntityNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     var item =
         cartItemRepository
             .findById(itemId)
-            .orElseThrow(() -> new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId));
+            .orElseThrow(() -> new EntityNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId));
     if (!item.getCart().getId().equals(cart.getId())) {
-      throw new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId);
+      throw new EntityNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId);
     }
     item.setQuantity(request.quantity());
     cartItemRepository.save(item);
-    var updatedCart = cartRepository.findBySessionId(sessionId).orElseThrow();
+    var updatedCart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseThrow(() -> new EntityNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     return cartMapper.toResponse(updatedCart);
   }
 
@@ -90,13 +96,13 @@ public class CartService {
     var cart =
         cartRepository
             .findBySessionId(sessionId)
-            .orElseThrow(() -> new ResourceNotFoundException(CART_NOT_FOUND_MSG + sessionId));
+            .orElseThrow(() -> new EntityNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     var item =
         cartItemRepository
             .findById(itemId)
-            .orElseThrow(() -> new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId));
+            .orElseThrow(() -> new EntityNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId));
     if (!item.getCart().getId().equals(cart.getId())) {
-      throw new ResourceNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId);
+      throw new EntityNotFoundException(CART_ITEM_NOT_FOUND_MSG + itemId);
     }
     cart.getItems().remove(item);
     cartRepository.save(cart);
@@ -107,10 +113,13 @@ public class CartService {
     var cart =
         cartRepository
             .findBySessionId(sessionId)
-            .orElseThrow(() -> new ResourceNotFoundException(CART_NOT_FOUND_MSG + sessionId));
+            .orElseThrow(() -> new EntityNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     cart.getItems().clear();
     cartRepository.save(cart);
-    var updatedCart = cartRepository.findBySessionId(sessionId).orElseThrow();
+    var updatedCart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseThrow(() -> new EntityNotFoundException(CART_NOT_FOUND_MSG + sessionId));
     return cartMapper.toResponse(updatedCart);
   }
 }

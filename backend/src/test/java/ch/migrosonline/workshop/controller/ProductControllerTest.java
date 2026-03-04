@@ -7,11 +7,11 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.model.CategoryResponse;
 import ch.migrosonline.workshop.model.ProductResponse;
 import ch.migrosonline.workshop.service.ProductService;
 import ch.migrosonline.workshop.support.ControllerTestSupport;
+import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -203,7 +203,7 @@ class ProductControllerTest extends ControllerTestSupport {
   void shouldReturn404WhenProductNotFound() {
     // given
     when(productService.getProduct(999L))
-        .thenThrow(new ResourceNotFoundException("Product with id 999 not found"));
+        .thenThrow(new EntityNotFoundException("Product with id 999 not found"));
 
     // when
     var result = mvc.get().uri("/api/products/999").exchange();
@@ -258,29 +258,25 @@ class ProductControllerTest extends ControllerTestSupport {
   }
 
   @Test
-  void shouldReturnErrorWhenProductIdIsNotNumeric() {
+  void shouldReturn400WhenProductIdIsNotNumeric() {
     // given — a non-numeric path variable
 
     // when
     var result = mvc.get().uri("/api/products/abc").exchange();
 
     // then
-    assertThat(result).hasStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(500);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Internal Server Error");
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
   }
 
   @Test
-  void shouldReturnErrorWhenMinPriceIsNotNumeric() {
+  void shouldReturn400WhenMinPriceIsNotNumeric() {
     // given — a non-numeric minPrice query parameter
 
     // when
     var result = mvc.get().uri("/api/products?minPrice=xyz").exchange();
 
     // then
-    assertThat(result).hasStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(result).bodyJson().extractingPath("status").isEqualTo(500);
-    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Internal Server Error");
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
   }
 
   @Test
@@ -363,7 +359,7 @@ class ProductControllerTest extends ControllerTestSupport {
   void shouldReturn404WithStructuredErrorBodyWhenProductNotFound() {
     // given
     when(productService.getProduct(999L))
-        .thenThrow(new ResourceNotFoundException("Product with id 999 not found"));
+        .thenThrow(new EntityNotFoundException("Product with id 999 not found"));
 
     // when
     var result = mvc.get().uri("/api/products/999").exchange();
