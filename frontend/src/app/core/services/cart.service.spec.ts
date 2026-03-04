@@ -144,6 +144,9 @@ describe('CartService', () => {
       expect(req.request.method).toBe('DELETE');
       expect(req.request.headers.has('X-Cart-Session')).toBe(true);
       req.flush(null);
+
+      // and — a follow-up GET /api/cart is issued to refresh
+      httpMock.expectOne(r => r.url === '/api/cart').flush(emptyCart);
     });
   });
 
@@ -186,16 +189,37 @@ describe('CartService', () => {
       expect(service.cart()).toEqual(mockCart);
     });
 
-    it('should NOT update cart signal after removeItem (DELETE returns void)', () => {
+    it('should refresh cart signal after removeItem completes', () => {
       // given — cart signal starts null
       expect(service.cart()).toBeNull();
 
-      // when — removeItem succeeds (no tap on response)
+      // when — removeItem succeeds and triggers getCart refresh
       service.removeItem(10).subscribe();
       httpMock.expectOne(r => r.url === '/api/cart/items/10').flush(null);
 
-      // then — cart signal is still null (removeItem has no tap)
+      // then — a GET /api/cart is issued to refresh
+      const getReq = httpMock.expectOne(r => r.url === '/api/cart');
+      expect(getReq.request.method).toBe('GET');
+      getReq.flush(emptyCart);
+
+      // and — cart signal is updated with the refreshed cart
+      expect(service.cart()).toEqual(emptyCart);
+    });
+
+    it('should load cart on loadCart call', () => {
+      // given — cart signal starts null
       expect(service.cart()).toBeNull();
+
+      // when — loadCart is called
+      service.loadCart();
+
+      // then — a GET /api/cart is issued
+      const req = httpMock.expectOne(r => r.url === '/api/cart');
+      expect(req.request.method).toBe('GET');
+      req.flush(mockCart);
+
+      // and — cart signal holds the returned cart
+      expect(service.cart()).toEqual(mockCart);
     });
 
     it('should return itemCount 0 when cart signal is null', () => {

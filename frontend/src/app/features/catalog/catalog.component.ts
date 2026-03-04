@@ -1,4 +1,4 @@
-import { Component, computed, signal, linkedSignal } from '@angular/core';
+import { Component, computed, inject, signal, linkedSignal } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { ProductCardComponent } from './product-card/product-card.component';
 import { SearchFilterBarComponent } from './search-filter-bar/search-filter-bar.component';
@@ -13,6 +13,7 @@ import {
   PaginatedResponse,
   Category,
 } from '../../core/models/product.model';
+import { CartService } from '../../core/services/cart.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -177,8 +178,9 @@ export class CatalogComponent {
     this.page.set(newPage);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onAddToCart(_product: Product): void {
-    // Cart integration — Epic 3
+  private readonly cartService = inject(CartService);
+
+  onAddToCart(product: Product): void {
+    this.cartService.addItem({ productId: product.id, quantity: 1 }).subscribe();
   }
 }

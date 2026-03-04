@@ -1,0 +1,108 @@
+package ch.migrosonline.workshop.service;
+
+import ch.migrosonline.workshop.entity.Cart;
+import ch.migrosonline.workshop.entity.CartItem;
+import ch.migrosonline.workshop.exception.ResourceNotFoundException;
+import ch.migrosonline.workshop.mapper.CartMapper;
+import ch.migrosonline.workshop.model.AddToCartRequest;
+import ch.migrosonline.workshop.model.CartResponse;
+import ch.migrosonline.workshop.model.UpdateCartItemRequest;
+import ch.migrosonline.workshop.repository.CartItemRepository;
+import ch.migrosonline.workshop.repository.CartRepository;
+import ch.migrosonline.workshop.repository.ProductRepository;
+import java.util.ArrayList;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class CartService {
+
+  private final CartRepository cartRepository;
+  private final CartItemRepository cartItemRepository;
+  private final ProductRepository productRepository;
+  private final CartMapper cartMapper;
+
+  public CartResponse getCart(String sessionId) {
+    var cart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseGet(
+                () ->
+                    cartRepository.save(
+                        Cart.builder().sessionId(sessionId).items(new ArrayList<>()).build()));
+    return cartMapper.toResponse(cart);
+  }
+
+  @Transactional
+  public CartResponse addItem(String sessionId, AddToCartRequest request) {
+    var cart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseGet(
+                () ->
+                    cartRepository.save(
+                        Cart.builder().sessionId(sessionId).items(new ArrayList<>()).build()));
+    var product =
+        productRepository
+            .findById(request.productId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Product not found with id: " + request.productId()));
+    var existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
+    if (existingItem.isPresent()) {
+      existingItem.get().setQuantity(existingItem.get().getQuantity() + request.quantity());
+    } else {
+      var newItem =
+          CartItem.builder().cart(cart).product(product).quantity(request.quantity()).build();
+      cart.getItems().add(newItem);
+    }
+    cartRepository.save(cart);
+    // Re-fetch with @EntityGraph to ensure product data is loaded
+    var updatedCart = cartRepository.findBySessionId(sessionId).orElseThrow();
+    return cartMapper.toResponse(updatedCart);
+  }
+
+  @Transactional
+  public CartResponse updateItemQuantity(
+      String sessionId, Long itemId, UpdateCartItemRequest request) {
+    var cart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Cart not found for session: " + sessionId));
+    var item =
+        cartItemRepository
+            .findById(itemId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Cart item not found with id: " + itemId));
+    if (!item.getCart().getId().equals(cart.getId())) {
+      throw new ResourceNotFoundException("Cart item not found with id: " + itemId);
+    }
+    item.setQuantity(request.quantity());
+    cartItemRepository.save(item);
+    var updatedCart = cartRepository.findBySessionId(sessionId).orElseThrow();
+    return cartMapper.toResponse(updatedCart);
+  }
+
+  @Transactional
+  public void removeItem(String sessionId, Long itemId) {
+    var cart =
+        cartRepository
+            .findBySessionId(sessionId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Cart not found for session: " + sessionId));
+    var item =
+        cartItemRepository
+            .findById(itemId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Cart item not found with id: " + itemId));
+    if (!item.getCart().getId().equals(cart.getId())) {
+      throw new ResourceNotFoundException("Cart item not found with id: " + itemId);
+    }
+    cart.getItems().remove(item);
+    cartRepository.save(cart);
+  }
+}

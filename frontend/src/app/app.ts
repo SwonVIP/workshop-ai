@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
+import { CartService } from './core/services/cart.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,11 @@ import { FooterComponent } from './shared/components/footer/footer.component';
     </div>
   `,
 })
-export class App {
+export class App implements OnInit {
   title = 'Workshop Store';
+  private readonly cartService = inject(CartService);
+
+  ngOnInit(): void {
+    this.cartService.loadCart();
+  }
 }

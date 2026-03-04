@@ -45,6 +45,12 @@ export class CartService {
   }
 
   removeItem(itemId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/items/${itemId}`, { headers: this.headers });
+    return this.http.delete<void>(`${this.baseUrl}/items/${itemId}`, { headers: this.headers }).pipe(
+      tap(() => this.getCart().subscribe())
+    );
+  }
+
+  loadCart(): void {
+    this.getCart().subscribe();
   }
 }
