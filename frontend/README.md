@@ -1,59 +1,105 @@
-# Frontend
+# Workshop AI — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+Angular 21 single-page application for the e-commerce workshop scaffold.
 
-## Development server
+## Prerequisites
 
-To start a local development server, run:
+- Node.js 22+
+- npm 10+
+- Backend running on port 9000 (for API proxy and E2E tests)
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Quick Start
 
 ```bash
-ng generate component component-name
+# Install dependencies
+npm install
+
+# Start development server (proxies /api to localhost:9000)
+npx ng serve
+
+# Open http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Testing
 
 ```bash
-ng generate --help
+# Unit tests (Vitest via Angular builder — handles path aliases)
+npx ng test --no-watch
+
+# E2E tests (Playwright — requires backend on port 9000)
+npx playwright test
+
+# E2E with visible browser
+npx playwright test --headed
+
+# Lint
+npx ng lint
 ```
 
-## Building
+> **Important**: Always use `npx ng test` (not `npx vitest`) — the Angular builder resolves `@spartan-ng/helm/*` path aliases from `tsconfig.json`.
 
-To build the project run:
+### Test Counts
 
-```bash
-ng build
+| Suite | Count |
+|-------|-------|
+| Unit tests (Vitest) | 174 |
+| E2E tests (Playwright) | 43 |
+| **Total** | **217** |
+
+## UI Stack
+
+- **Spartan UI** — accessible component primitives (Sheet, Button, Badge, Card, Skeleton, etc.)
+- **Tailwind CSS 3** — utility-first styling with semantic design tokens
+- **Dark mode** — system preference detection + manual toggle (light/dark/system), persisted in localStorage
+
+## Architecture
+
+```
+src/app/
+├── core/
+│   ├── models/          # TypeScript interfaces (Product, Cart, etc.)
+│   └── services/        # ProductService, CartService, ThemeService
+├── features/
+│   ├── catalog/         # Product grid, search/filter bar, product card
+│   ├── cart/            # Cart page, item row, order summary
+│   └── checkout/        # Placeholder for workshop participants
+├── shared/
+│   └── components/      # Header (with cart drawer), Footer, Pagination, EmptyState, ThemeToggle
+└── app.ts               # Root component with layout
+
+e2e/                     # Playwright E2E tests
+libs/ui/                 # Spartan UI helm components (generated, local ownership)
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Key Patterns
 
-## Running unit tests
+- **Signal-based**: `input()`, `output()`, `computed()`, `effect()`, `signal()`, `linkedSignal()`
+- **Control flow**: `@if`, `@for`, `@switch` (no `*ngIf`/`*ngFor`)
+- **`httpResource()`** for declarative data fetching with loading/error states
+- **Standalone components** (Angular 21 default — no `standalone: true` needed)
+- **Spartan Sheet** for cart drawer (requires `<ng-template hlmSheetPortal>` pattern)
+- **Design tokens**: all colors use semantic HSL variables (`bg-background`, `text-foreground`, `border-border`, etc.) — fully dark-mode compatible
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Proxy Configuration
 
-```bash
-ng test
+API calls are proxied to the backend via `proxy.conf.json`:
+
+```json
+{
+  "/api": {
+    "target": "http://localhost:9000",
+    "secure": false
+  }
+}
 ```
 
-## Running end-to-end tests
+## Environment
 
-For end-to-end (e2e) testing, run:
+The app uses `src/environments/environment.ts` for configuration:
 
-```bash
-ng e2e
+```typescript
+export const environment = {
+  production: false,
+  apiBaseUrl: '/api',
+};
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
