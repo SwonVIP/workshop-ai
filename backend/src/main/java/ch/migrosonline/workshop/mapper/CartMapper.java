@@ -1,7 +1,7 @@
 package ch.migrosonline.workshop.mapper;
 
-import ch.migrosonline.workshop.entity.Cart;
-import ch.migrosonline.workshop.entity.CartItem;
+import ch.migrosonline.workshop.entity.CartEntity;
+import ch.migrosonline.workshop.entity.CartItemEntity;
 import ch.migrosonline.workshop.model.CartItemProductResponse;
 import ch.migrosonline.workshop.model.CartItemResponse;
 import ch.migrosonline.workshop.model.CartResponse;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class CartMapper {
 
-  public CartResponse toResponse(Cart cart) {
+  public CartResponse toResponse(CartEntity cart) {
     var items = cart.getItems().stream().map(this::toCartItemResponse).toList();
-    var totalItems = cart.getItems().stream().mapToInt(CartItem::getQuantity).sum();
+    var totalItems = cart.getItems().stream().mapToInt(CartItemEntity::getQuantity).sum();
     var totalPrice =
         cart.getItems().stream()
             .map(
@@ -23,7 +23,7 @@ public class CartMapper {
     return new CartResponse(cart.getId(), cart.getSessionId(), items, totalItems, totalPrice);
   }
 
-  public CartItemResponse toCartItemResponse(CartItem item) {
+  public CartItemResponse toCartItemResponse(CartItemEntity item) {
     var product = item.getProduct();
     var productResponse =
         new CartItemProductResponse(

@@ -1,8 +1,8 @@
 package ch.migrosonline.workshop.repository;
 
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ProductRepository
-    extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {}
+    extends JpaRepository<ProductEntity, Long>, JpaSpecificationExecutor<ProductEntity> {}

@@ -1,7 +1,7 @@
 package ch.migrosonline.workshop.service;
 
-import ch.migrosonline.workshop.entity.Cart;
-import ch.migrosonline.workshop.entity.CartItem;
+import ch.migrosonline.workshop.entity.CartEntity;
+import ch.migrosonline.workshop.entity.CartItemEntity;
 import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.mapper.CartMapper;
 import ch.migrosonline.workshop.model.AddToCartRequest;
@@ -28,13 +28,13 @@ public class CartService {
   private final ProductRepository productRepository;
   private final CartMapper cartMapper;
 
-  private Cart findOrCreateCart(String sessionId) {
+  private CartEntity findOrCreateCart(String sessionId) {
     return cartRepository
         .findBySessionId(sessionId)
         .orElseGet(
             () ->
                 cartRepository.save(
-                    Cart.builder().sessionId(sessionId).items(new ArrayList<>()).build()));
+                    CartEntity.builder().sessionId(sessionId).items(new ArrayList<>()).build()));
   }
 
   @Transactional
@@ -56,7 +56,7 @@ public class CartService {
       existingItem.get().setQuantity(existingItem.get().getQuantity() + request.quantity());
     } else {
       var newItem =
-          CartItem.builder().cart(cart).product(product).quantity(request.quantity()).build();
+          CartItemEntity.builder().cart(cart).product(product).quantity(request.quantity()).build();
       cart.getItems().add(newItem);
     }
     cartRepository.save(cart);

@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-class CartItemEqualsHashCodeTest {
+class CartItemEntityEqualsHashCodeTest {
 
-  private CartItem buildItem(Long cartId, Long productId) {
-    var cart = Cart.builder().id(cartId).sessionId("sess-" + cartId).build();
-    var product = Product.builder().id(productId).name("product-" + productId).build();
-    return CartItem.builder().cart(cart).product(product).quantity(1).build();
+  private CartItemEntity buildItem(Long cartId, Long productId) {
+    var cart = CartEntity.builder().id(cartId).sessionId("sess-" + cartId).build();
+    var product = ProductEntity.builder().id(productId).name("product-" + productId).build();
+    return CartItemEntity.builder().cart(cart).product(product).quantity(1).build();
   }
 
   @Test
@@ -67,7 +67,11 @@ class CartItemEqualsHashCodeTest {
   void shouldNotMatchWhenCartIsNull() {
     // given — an orphan item not yet associated with a cart
     var orphan =
-        CartItem.builder().cart(null).product(Product.builder().id(1L).build()).quantity(1).build();
+        CartItemEntity.builder()
+            .cart(null)
+            .product(ProductEntity.builder().id(1L).build())
+            .quantity(1)
+            .build();
     var normal = buildItem(1L, 1L);
 
     // then
@@ -78,8 +82,8 @@ class CartItemEqualsHashCodeTest {
   void shouldNotMatchWhenProductIsNull() {
     // given — an item with no product reference
     var broken =
-        CartItem.builder()
-            .cart(Cart.builder().id(1L).sessionId("s").build())
+        CartItemEntity.builder()
+            .cart(CartEntity.builder().id(1L).sessionId("s").build())
             .product(null)
             .quantity(1)
             .build();

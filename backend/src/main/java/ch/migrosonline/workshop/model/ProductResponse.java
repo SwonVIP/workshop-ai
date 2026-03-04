@@ -1,6 +1,6 @@
 package ch.migrosonline.workshop.model;
 
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import java.math.BigDecimal;
 
 public record ProductResponse(
@@ -11,7 +11,7 @@ public record ProductResponse(
     String imageUrl,
     CategoryResponse category) {
 
-  public static ProductResponse from(Product entity) {
+  public static ProductResponse from(ProductEntity entity) {
     return new ProductResponse(
         entity.getId(),
         entity.getName(),

@@ -3,7 +3,7 @@ package ch.migrosonline.workshop.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import ch.migrosonline.workshop.entity.Category;
+import ch.migrosonline.workshop.entity.CategoryEntity;
 import org.junit.jupiter.api.Test;
 
 class CategoryResponseTest {
@@ -11,7 +11,7 @@ class CategoryResponseTest {
   @Test
   void shouldMapCategoryEntityToResponse() {
     // given
-    var entity = Category.builder().id(1L).name("Electronics").description("Gadgets").build();
+    var entity = CategoryEntity.builder().id(1L).name("Electronics").description("Gadgets").build();
 
     // when
     var response = CategoryResponse.from(entity);
@@ -25,7 +25,7 @@ class CategoryResponseTest {
   @Test
   void shouldHandleNullDescription() {
     // given
-    var entity = Category.builder().id(2L).name("Books").description(null).build();
+    var entity = CategoryEntity.builder().id(2L).name("Books").description(null).build();
 
     // when
     var response = CategoryResponse.from(entity);
@@ -45,7 +45,7 @@ class CategoryResponseTest {
   @Test
   void shouldMapCategoryWithNullName() {
     // given
-    var entity = Category.builder().id(3L).name(null).description("Unnamed").build();
+    var entity = CategoryEntity.builder().id(3L).name(null).description("Unnamed").build();
 
     // when
     var response = CategoryResponse.from(entity);

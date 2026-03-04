@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItem {
+public class CartItemEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +29,11 @@ public class CartItem {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "cart_id", nullable = false)
-  private Cart cart;
+  private CartEntity cart;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id", nullable = false)
-  private Product product;
+  private ProductEntity product;
 
   @Setter
   @Column(nullable = false)
@@ -47,7 +47,7 @@ public class CartItem {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CartItem cartItem = (CartItem) o;
+    CartItemEntity cartItem = (CartItemEntity) o;
     if (cart == null || cart.getId() == null || product == null || product.getId() == null) {
       return false;
     }

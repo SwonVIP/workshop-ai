@@ -2,6 +2,7 @@ package ch.migrosonline.workshop.exception;
 
 import ch.migrosonline.workshop.model.ErrorResponse;
 import ch.migrosonline.workshop.model.ValidationErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestControllerAdvice
@@ -43,6 +43,18 @@ public class GlobalExceptionHandler {
     return ResponseEntity.badRequest().body(body);
   }
 
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
+    var message =
+        ex.getConstraintViolations().stream()
+            .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+            .collect(Collectors.joining(", "));
+    var body =
+        new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), message);
+    return ResponseEntity.badRequest().body(body);
+  }
+
   @ExceptionHandler(MissingRequestHeaderException.class)
   public ResponseEntity<ErrorResponse> handleMissingHeader(MissingRequestHeaderException ex) {
     var body =
@@ -51,13 +63,6 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.getReasonPhrase(),
             ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
-  }
-
-  @ExceptionHandler(ResponseStatusException.class)
-  public ResponseEntity<ErrorResponse> handleResponseStatus(ResponseStatusException ex) {
-    var status = HttpStatus.valueOf(ex.getStatusCode().value());
-    var body = new ErrorResponse(status.value(), status.getReasonPhrase(), ex.getReason());
-    return ResponseEntity.status(status).body(body);
   }
 
   @ExceptionHandler(Exception.class)

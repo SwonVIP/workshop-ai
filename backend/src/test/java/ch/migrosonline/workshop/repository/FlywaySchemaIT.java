@@ -106,7 +106,7 @@ class FlywaySchemaIT extends RepositoryTestSupport {
       var categoryName = row.get("name").toString();
       var productCount = ((Number) row.get("product_count")).intValue();
       assertThat(productCount)
-          .as("Category '%s' should have at least 8 products", categoryName)
+          .as("CategoryEntity '%s' should have at least 8 products", categoryName)
           .isGreaterThanOrEqualTo(8);
     }
   }

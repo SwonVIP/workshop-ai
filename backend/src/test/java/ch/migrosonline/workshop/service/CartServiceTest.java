@@ -8,9 +8,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ch.migrosonline.workshop.entity.Cart;
-import ch.migrosonline.workshop.entity.CartItem;
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.CartEntity;
+import ch.migrosonline.workshop.entity.CartItemEntity;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.mapper.CartMapper;
 import ch.migrosonline.workshop.model.CartResponse;
@@ -45,10 +45,11 @@ class CartServiceTest {
   @Test
   void shouldReturnEmptyCartWhenSessionIsNew() {
     // given
-    var savedCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var savedCart =
+        CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 0, BigDecimal.ZERO);
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.empty());
-    when(cartRepository.save(any(Cart.class))).thenReturn(savedCart);
+    when(cartRepository.save(any(CartEntity.class))).thenReturn(savedCart);
     when(cartMapper.toResponse(savedCart)).thenReturn(expectedResponse);
 
     // when
@@ -60,13 +61,14 @@ class CartServiceTest {
     assertThat(result.items()).isEmpty();
     assertThat(result.totalItems()).isZero();
     assertThat(result.totalPrice()).isEqualTo(BigDecimal.ZERO);
-    verify(cartRepository).save(any(Cart.class));
+    verify(cartRepository).save(any(CartEntity.class));
   }
 
   @Test
   void shouldReturnExistingCartWhenSessionHasCart() {
     // given
-    var existingCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var existingCart =
+        CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 0, BigDecimal.ZERO);
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(existingCart));
     when(cartMapper.toResponse(existingCart)).thenReturn(expectedResponse);
@@ -80,16 +82,17 @@ class CartServiceTest {
     assertThat(result.items()).isEmpty();
     assertThat(result.totalItems()).isZero();
     assertThat(result.totalPrice()).isEqualTo(BigDecimal.ZERO);
-    verify(cartRepository, never()).save(any(Cart.class));
+    verify(cartRepository, never()).save(any(CartEntity.class));
   }
 
   @Test
   void shouldAddNewItemToCart() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var product =
-        Product.builder().id(10L).name("Headphones").price(new BigDecimal("89.99")).build();
-    var updatedCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+        ProductEntity.builder().id(10L).name("Headphones").price(new BigDecimal("89.99")).build();
+    var updatedCart =
+        CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 1, new BigDecimal("89.99"));
 
     when(cartRepository.findBySessionId(SESSION_ID))
@@ -114,11 +117,13 @@ class CartServiceTest {
   @Test
   void shouldIncrementQuantityWhenAddingSameProductAgain() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var product =
-        Product.builder().id(10L).name("Headphones").price(new BigDecimal("89.99")).build();
-    var existingItem = CartItem.builder().id(5L).cart(cart).product(product).quantity(2).build();
-    var updatedCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+        ProductEntity.builder().id(10L).name("Headphones").price(new BigDecimal("89.99")).build();
+    var existingItem =
+        CartItemEntity.builder().id(5L).cart(cart).product(product).quantity(2).build();
+    var updatedCart =
+        CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 5, new BigDecimal("449.95"));
 
     when(cartRepository.findBySessionId(SESSION_ID))
@@ -143,7 +148,7 @@ class CartServiceTest {
   @Test
   void shouldThrowNotFoundWhenAddingNonExistentProduct() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(cart));
     when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -157,15 +162,16 @@ class CartServiceTest {
   @Test
   void shouldCreateCartAutomaticallyWhenAddingItemToNewSession() {
     // given
-    var newCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var newCart =
+        CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var product =
-        Product.builder().id(10L).name("Headphones").price(new BigDecimal("89.99")).build();
+        ProductEntity.builder().id(10L).name("Headphones").price(new BigDecimal("89.99")).build();
     var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 1, new BigDecimal("89.99"));
 
     when(cartRepository.findBySessionId(SESSION_ID))
         .thenReturn(Optional.empty())
         .thenReturn(Optional.of(newCart));
-    when(cartRepository.save(any(Cart.class))).thenReturn(newCart);
+    when(cartRepository.save(any(CartEntity.class))).thenReturn(newCart);
     when(productRepository.findById(10L)).thenReturn(Optional.of(product));
     when(cartItemRepository.findByCartIdAndProductId(1L, 10L)).thenReturn(Optional.empty());
     when(cartMapper.toResponse(newCart)).thenReturn(expectedResponse);
@@ -179,15 +185,16 @@ class CartServiceTest {
     assertThat(result.sessionId()).isEqualTo(SESSION_ID);
     assertThat(result.totalItems()).isEqualTo(1);
     assertThat(result.totalPrice()).isEqualByComparingTo(new BigDecimal("89.99"));
-    verify(cartRepository, atLeastOnce()).save(any(Cart.class));
+    verify(cartRepository, atLeastOnce()).save(any(CartEntity.class));
   }
 
   @Test
   void shouldUpdateCartItemQuantity() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
-    var item = CartItem.builder().id(5L).cart(cart).quantity(2).build();
-    var updatedCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var item = CartItemEntity.builder().id(5L).cart(cart).quantity(2).build();
+    var updatedCart =
+        CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 7, BigDecimal.ZERO);
 
     when(cartRepository.findBySessionId(SESSION_ID))
@@ -211,7 +218,7 @@ class CartServiceTest {
   @Test
   void shouldThrowNotFoundWhenUpdatingNonExistentItem() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(cart));
     when(cartItemRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -225,9 +232,9 @@ class CartServiceTest {
   @Test
   void shouldThrowNotFoundWhenItemDoesNotBelongToCart() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
-    var otherCart = Cart.builder().id(99L).sessionId("other-session").build();
-    var item = CartItem.builder().id(5L).cart(otherCart).quantity(2).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var otherCart = CartEntity.builder().id(99L).sessionId("other-session").build();
+    var item = CartItemEntity.builder().id(5L).cart(otherCart).quantity(2).build();
 
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(cart));
     when(cartItemRepository.findById(5L)).thenReturn(Optional.of(item));
@@ -242,8 +249,8 @@ class CartServiceTest {
   @Test
   void shouldRemoveItemFromCart() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
-    var item = CartItem.builder().id(5L).cart(cart).quantity(2).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var item = CartItemEntity.builder().id(5L).cart(cart).quantity(2).build();
     cart.getItems().add(item);
 
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(cart));
@@ -272,8 +279,8 @@ class CartServiceTest {
   @Test
   void shouldLeaveEmptyCartAfterRemovingLastItem() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
-    var item = CartItem.builder().id(5L).cart(cart).quantity(1).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var item = CartItemEntity.builder().id(5L).cart(cart).quantity(1).build();
     cart.getItems().add(item);
 
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(cart));
@@ -292,12 +299,13 @@ class CartServiceTest {
   @Test
   void shouldClearAllItemsFromCart() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
-    var item1 = CartItem.builder().id(1L).cart(cart).quantity(2).build();
-    var item2 = CartItem.builder().id(2L).cart(cart).quantity(3).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var item1 = CartItemEntity.builder().id(1L).cart(cart).quantity(2).build();
+    var item2 = CartItemEntity.builder().id(2L).cart(cart).quantity(3).build();
     cart.getItems().add(item1);
     cart.getItems().add(item2);
-    var updatedCart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var updatedCart =
+        CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
     var expectedResponse = new CartResponse(1L, SESSION_ID, List.of(), 0, BigDecimal.ZERO);
 
     when(cartRepository.findBySessionId(SESSION_ID))
@@ -332,9 +340,9 @@ class CartServiceTest {
   @Test
   void shouldThrowNotFoundWhenRemovingItemBelongingToDifferentCart() {
     // given
-    var cart = Cart.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
-    var otherCart = Cart.builder().id(2L).sessionId("other-session").build();
-    var item = CartItem.builder().id(5L).cart(otherCart).quantity(1).build();
+    var cart = CartEntity.builder().id(1L).sessionId(SESSION_ID).items(new ArrayList<>()).build();
+    var otherCart = CartEntity.builder().id(2L).sessionId("other-session").build();
+    var item = CartItemEntity.builder().id(5L).cart(otherCart).quantity(1).build();
 
     when(cartRepository.findBySessionId(SESSION_ID)).thenReturn(Optional.of(cart));
     when(cartItemRepository.findById(5L)).thenReturn(Optional.of(item));

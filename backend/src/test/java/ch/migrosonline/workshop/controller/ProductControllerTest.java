@@ -46,33 +46,21 @@ class ProductControllerTest extends ControllerTestSupport {
     when(productService.getProducts(isNull(), isNull(), isNull(), isNull(), any(Pageable.class)))
         .thenReturn(page);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("content[0].name")
-        .isEqualTo("Headphones");
-    assertThat(mvc.get().uri("/api/products"))
-        .bodyJson()
-        .extractingPath("content[0].id")
-        .isEqualTo(1);
-    assertThat(mvc.get().uri("/api/products"))
-        .bodyJson()
-        .extractingPath("content[0].description")
-        .isEqualTo("Wireless");
-    assertThat(mvc.get().uri("/api/products"))
-        .bodyJson()
-        .extractingPath("content[0].price")
-        .isEqualTo(89.99);
-    assertThat(mvc.get().uri("/api/products"))
+    // when
+    var result = mvc.get().uri("/api/products").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("content[0].id").isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("content[0].name").isEqualTo("Headphones");
+    assertThat(result).bodyJson().extractingPath("content[0].description").isEqualTo("Wireless");
+    assertThat(result).bodyJson().extractingPath("content[0].price").isEqualTo(89.99);
+    assertThat(result)
         .bodyJson()
         .extractingPath("content[0].imageUrl")
         .isEqualTo("https://placehold.co/400x300?text=Headphones");
-    assertThat(mvc.get().uri("/api/products"))
-        .bodyJson()
-        .extractingPath("content[0].category.id")
-        .isEqualTo(1);
-    assertThat(mvc.get().uri("/api/products"))
+    assertThat(result).bodyJson().extractingPath("content[0].category.id").isEqualTo(1);
+    assertThat(result)
         .bodyJson()
         .extractingPath("content[0].category.description")
         .isEqualTo("Gadgets");
@@ -95,20 +83,17 @@ class ProductControllerTest extends ControllerTestSupport {
             eq("Electronics"), isNull(), isNull(), isNull(), any(Pageable.class)))
         .thenReturn(page);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products?category=Electronics"))
-        .hasStatusOk()
+    // when
+    var result = mvc.get().uri("/api/products?category=Electronics").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result)
         .bodyJson()
         .extractingPath("content[0].category.name")
         .isEqualTo("Electronics");
-    assertThat(mvc.get().uri("/api/products?category=Electronics"))
-        .bodyJson()
-        .extractingPath("content[0].name")
-        .isEqualTo("Headphones");
-    assertThat(mvc.get().uri("/api/products?category=Electronics"))
-        .bodyJson()
-        .extractingPath("content[0].price")
-        .isEqualTo(89.99);
+    assertThat(result).bodyJson().extractingPath("content[0].name").isEqualTo("Headphones");
+    assertThat(result).bodyJson().extractingPath("content[0].price").isEqualTo(89.99);
   }
 
   @Test
@@ -127,21 +112,14 @@ class ProductControllerTest extends ControllerTestSupport {
     when(productService.getProducts(isNull(), eq("head"), isNull(), isNull(), any(Pageable.class)))
         .thenReturn(page);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products?search=head"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("content")
-        .asList()
-        .hasSize(1);
-    assertThat(mvc.get().uri("/api/products?search=head"))
-        .bodyJson()
-        .extractingPath("content[0].name")
-        .isEqualTo("Headphones");
-    assertThat(mvc.get().uri("/api/products?search=head"))
-        .bodyJson()
-        .extractingPath("content[0].id")
-        .isEqualTo(1);
+    // when
+    var result = mvc.get().uri("/api/products?search=head").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("content").asList().hasSize(1);
+    assertThat(result).bodyJson().extractingPath("content[0].id").isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("content[0].name").isEqualTo("Headphones");
   }
 
   @Test
@@ -165,16 +143,13 @@ class ProductControllerTest extends ControllerTestSupport {
             any(Pageable.class)))
         .thenReturn(page);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products?minPrice=50&maxPrice=100"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("content[0].price")
-        .isEqualTo(89.99);
-    assertThat(mvc.get().uri("/api/products?minPrice=50&maxPrice=100"))
-        .bodyJson()
-        .extractingPath("content[0].name")
-        .isEqualTo("Headphones");
+    // when
+    var result = mvc.get().uri("/api/products?minPrice=50&maxPrice=100").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("content[0].price").isEqualTo(89.99);
+    assertThat(result).bodyJson().extractingPath("content[0].name").isEqualTo("Headphones");
   }
 
   @Test
@@ -184,17 +159,13 @@ class ProductControllerTest extends ControllerTestSupport {
             eq("NonExistent"), isNull(), isNull(), isNull(), any(Pageable.class)))
         .thenReturn(Page.empty());
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products?category=NonExistent"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("content")
-        .asList()
-        .isEmpty();
-    assertThat(mvc.get().uri("/api/products?category=NonExistent"))
-        .bodyJson()
-        .extractingPath("totalElements")
-        .isEqualTo(0);
+    // when
+    var result = mvc.get().uri("/api/products?category=NonExistent").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("content").asList().isEmpty();
+    assertThat(result).bodyJson().extractingPath("totalElements").isEqualTo(0);
   }
 
   @Test
@@ -211,33 +182,21 @@ class ProductControllerTest extends ControllerTestSupport {
             category);
     when(productService.getProduct(42L)).thenReturn(product);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products/42"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("name")
-        .isEqualTo("Smart Watch");
-    assertThat(mvc.get().uri("/api/products/42")).bodyJson().extractingPath("id").isEqualTo(42);
-    assertThat(mvc.get().uri("/api/products/42"))
-        .bodyJson()
-        .extractingPath("description")
-        .isEqualTo("Fitness tracker");
-    assertThat(mvc.get().uri("/api/products/42"))
-        .bodyJson()
-        .extractingPath("price")
-        .isEqualTo(199.99);
-    assertThat(mvc.get().uri("/api/products/42"))
+    // when
+    var result = mvc.get().uri("/api/products/42").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("id").isEqualTo(42);
+    assertThat(result).bodyJson().extractingPath("name").isEqualTo("Smart Watch");
+    assertThat(result).bodyJson().extractingPath("description").isEqualTo("Fitness tracker");
+    assertThat(result).bodyJson().extractingPath("price").isEqualTo(199.99);
+    assertThat(result)
         .bodyJson()
         .extractingPath("imageUrl")
         .isEqualTo("https://placehold.co/400x300?text=Smart+Watch");
-    assertThat(mvc.get().uri("/api/products/42"))
-        .bodyJson()
-        .extractingPath("category.name")
-        .isEqualTo("Electronics");
-    assertThat(mvc.get().uri("/api/products/42"))
-        .bodyJson()
-        .extractingPath("category.id")
-        .isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("category.name").isEqualTo("Electronics");
+    assertThat(result).bodyJson().extractingPath("category.id").isEqualTo(1);
   }
 
   @Test
@@ -246,17 +205,14 @@ class ProductControllerTest extends ControllerTestSupport {
     when(productService.getProduct(999L))
         .thenThrow(new ResourceNotFoundException("Product with id 999 not found"));
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products/999"))
-        .hasStatus(HttpStatus.NOT_FOUND)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(404);
-    assertThat(mvc.get().uri("/api/products/999"))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Not Found");
-    assertThat(mvc.get().uri("/api/products/999"))
+    // when
+    var result = mvc.get().uri("/api/products/999").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(404);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Not Found");
+    assertThat(result)
         .bodyJson()
         .extractingPath("message")
         .isEqualTo("Product with id 999 not found");
@@ -271,29 +227,16 @@ class ProductControllerTest extends ControllerTestSupport {
             new CategoryResponse(1L, "Electronics", "Gadgets"));
     when(productService.getCategories()).thenReturn(categories);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products/categories"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("$")
-        .asList()
-        .hasSize(2);
-    assertThat(mvc.get().uri("/api/products/categories"))
-        .bodyJson()
-        .extractingPath("[0].id")
-        .isEqualTo(4);
-    assertThat(mvc.get().uri("/api/products/categories"))
-        .bodyJson()
-        .extractingPath("[0].name")
-        .isEqualTo("Books");
-    assertThat(mvc.get().uri("/api/products/categories"))
-        .bodyJson()
-        .extractingPath("[0].description")
-        .isEqualTo("Reading");
-    assertThat(mvc.get().uri("/api/products/categories"))
-        .bodyJson()
-        .extractingPath("[1].name")
-        .isEqualTo("Electronics");
+    // when
+    var result = mvc.get().uri("/api/products/categories").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("$").asList().hasSize(2);
+    assertThat(result).bodyJson().extractingPath("[0].id").isEqualTo(4);
+    assertThat(result).bodyJson().extractingPath("[0].name").isEqualTo("Books");
+    assertThat(result).bodyJson().extractingPath("[0].description").isEqualTo("Reading");
+    assertThat(result).bodyJson().extractingPath("[1].name").isEqualTo("Electronics");
   }
 
   @Test
@@ -304,53 +247,40 @@ class ProductControllerTest extends ControllerTestSupport {
     when(productService.getProducts(isNull(), isNull(), isNull(), isNull(), any(Pageable.class)))
         .thenReturn(emptyPage);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("size")
-        .isEqualTo(12);
-    assertThat(mvc.get().uri("/api/products"))
-        .bodyJson()
-        .extractingPath("totalElements")
-        .isEqualTo(0);
-    assertThat(mvc.get().uri("/api/products"))
-        .bodyJson()
-        .extractingPath("content")
-        .asList()
-        .isEmpty();
+    // when
+    var result = mvc.get().uri("/api/products").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("size").isEqualTo(12);
+    assertThat(result).bodyJson().extractingPath("totalElements").isEqualTo(0);
+    assertThat(result).bodyJson().extractingPath("content").asList().isEmpty();
   }
 
   @Test
   void shouldReturnErrorWhenProductIdIsNotNumeric() {
     // given — a non-numeric path variable
 
-    // when/then — caught by generic exception handler as 500
-    assertThat(mvc.get().uri("/api/products/abc"))
-        .hasStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(500);
-    assertThat(mvc.get().uri("/api/products/abc"))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Internal Server Error");
+    // when
+    var result = mvc.get().uri("/api/products/abc").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(500);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Internal Server Error");
   }
 
   @Test
   void shouldReturnErrorWhenMinPriceIsNotNumeric() {
     // given — a non-numeric minPrice query parameter
 
-    // when/then — caught by generic exception handler as 500
-    assertThat(mvc.get().uri("/api/products?minPrice=xyz"))
-        .hasStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(500);
-    assertThat(mvc.get().uri("/api/products?minPrice=xyz"))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Internal Server Error");
+    // when
+    var result = mvc.get().uri("/api/products?minPrice=xyz").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(500);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Internal Server Error");
   }
 
   @Test
@@ -361,21 +291,14 @@ class ProductControllerTest extends ControllerTestSupport {
     when(productService.getProducts(isNull(), isNull(), isNull(), isNull(), any(Pageable.class)))
         .thenReturn(emptyPage);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products?page=9999"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("content")
-        .asList()
-        .isEmpty();
-    assertThat(mvc.get().uri("/api/products?page=9999"))
-        .bodyJson()
-        .extractingPath("totalElements")
-        .isEqualTo(0);
-    assertThat(mvc.get().uri("/api/products?page=9999"))
-        .bodyJson()
-        .extractingPath("number")
-        .isEqualTo(9999);
+    // when
+    var result = mvc.get().uri("/api/products?page=9999").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("content").asList().isEmpty();
+    assertThat(result).bodyJson().extractingPath("totalElements").isEqualTo(0);
+    assertThat(result).bodyJson().extractingPath("number").isEqualTo(9999);
   }
 
   @Test
@@ -384,16 +307,13 @@ class ProductControllerTest extends ControllerTestSupport {
     when(productService.getProducts(isNull(), isNull(), isNull(), isNull(), any(Pageable.class)))
         .thenThrow(new RuntimeException("Unexpected failure"));
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products"))
-        .hasStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(500);
-    assertThat(mvc.get().uri("/api/products"))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Internal Server Error");
+    // when
+    var result = mvc.get().uri("/api/products").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(500);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Internal Server Error");
   }
 
   @Test
@@ -401,13 +321,12 @@ class ProductControllerTest extends ControllerTestSupport {
     // given
     when(productService.getCategories()).thenReturn(List.of());
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products/categories"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("$")
-        .asList()
-        .isEmpty();
+    // when
+    var result = mvc.get().uri("/api/products/categories").exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("$").asList().isEmpty();
   }
 
   @Test
@@ -422,15 +341,15 @@ class ProductControllerTest extends ControllerTestSupport {
             any(Pageable.class)))
         .thenReturn(page);
 
-    // when/then
-    assertThat(
-            mvc.get()
-                .uri("/api/products?category=Electronics&search=phone&minPrice=10&maxPrice=50"))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("content")
-        .asList()
-        .isEmpty();
+    // when
+    var result =
+        mvc.get()
+            .uri("/api/products?category=Electronics&search=phone&minPrice=10&maxPrice=50")
+            .exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("content").asList().isEmpty();
     verify(productService)
         .getProducts(
             eq("Electronics"),
@@ -446,17 +365,14 @@ class ProductControllerTest extends ControllerTestSupport {
     when(productService.getProduct(999L))
         .thenThrow(new ResourceNotFoundException("Product with id 999 not found"));
 
-    // when/then
-    assertThat(mvc.get().uri("/api/products/999"))
-        .hasStatus(HttpStatus.NOT_FOUND)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(404);
-    assertThat(mvc.get().uri("/api/products/999"))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Not Found");
-    assertThat(mvc.get().uri("/api/products/999"))
+    // when
+    var result = mvc.get().uri("/api/products/999").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(404);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Not Found");
+    assertThat(result)
         .bodyJson()
         .extractingPath("message")
         .isEqualTo("Product with id 999 not found");
@@ -470,9 +386,10 @@ class ProductControllerTest extends ControllerTestSupport {
         .thenReturn(Page.empty());
 
     // when
-    assertThat(mvc.get().uri("/api/products?sort=price,asc")).hasStatusOk();
+    var result = mvc.get().uri("/api/products?sort=price,asc").exchange();
 
     // then
+    assertThat(result).hasStatusOk();
     verify(productService)
         .getProducts(isNull(), isNull(), isNull(), isNull(), pageableCaptor.capture());
     var capturedPageable = pageableCaptor.getValue();

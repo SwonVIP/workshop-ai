@@ -3,9 +3,9 @@ package ch.migrosonline.workshop.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import ch.migrosonline.workshop.entity.Cart;
-import ch.migrosonline.workshop.entity.CartItem;
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.CartEntity;
+import ch.migrosonline.workshop.entity.CartItemEntity;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,22 +19,22 @@ class CartMapperTest {
   void shouldMapCartEntityToResponseWithCorrectTotals() {
     // given
     var product1 =
-        Product.builder()
+        ProductEntity.builder()
             .id(1L)
             .name("Widget")
             .price(new BigDecimal("10.00"))
             .imageUrl("img1.png")
             .build();
     var product2 =
-        Product.builder()
+        ProductEntity.builder()
             .id(2L)
             .name("Gadget")
             .price(new BigDecimal("25.00"))
             .imageUrl("img2.png")
             .build();
-    var cart = Cart.builder().id(1L).sessionId("sess-1").items(new ArrayList<>()).build();
-    var item1 = CartItem.builder().id(1L).cart(cart).product(product1).quantity(2).build();
-    var item2 = CartItem.builder().id(2L).cart(cart).product(product2).quantity(3).build();
+    var cart = CartEntity.builder().id(1L).sessionId("sess-1").items(new ArrayList<>()).build();
+    var item1 = CartItemEntity.builder().id(1L).cart(cart).product(product1).quantity(2).build();
+    var item2 = CartItemEntity.builder().id(2L).cart(cart).product(product2).quantity(3).build();
     cart.setItems(List.of(item1, item2));
 
     // when
@@ -72,14 +72,14 @@ class CartMapperTest {
   void shouldCalculateSubtotalForCartItemResponse() {
     // given
     var product =
-        Product.builder()
+        ProductEntity.builder()
             .id(1L)
             .name("Shoes")
             .price(new BigDecimal("29.99"))
             .imageUrl("shoes.png")
             .build();
-    var cart = Cart.builder().id(1L).sessionId("sess-2").items(new ArrayList<>()).build();
-    var item = CartItem.builder().id(1L).cart(cart).product(product).quantity(3).build();
+    var cart = CartEntity.builder().id(1L).sessionId("sess-2").items(new ArrayList<>()).build();
+    var item = CartItemEntity.builder().id(1L).cart(cart).product(product).quantity(3).build();
 
     // when
     var response = mapper.toCartItemResponse(item);
@@ -97,7 +97,7 @@ class CartMapperTest {
   @Test
   void shouldMapEmptyCartToResponseWithZeroTotals() {
     // given
-    var cart = Cart.builder().id(1L).sessionId("sess-3").items(new ArrayList<>()).build();
+    var cart = CartEntity.builder().id(1L).sessionId("sess-3").items(new ArrayList<>()).build();
 
     // when
     var response = mapper.toResponse(cart);
@@ -114,14 +114,14 @@ class CartMapperTest {
   void shouldMapCartItemProductFields() {
     // given
     var product =
-        Product.builder()
+        ProductEntity.builder()
             .id(42L)
             .name("Bluetooth Speaker")
             .price(new BigDecimal("59.99"))
             .imageUrl("https://example.com/speaker.png")
             .build();
-    var cart = Cart.builder().id(1L).sessionId("sess-4").items(new ArrayList<>()).build();
-    var item = CartItem.builder().id(1L).cart(cart).product(product).quantity(1).build();
+    var cart = CartEntity.builder().id(1L).sessionId("sess-4").items(new ArrayList<>()).build();
+    var item = CartItemEntity.builder().id(1L).cart(cart).product(product).quantity(1).build();
 
     // when
     var response = mapper.toCartItemResponse(item);
@@ -140,14 +140,14 @@ class CartMapperTest {
   void shouldHandleSingleItemCart() {
     // given
     var product =
-        Product.builder()
+        ProductEntity.builder()
             .id(1L)
             .name("Book")
             .price(new BigDecimal("15.00"))
             .imageUrl("book.png")
             .build();
-    var cart = Cart.builder().id(1L).sessionId("sess-5").items(new ArrayList<>()).build();
-    var item = CartItem.builder().id(1L).cart(cart).product(product).quantity(1).build();
+    var cart = CartEntity.builder().id(1L).sessionId("sess-5").items(new ArrayList<>()).build();
+    var item = CartItemEntity.builder().id(1L).cart(cart).product(product).quantity(1).build();
     cart.setItems(List.of(item));
 
     // when
@@ -173,9 +173,9 @@ class CartMapperTest {
 
   @Test
   void shouldThrowNullPointerWhenCartItemHasNullProduct() {
-    // given — CartItem with null product documents current NPE behavior
-    var cart = Cart.builder().id(1L).sessionId("sess-npe").items(new ArrayList<>()).build();
-    var item = CartItem.builder().id(1L).cart(cart).product(null).quantity(1).build();
+    // given — CartItemEntity with null product documents current NPE behavior
+    var cart = CartEntity.builder().id(1L).sessionId("sess-npe").items(new ArrayList<>()).build();
+    var item = CartItemEntity.builder().id(1L).cart(cart).product(null).quantity(1).build();
     cart.setItems(List.of(item));
 
     // when/then

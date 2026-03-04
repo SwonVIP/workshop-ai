@@ -1,12 +1,12 @@
 package ch.migrosonline.workshop.repository;
 
-import ch.migrosonline.workshop.entity.Cart;
+import ch.migrosonline.workshop.entity.CartEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CartRepository extends JpaRepository<Cart, Long> {
+public interface CartRepository extends JpaRepository<CartEntity, Long> {
 
   @EntityGraph(attributePaths = {"items", "items.product"})
-  Optional<Cart> findBySessionId(String sessionId);
+  Optional<CartEntity> findBySessionId(String sessionId);
 }

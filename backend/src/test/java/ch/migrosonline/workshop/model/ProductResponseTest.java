@@ -3,10 +3,10 @@ package ch.migrosonline.workshop.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import ch.migrosonline.workshop.entity.Category;
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.CategoryEntity;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 class ProductResponseTest {
@@ -14,16 +14,17 @@ class ProductResponseTest {
   @Test
   void shouldMapProductEntityToResponseWithCategory() {
     // given
-    var category = Category.builder().id(1L).name("Electronics").description("Gadgets").build();
+    var category =
+        CategoryEntity.builder().id(1L).name("Electronics").description("Gadgets").build();
     var entity =
-        Product.builder()
+        ProductEntity.builder()
             .id(10L)
             .name("Wireless Headphones")
             .description("Noise cancelling")
             .price(new BigDecimal("89.99"))
             .imageUrl("https://placehold.co/400x300?text=Headphones")
             .category(category)
-            .createdAt(LocalDateTime.of(2026, 3, 3, 9, 0))
+            .createdAt(Instant.parse("2026-03-03T09:00:00Z"))
             .build();
 
     // when
@@ -43,9 +44,9 @@ class ProductResponseTest {
   @Test
   void shouldHandleNullOptionalFields() {
     // given
-    var category = Category.builder().id(1L).name("Books").description(null).build();
+    var category = CategoryEntity.builder().id(1L).name("Books").description(null).build();
     var entity =
-        Product.builder()
+        ProductEntity.builder()
             .id(20L)
             .name("Clean Code")
             .description(null)
@@ -67,14 +68,14 @@ class ProductResponseTest {
   void shouldThrowNullPointerExceptionWhenCategoryIsNull() {
     // given — product with null category
     var entity =
-        Product.builder()
+        ProductEntity.builder()
             .id(30L)
-            .name("Orphan Product")
+            .name("Orphan ProductEntity")
             .description("No category")
             .price(new BigDecimal("9.99"))
             .imageUrl(null)
             .category(null)
-            .createdAt(LocalDateTime.now())
+            .createdAt(Instant.now())
             .build();
 
     // when/then — NPE because CategoryResponse.from() calls entity.getCategory().getId()
@@ -84,16 +85,16 @@ class ProductResponseTest {
   @Test
   void shouldMapProductWithZeroPrice() {
     // given
-    var category = Category.builder().id(1L).name("Free").description("Free items").build();
+    var category = CategoryEntity.builder().id(1L).name("Free").description("Free items").build();
     var entity =
-        Product.builder()
+        ProductEntity.builder()
             .id(40L)
             .name("Free Sample")
             .description("Complimentary")
             .price(BigDecimal.ZERO)
             .imageUrl(null)
             .category(category)
-            .createdAt(LocalDateTime.now())
+            .createdAt(Instant.now())
             .build();
 
     // when
@@ -106,9 +107,9 @@ class ProductResponseTest {
   @Test
   void shouldMapProductWithNullId() {
     // given — unsaved entity with null id
-    var category = Category.builder().id(1L).name("Books").description("Reading").build();
+    var category = CategoryEntity.builder().id(1L).name("Books").description("Reading").build();
     var entity =
-        Product.builder()
+        ProductEntity.builder()
             .id(null)
             .name("Draft Book")
             .description("Unpublished")

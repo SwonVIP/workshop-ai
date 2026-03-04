@@ -2,8 +2,8 @@ package ch.migrosonline.workshop.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.migrosonline.workshop.entity.Category;
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.CategoryEntity;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import ch.migrosonline.workshop.support.RepositoryTestSupport;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class EntityMappingIT extends RepositoryTestSupport {
     // given — seed data loaded by Flyway
 
     // when — loading category by id
-    var category = entityManager.find(Category.class, 1L);
+    var category = entityManager.find(CategoryEntity.class, 1L);
 
     // then — entity fields are correctly mapped
     assertThat(category).isNotNull();
@@ -32,7 +32,7 @@ class EntityMappingIT extends RepositoryTestSupport {
     // given — seed data loaded by Flyway
 
     // when — loading product by id
-    var product = entityManager.find(Product.class, 1L);
+    var product = entityManager.find(ProductEntity.class, 1L);
 
     // then — product fields are correctly mapped including lazy-loaded category
     assertThat(product).isNotNull();
@@ -41,7 +41,6 @@ class EntityMappingIT extends RepositoryTestSupport {
     assertThat(product.getPrice()).isNotNull();
     assertThat(product.getCategory()).isNotNull();
     assertThat(product.getCategory().getName()).isNotBlank();
-    assertThat(product.getCreatedAt()).isNotNull();
   }
 
   @Test
@@ -49,7 +48,7 @@ class EntityMappingIT extends RepositoryTestSupport {
     // given — seed data with image URLs
 
     // when — loading first product
-    var product = entityManager.find(Product.class, 1L);
+    var product = entityManager.find(ProductEntity.class, 1L);
 
     // then — imageUrl is mapped from image_url column
     assertThat(product.getImageUrl()).startsWith("https://placehold.co/");

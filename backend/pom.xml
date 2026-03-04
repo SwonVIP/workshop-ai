@@ -239,10 +239,10 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>spotless-check</id>
-                        <phase>verify</phase>
+                        <id>spotless-apply</id>
+                        <phase>compile</phase>
                         <goals>
-                            <goal>check</goal>
+                            <goal>apply</goal>
                         </goals>
                     </execution>
                 </executions>

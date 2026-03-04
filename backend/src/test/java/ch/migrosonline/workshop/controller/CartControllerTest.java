@@ -27,53 +27,37 @@ class CartControllerTest extends ControllerTestSupport {
   @MockitoBean private CartService cartService;
 
   private static final String SESSION_ID = "550e8400-e29b-41d4-a716-446655440000";
-  private static final String SESSION_HEADER = "X-Cart-Session";
+  private static final String SESSION_HEADER = "X-CartEntity-Session";
 
   @Test
-  void shouldReturnCartWhenValidSessionHeaderProvided() throws Exception {
+  void shouldReturnCartWhenValidSessionHeaderProvided() {
     // given
     var cartResponse = new CartResponse(1L, SESSION_ID, List.of(), 0, BigDecimal.ZERO);
     when(cartService.getCart(SESSION_ID)).thenReturn(cartResponse);
 
-    // when/then
-    assertThat(mvc.get().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("sessionId")
-        .isEqualTo(SESSION_ID);
-    assertThat(mvc.get().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("id")
-        .isEqualTo(1);
-    assertThat(mvc.get().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("totalItems")
-        .isEqualTo(0);
-    assertThat(mvc.get().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("totalPrice")
-        .isEqualTo(0);
-    assertThat(mvc.get().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("items")
-        .asList()
-        .isEmpty();
+    // when
+    var result = mvc.get().uri("/api/cart").header(SESSION_HEADER, SESSION_ID).exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("sessionId").isEqualTo(SESSION_ID);
+    assertThat(result).bodyJson().extractingPath("id").isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("totalItems").isEqualTo(0);
+    assertThat(result).bodyJson().extractingPath("totalPrice").isEqualTo(0);
+    assertThat(result).bodyJson().extractingPath("items").asList().isEmpty();
   }
 
   @Test
   void shouldReturn400WhenSessionHeaderMissing() {
-    // given — no X-Cart-Session header
+    // given — no X-CartEntity-Session header
 
-    // when/then
-    assertThat(mvc.get().uri("/api/cart"))
-        .hasStatus(HttpStatus.BAD_REQUEST)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(400);
-    assertThat(mvc.get().uri("/api/cart"))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Bad Request");
+    // when
+    var result = mvc.get().uri("/api/cart").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Bad Request");
   }
 
   @Test
@@ -81,9 +65,11 @@ class CartControllerTest extends ControllerTestSupport {
     // given — an invalid (non-UUID) session ID
     var invalidSessionId = "not-a-valid-uuid";
 
-    // when/then
-    assertThat(mvc.get().uri("/api/cart").header(SESSION_HEADER, invalidSessionId))
-        .hasStatus(HttpStatus.BAD_REQUEST);
+    // when
+    var result = mvc.get().uri("/api/cart").header(SESSION_HEADER, invalidSessionId).exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
   }
 
   @Test
@@ -93,44 +79,21 @@ class CartControllerTest extends ControllerTestSupport {
     when(cartService.addItem(eq(SESSION_ID), any(AddToCartRequest.class))).thenReturn(cartResponse);
     var requestBody = jsonMapper.writeValueAsString(new AddToCartRequest(10L, 1));
 
-    // when/then
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.CREATED)
-        .bodyJson()
-        .extractingPath("totalItems")
-        .isEqualTo(1);
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("sessionId")
-        .isEqualTo(SESSION_ID);
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("totalPrice")
-        .isEqualTo(89.99);
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("id")
-        .isEqualTo(1);
+    // when
+    var result =
+        mvc.post()
+            .uri("/api/cart/items")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.CREATED);
+    assertThat(result).bodyJson().extractingPath("id").isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("sessionId").isEqualTo(SESSION_ID);
+    assertThat(result).bodyJson().extractingPath("totalItems").isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("totalPrice").isEqualTo(89.99);
   }
 
   @Test
@@ -138,26 +101,19 @@ class CartControllerTest extends ControllerTestSupport {
     // given
     var requestBody = "{\"quantity\": 2}";
 
-    // when/then
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.BAD_REQUEST)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(400);
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Validation Failed");
+    // when
+    var result =
+        mvc.post()
+            .uri("/api/cart/items")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
@@ -165,26 +121,19 @@ class CartControllerTest extends ControllerTestSupport {
     // given
     var requestBody = jsonMapper.writeValueAsString(new AddToCartRequest(1L, 0));
 
-    // when/then
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.BAD_REQUEST)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(400);
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Validation Failed");
+    // when
+    var result =
+        mvc.post()
+            .uri("/api/cart/items")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
@@ -192,26 +141,19 @@ class CartControllerTest extends ControllerTestSupport {
     // given
     var requestBody = jsonMapper.writeValueAsString(new AddToCartRequest(1L, -1));
 
-    // when/then
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.BAD_REQUEST)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(400);
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Validation Failed");
+    // when
+    var result =
+        mvc.post()
+            .uri("/api/cart/items")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
@@ -221,32 +163,20 @@ class CartControllerTest extends ControllerTestSupport {
         .thenThrow(new ResourceNotFoundException("Product not found with id: 999"));
     var requestBody = jsonMapper.writeValueAsString(new AddToCartRequest(999L, 1));
 
-    // when/then
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.NOT_FOUND)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(404);
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Not Found");
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+    // when
+    var result =
+        mvc.post()
+            .uri("/api/cart/items")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(404);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Not Found");
+    assertThat(result)
         .bodyJson()
         .extractingPath("message")
         .isEqualTo("Product not found with id: 999");
@@ -260,44 +190,21 @@ class CartControllerTest extends ControllerTestSupport {
         .thenReturn(cartResponse);
     var requestBody = jsonMapper.writeValueAsString(new UpdateCartItemRequest(5));
 
-    // when/then
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/10")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("totalItems")
-        .isEqualTo(5);
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/10")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("sessionId")
-        .isEqualTo(SESSION_ID);
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/10")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("totalPrice")
-        .isEqualTo(449.95);
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/10")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("id")
-        .isEqualTo(1);
+    // when
+    var result =
+        mvc.put()
+            .uri("/api/cart/items/10")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("id").isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("sessionId").isEqualTo(SESSION_ID);
+    assertThat(result).bodyJson().extractingPath("totalItems").isEqualTo(5);
+    assertThat(result).bodyJson().extractingPath("totalPrice").isEqualTo(449.95);
   }
 
   @Test
@@ -305,10 +212,12 @@ class CartControllerTest extends ControllerTestSupport {
     // given
     doNothing().when(cartService).removeItem(SESSION_ID, 10L);
 
-    // when/then
-    assertThat(mvc.delete().uri("/api/cart/items/10").header(SESSION_HEADER, SESSION_ID))
-        .hasStatus(HttpStatus.NO_CONTENT)
-        .hasBodyTextEqualTo("");
+    // when
+    var result =
+        mvc.delete().uri("/api/cart/items/10").header(SESSION_HEADER, SESSION_ID).exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.NO_CONTENT).hasBodyTextEqualTo("");
   }
 
   @Test
@@ -318,23 +227,19 @@ class CartControllerTest extends ControllerTestSupport {
         .thenThrow(new ResourceNotFoundException("Cart item not found with id: 999"));
     var requestBody = jsonMapper.writeValueAsString(new UpdateCartItemRequest(3));
 
-    // when/then
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/999")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.NOT_FOUND)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(404);
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/999")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+    // when
+    var result =
+        mvc.put()
+            .uri("/api/cart/items/999")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(404);
+    assertThat(result)
         .bodyJson()
         .extractingPath("message")
         .isEqualTo("Cart item not found with id: 999");
@@ -347,13 +252,14 @@ class CartControllerTest extends ControllerTestSupport {
         .when(cartService)
         .removeItem(SESSION_ID, 999L);
 
-    // when/then
-    assertThat(mvc.delete().uri("/api/cart/items/999").header(SESSION_HEADER, SESSION_ID))
-        .hasStatus(HttpStatus.NOT_FOUND)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(404);
-    assertThat(mvc.delete().uri("/api/cart/items/999").header(SESSION_HEADER, SESSION_ID))
+    // when
+    var result =
+        mvc.delete().uri("/api/cart/items/999").header(SESSION_HEADER, SESSION_ID).exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(404);
+    assertThat(result)
         .bodyJson()
         .extractingPath("message")
         .isEqualTo("Cart item not found with id: 999");
@@ -364,26 +270,19 @@ class CartControllerTest extends ControllerTestSupport {
     // given
     var requestBody = jsonMapper.writeValueAsString(new UpdateCartItemRequest(0));
 
-    // when/then
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/10")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.BAD_REQUEST)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(400);
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/10")
-                .header(SESSION_HEADER, SESSION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Validation Failed");
+    // when
+    var result =
+        mvc.put()
+            .uri("/api/cart/items/10")
+            .header(SESSION_HEADER, SESSION_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Validation Failed");
   }
 
   @Test
@@ -392,29 +291,16 @@ class CartControllerTest extends ControllerTestSupport {
     var cartResponse = new CartResponse(1L, SESSION_ID, List.of(), 0, BigDecimal.ZERO);
     when(cartService.clearCart(SESSION_ID)).thenReturn(cartResponse);
 
-    // when/then
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .hasStatusOk()
-        .bodyJson()
-        .extractingPath("totalItems")
-        .isEqualTo(0);
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("sessionId")
-        .isEqualTo(SESSION_ID);
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("totalPrice")
-        .isEqualTo(0);
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("items")
-        .asList()
-        .isEmpty();
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .bodyJson()
-        .extractingPath("id")
-        .isEqualTo(1);
+    // when
+    var result = mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID).exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("id").isEqualTo(1);
+    assertThat(result).bodyJson().extractingPath("sessionId").isEqualTo(SESSION_ID);
+    assertThat(result).bodyJson().extractingPath("totalItems").isEqualTo(0);
+    assertThat(result).bodyJson().extractingPath("totalPrice").isEqualTo(0);
+    assertThat(result).bodyJson().extractingPath("items").asList().isEmpty();
   }
 
   @Test
@@ -423,13 +309,13 @@ class CartControllerTest extends ControllerTestSupport {
     when(cartService.clearCart(SESSION_ID))
         .thenThrow(new ResourceNotFoundException("Cart not found for session: " + SESSION_ID));
 
-    // when/then
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
-        .hasStatus(HttpStatus.NOT_FOUND)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(404);
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID))
+    // when
+    var result = mvc.delete().uri("/api/cart").header(SESSION_HEADER, SESSION_ID).exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(404);
+    assertThat(result)
         .bodyJson()
         .extractingPath("message")
         .isEqualTo("Cart not found for session: " + SESSION_ID);
@@ -437,18 +323,15 @@ class CartControllerTest extends ControllerTestSupport {
 
   @Test
   void shouldReturn400WhenClearCartMissingSessionHeader() {
-    // given — no X-Cart-Session header
+    // given — no X-CartEntity-Session header
 
-    // when/then
-    assertThat(mvc.delete().uri("/api/cart"))
-        .hasStatus(HttpStatus.BAD_REQUEST)
-        .bodyJson()
-        .extractingPath("status")
-        .isEqualTo(400);
-    assertThat(mvc.delete().uri("/api/cart"))
-        .bodyJson()
-        .extractingPath("error")
-        .isEqualTo("Bad Request");
+    // when
+    var result = mvc.delete().uri("/api/cart").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+    assertThat(result).bodyJson().extractingPath("status").isEqualTo(400);
+    assertThat(result).bodyJson().extractingPath("error").isEqualTo("Bad Request");
   }
 
   @Test
@@ -456,14 +339,17 @@ class CartControllerTest extends ControllerTestSupport {
     // given
     var requestBody = jsonMapper.writeValueAsString(new AddToCartRequest(1L, 1));
 
-    // when/then
-    assertThat(
-            mvc.post()
-                .uri("/api/cart/items")
-                .header(SESSION_HEADER, "not-a-uuid")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.BAD_REQUEST);
+    // when
+    var result =
+        mvc.post()
+            .uri("/api/cart/items")
+            .header(SESSION_HEADER, "not-a-uuid")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
   }
 
   @Test
@@ -471,27 +357,35 @@ class CartControllerTest extends ControllerTestSupport {
     // given
     var requestBody = jsonMapper.writeValueAsString(new UpdateCartItemRequest(3));
 
-    // when/then
-    assertThat(
-            mvc.put()
-                .uri("/api/cart/items/1")
-                .header(SESSION_HEADER, "not-a-uuid")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-        .hasStatus(HttpStatus.BAD_REQUEST);
+    // when
+    var result =
+        mvc.put()
+            .uri("/api/cart/items/1")
+            .header(SESSION_HEADER, "not-a-uuid")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+            .exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
   }
 
   @Test
   void shouldReturn400WhenInvalidUuidOnRemoveItem() {
-    // when/then
-    assertThat(mvc.delete().uri("/api/cart/items/1").header(SESSION_HEADER, "not-a-uuid"))
-        .hasStatus(HttpStatus.BAD_REQUEST);
+    // when
+    var result =
+        mvc.delete().uri("/api/cart/items/1").header(SESSION_HEADER, "not-a-uuid").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
   }
 
   @Test
   void shouldReturn400WhenInvalidUuidOnClearCart() {
-    // when/then
-    assertThat(mvc.delete().uri("/api/cart").header(SESSION_HEADER, "not-a-uuid"))
-        .hasStatus(HttpStatus.BAD_REQUEST);
+    // when
+    var result = mvc.delete().uri("/api/cart").header(SESSION_HEADER, "not-a-uuid").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
   }
 }

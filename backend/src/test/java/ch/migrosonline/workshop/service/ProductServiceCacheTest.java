@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import ch.migrosonline.workshop.config.CacheConfig;
-import ch.migrosonline.workshop.entity.Category;
+import ch.migrosonline.workshop.entity.CategoryEntity;
 import ch.migrosonline.workshop.model.CategoryResponse;
 import ch.migrosonline.workshop.repository.CategoryRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
@@ -31,10 +31,14 @@ class ProductServiceCacheTest {
   @Autowired private ProductService productService;
   @Autowired private CacheManager cacheManager;
 
-  private final List<Category> sampleCategories =
+  private final List<CategoryEntity> sampleCategories =
       List.of(
-          Category.builder().id(1L).name("Electronics").description("Electronic devices").build(),
-          Category.builder().id(2L).name("Sports").description("Sports equipment").build());
+          CategoryEntity.builder()
+              .id(1L)
+              .name("Electronics")
+              .description("Electronic devices")
+              .build(),
+          CategoryEntity.builder().id(2L).name("Sports").description("Sports equipment").build());
 
   @BeforeEach
   void setUp() {
@@ -95,11 +99,15 @@ class ProductServiceCacheTest {
     assertThat(initial).hasSize(2);
 
     // when — data changes and cache is cleared
-    List<Category> updatedCategories =
+    List<CategoryEntity> updatedCategories =
         List.of(
-            Category.builder().id(1L).name("Electronics").description("Electronic devices").build(),
-            Category.builder().id(2L).name("Sports").description("Sports equipment").build(),
-            Category.builder().id(3L).name("Books").description("Books and media").build());
+            CategoryEntity.builder()
+                .id(1L)
+                .name("Electronics")
+                .description("Electronic devices")
+                .build(),
+            CategoryEntity.builder().id(2L).name("Sports").description("Sports equipment").build(),
+            CategoryEntity.builder().id(3L).name("Books").description("Books and media").build());
     when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(updatedCategories);
     cacheManager.getCache(CATEGORIES_CACHE).clear();
 

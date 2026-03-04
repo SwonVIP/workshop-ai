@@ -2,7 +2,7 @@ package ch.migrosonline.workshop.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import ch.migrosonline.workshop.support.RepositoryTestSupport;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
@@ -193,7 +193,7 @@ class ProductRepositoryIT extends RepositoryTestSupport {
 
     // then
     assertThat(page.getContent()).hasSizeGreaterThan(1);
-    assertThat(page.getContent()).extracting(Product::getPrice).isSorted();
+    assertThat(page.getContent()).extracting(ProductEntity::getPrice).isSorted();
   }
 
   @Test
@@ -265,7 +265,7 @@ class ProductRepositoryIT extends RepositoryTestSupport {
   @Test
   void shouldReturnAllProductsWhenAllSpecsAreUnrestricted() {
     // given
-    Specification<Product> spec =
+    Specification<ProductEntity> spec =
         Specification.where(ProductSpecs.hasCategory(null))
             .and(ProductSpecs.nameContains(null))
             .and(ProductSpecs.priceAtLeast(null))

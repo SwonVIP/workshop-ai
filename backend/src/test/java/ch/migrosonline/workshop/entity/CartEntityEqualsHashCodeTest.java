@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-class CartEqualsHashCodeTest {
+class CartEntityEqualsHashCodeTest {
 
   @Test
   void shouldConsiderTwoCartsWithSameSessionAsTheSameCart() {
     // given — two cart instances for the same browser session
-    var cart1 = Cart.builder().id(1L).sessionId("abc-123").build();
-    var cart2 = Cart.builder().id(2L).sessionId("abc-123").build();
+    var cart1 = CartEntity.builder().id(1L).sessionId("abc-123").build();
+    var cart2 = CartEntity.builder().id(2L).sessionId("abc-123").build();
 
     // then — same session means same cart
     assertThat(cart1).isEqualTo(cart2);
@@ -20,8 +20,8 @@ class CartEqualsHashCodeTest {
   @Test
   void shouldConsiderCartsFromDifferentSessionsAsDifferentCarts() {
     // given — two different browser sessions
-    var cart1 = Cart.builder().id(1L).sessionId("session-alice").build();
-    var cart2 = Cart.builder().id(2L).sessionId("session-bob").build();
+    var cart1 = CartEntity.builder().id(1L).sessionId("session-alice").build();
+    var cart2 = CartEntity.builder().id(2L).sessionId("session-bob").build();
 
     // then
     assertThat(cart1).isNotEqualTo(cart2);
@@ -31,7 +31,7 @@ class CartEqualsHashCodeTest {
   @Test
   void shouldNotMatchCartWithNull() {
     // given
-    var cart = Cart.builder().sessionId("abc-123").build();
+    var cart = CartEntity.builder().sessionId("abc-123").build();
 
     // then
     assertThat(cart).isNotEqualTo(null);
@@ -40,7 +40,7 @@ class CartEqualsHashCodeTest {
   @Test
   void shouldNotMatchCartWithDifferentObjectType() {
     // given
-    var cart = Cart.builder().sessionId("abc-123").build();
+    var cart = CartEntity.builder().sessionId("abc-123").build();
 
     // then
     assertThat(cart.equals("abc-123")).isFalse();
@@ -49,8 +49,8 @@ class CartEqualsHashCodeTest {
   @Test
   void shouldNotMatchWhenSessionIdIsNull() {
     // given — a cart not yet assigned to a session
-    var unassigned = Cart.builder().id(1L).sessionId(null).build();
-    var assigned = Cart.builder().id(2L).sessionId("abc-123").build();
+    var unassigned = CartEntity.builder().id(1L).sessionId(null).build();
+    var assigned = CartEntity.builder().id(2L).sessionId("abc-123").build();
 
     // then
     assertThat(unassigned).isNotEqualTo(assigned);

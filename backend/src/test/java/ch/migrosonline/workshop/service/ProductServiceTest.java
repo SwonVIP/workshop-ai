@@ -7,13 +7,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ch.migrosonline.workshop.entity.Category;
-import ch.migrosonline.workshop.entity.Product;
+import ch.migrosonline.workshop.entity.CategoryEntity;
+import ch.migrosonline.workshop.entity.ProductEntity;
 import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.repository.CategoryRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,21 +40,22 @@ class ProductServiceTest {
 
   @InjectMocks private ProductService productService;
 
-  @Captor private ArgumentCaptor<Specification<Product>> specCaptor;
+  @Captor private ArgumentCaptor<Specification<ProductEntity>> specCaptor;
 
   @Test
   void shouldReturnPaginatedProductsWhenNoFiltersApplied() {
     // given
-    var category = Category.builder().id(1L).name("Electronics").description("Gadgets").build();
+    var category =
+        CategoryEntity.builder().id(1L).name("Electronics").description("Gadgets").build();
     var product =
-        Product.builder()
+        ProductEntity.builder()
             .id(1L)
             .name("Headphones")
             .description("Wireless")
             .price(new BigDecimal("89.99"))
             .imageUrl("https://placehold.co/400x300?text=Headphones")
             .category(category)
-            .createdAt(LocalDateTime.now())
+            .createdAt(Instant.now())
             .build();
     var pageable = PageRequest.of(0, 12);
     var page = new PageImpl<>(List.of(product), pageable, 1);
@@ -81,16 +82,17 @@ class ProductServiceTest {
   @Test
   void shouldReturnProductByIdWhenExists() {
     // given
-    var category = Category.builder().id(1L).name("Electronics").description("Gadgets").build();
+    var category =
+        CategoryEntity.builder().id(1L).name("Electronics").description("Gadgets").build();
     var product =
-        Product.builder()
+        ProductEntity.builder()
             .id(42L)
             .name("Smart Watch")
             .description("Fitness tracker")
             .price(new BigDecimal("199.99"))
             .imageUrl("https://placehold.co/400x300?text=Smart+Watch")
             .category(category)
-            .createdAt(LocalDateTime.now())
+            .createdAt(Instant.now())
             .build();
     when(productRepository.findById(42L)).thenReturn(Optional.of(product));
 
@@ -124,8 +126,8 @@ class ProductServiceTest {
     // given
     var categories =
         List.of(
-            Category.builder().id(4L).name("Books").description("Reading").build(),
-            Category.builder().id(1L).name("Electronics").description("Gadgets").build());
+            CategoryEntity.builder().id(4L).name("Books").description("Reading").build(),
+            CategoryEntity.builder().id(1L).name("Electronics").description("Gadgets").build());
     when(categoryRepository.findAllByOrderByNameAsc()).thenReturn(categories);
 
     // when
@@ -171,16 +173,17 @@ class ProductServiceTest {
   @Test
   void shouldComposeAllFiltersWhenAllParametersProvided() {
     // given
-    var category = Category.builder().id(1L).name("Electronics").description("Gadgets").build();
+    var category =
+        CategoryEntity.builder().id(1L).name("Electronics").description("Gadgets").build();
     var product =
-        Product.builder()
+        ProductEntity.builder()
             .id(1L)
             .name("Headphones")
             .description("Wireless")
             .price(new BigDecimal("89.99"))
             .imageUrl("https://placehold.co/400x300?text=Headphones")
             .category(category)
-            .createdAt(LocalDateTime.now())
+            .createdAt(Instant.now())
             .build();
     var pageable = PageRequest.of(0, 10);
     when(productRepository.findAll(specCaptor.capture(), eq(pageable)))

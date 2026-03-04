@@ -4,13 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-class CategoryEqualsHashCodeTest {
+class CategoryEntityEqualsHashCodeTest {
 
   @Test
   void shouldConsiderTwoCategoriesWithSameNameAsTheSameCategory() {
     // given — two category instances loaded from different queries but same business name
-    var electronics1 = Category.builder().id(1L).name("Electronics").description("v1").build();
-    var electronics2 = Category.builder().id(2L).name("Electronics").description("v2").build();
+    var electronics1 =
+        CategoryEntity.builder().id(1L).name("Electronics").description("v1").build();
+    var electronics2 =
+        CategoryEntity.builder().id(2L).name("Electronics").description("v2").build();
 
     // then — they represent the same category
     assertThat(electronics1).isEqualTo(electronics2);
@@ -20,8 +22,8 @@ class CategoryEqualsHashCodeTest {
   @Test
   void shouldConsiderCategoriesWithDifferentNamesAsDifferentCategories() {
     // given
-    var electronics = Category.builder().id(1L).name("Electronics").build();
-    var clothing = Category.builder().id(2L).name("Clothing").build();
+    var electronics = CategoryEntity.builder().id(1L).name("Electronics").build();
+    var clothing = CategoryEntity.builder().id(2L).name("Clothing").build();
 
     // then
     assertThat(electronics).isNotEqualTo(clothing);
@@ -31,7 +33,7 @@ class CategoryEqualsHashCodeTest {
   @Test
   void shouldNotMatchCategoryWithNull() {
     // given
-    var electronics = Category.builder().id(1L).name("Electronics").build();
+    var electronics = CategoryEntity.builder().id(1L).name("Electronics").build();
 
     // then
     assertThat(electronics).isNotEqualTo(null);
@@ -40,7 +42,7 @@ class CategoryEqualsHashCodeTest {
   @Test
   void shouldNotMatchCategoryWithDifferentObjectType() {
     // given
-    var electronics = Category.builder().id(1L).name("Electronics").build();
+    var electronics = CategoryEntity.builder().id(1L).name("Electronics").build();
 
     // then
     assertThat(electronics.equals("Electronics")).isFalse();
@@ -49,8 +51,8 @@ class CategoryEqualsHashCodeTest {
   @Test
   void shouldNotMatchWhenCategoryNameIsNull() {
     // given — a transient category not yet persisted with no name
-    var transient1 = Category.builder().id(null).name(null).build();
-    var electronics = Category.builder().id(1L).name("Electronics").build();
+    var transient1 = CategoryEntity.builder().id(null).name(null).build();
+    var electronics = CategoryEntity.builder().id(1L).name("Electronics").build();
 
     // then — unknown category does not match any named category
     assertThat(transient1).isNotEqualTo(electronics);

@@ -1,10 +1,10 @@
 package ch.migrosonline.workshop.repository;
 
-import ch.migrosonline.workshop.entity.CartItem;
+import ch.migrosonline.workshop.entity.CartItemEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CartItemRepository extends JpaRepository<CartItem, Long> {
+public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> {
 
-  Optional<CartItem> findByCartIdAndProductId(Long cartId, Long productId);
+  Optional<CartItemEntity> findByCartIdAndProductId(Long cartId, Long productId);
 }
