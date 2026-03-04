@@ -81,8 +81,8 @@ mvn spotless:apply          # Auto-fix
 # Static analysis (Checkstyle — severity: error)
 mvn checkstyle:check
 
-# Mutation testing (PIT — incompatible with JDK 25, needs JDK 21 override)
-JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn org.pitest:pitest-maven:mutationCoverage
+# Mutation testing (PIT)
+mvn initialize pitest:mutationCoverage
 ```
 
 ## Architecture
