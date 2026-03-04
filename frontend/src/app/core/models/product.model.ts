@@ -13,8 +13,8 @@ export interface Product {
   category: Category;
 }
 
-export interface ProductPage {
-  content: Product[];
+export interface PaginatedResponse<T> {
+  content: T[];
   totalElements: number;
   totalPages: number;
   size: number;
@@ -29,7 +29,5 @@ export interface ProductFilter {
   minPrice?: number;
   maxPrice?: number;
   sort?: string;
-  direction?: string;
-  page?: number;
-  size?: number;
+  direction?: 'asc' | 'desc';
 }
