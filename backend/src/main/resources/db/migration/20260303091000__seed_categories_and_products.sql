@@ -1,0 +1,76 @@
+-- Categories
+insert into category (name, description) values ('Electronics', 'Gadgets, devices, and electronic accessories')
+insert into category (name, description) values ('Clothing', 'Apparel and fashion items for all occasions')
+insert into category (name, description) values ('Home & Garden', 'Furniture, decor, and garden essentials')
+insert into category (name, description) values ('Books', 'Fiction, non-fiction, and educational reading')
+insert into category (name, description) values ('Sports & Outdoors', 'Equipment and gear for sports and outdoor activities')
+insert into category (name, description) values ('Food & Beverages', 'Gourmet food, snacks, and drinks')
+go
+
+-- Electronics (category_id = 1)
+insert into product (name, description, price, image_url, category_id) values ('Wireless Bluetooth Headphones', 'Premium noise-cancelling over-ear headphones with 30h battery', 89.99, 'https://placehold.co/400x300?text=Wireless+Bluetooth+Headphones', 1)
+insert into product (name, description, price, image_url, category_id) values ('USB-C Charging Hub', 'Multi-port charging station with 6 USB-C ports and fast charging', 49.99, 'https://placehold.co/400x300?text=USB-C+Charging+Hub', 1)
+insert into product (name, description, price, image_url, category_id) values ('Portable Power Bank', '20000mAh portable charger with dual USB output', 39.99, 'https://placehold.co/400x300?text=Portable+Power+Bank', 1)
+insert into product (name, description, price, image_url, category_id) values ('Smart LED Desk Lamp', 'Adjustable brightness desk lamp with wireless charging base', 59.99, 'https://placehold.co/400x300?text=Smart+LED+Desk+Lamp', 1)
+insert into product (name, description, price, image_url, category_id) values ('Mechanical Keyboard', 'RGB backlit mechanical keyboard with Cherry MX switches', 129.99, 'https://placehold.co/400x300?text=Mechanical+Keyboard', 1)
+insert into product (name, description, price, image_url, category_id) values ('Wireless Mouse', 'Ergonomic wireless mouse with adjustable DPI', 34.99, 'https://placehold.co/400x300?text=Wireless+Mouse', 1)
+insert into product (name, description, price, image_url, category_id) values ('4K Webcam', 'Ultra HD webcam with auto-focus and built-in microphone', 79.99, 'https://placehold.co/400x300?text=4K+Webcam', 1)
+insert into product (name, description, price, image_url, category_id) values ('Noise Cancelling Earbuds', 'True wireless earbuds with active noise cancellation', 149.99, 'https://placehold.co/400x300?text=Noise+Cancelling+Earbuds', 1)
+insert into product (name, description, price, image_url, category_id) values ('Smart Watch', 'Fitness tracker with heart rate monitor and GPS', 199.99, 'https://placehold.co/400x300?text=Smart+Watch', 1)
+go
+
+-- Clothing (category_id = 2)
+insert into product (name, description, price, image_url, category_id) values ('Merino Wool Sweater', 'Soft and warm merino wool crew neck sweater', 79.99, 'https://placehold.co/400x300?text=Merino+Wool+Sweater', 2)
+insert into product (name, description, price, image_url, category_id) values ('Cotton T-Shirt', 'Premium organic cotton t-shirt in classic fit', 24.99, 'https://placehold.co/400x300?text=Cotton+T-Shirt', 2)
+insert into product (name, description, price, image_url, category_id) values ('Denim Jeans', 'Slim fit stretch denim jeans in dark wash', 69.99, 'https://placehold.co/400x300?text=Denim+Jeans', 2)
+insert into product (name, description, price, image_url, category_id) values ('Rain Jacket', 'Waterproof breathable rain jacket with hood', 129.99, 'https://placehold.co/400x300?text=Rain+Jacket', 2)
+insert into product (name, description, price, image_url, category_id) values ('Running Shoes', 'Lightweight cushioned running shoes', 119.99, 'https://placehold.co/400x300?text=Running+Shoes', 2)
+insert into product (name, description, price, image_url, category_id) values ('Wool Beanie', 'Warm knitted beanie for cold weather', 19.99, 'https://placehold.co/400x300?text=Wool+Beanie', 2)
+insert into product (name, description, price, image_url, category_id) values ('Leather Belt', 'Genuine leather belt with brushed metal buckle', 39.99, 'https://placehold.co/400x300?text=Leather+Belt', 2)
+insert into product (name, description, price, image_url, category_id) values ('Linen Shirt', 'Casual linen button-down shirt for summer', 54.99, 'https://placehold.co/400x300?text=Linen+Shirt', 2)
+go
+
+-- Home & Garden (category_id = 3)
+insert into product (name, description, price, image_url, category_id) values ('Ceramic Plant Pot', 'Handcrafted ceramic pot with drainage hole', 29.99, 'https://placehold.co/400x300?text=Ceramic+Plant+Pot', 3)
+insert into product (name, description, price, image_url, category_id) values ('Scented Candle Set', 'Set of 3 soy wax scented candles in glass jars', 34.99, 'https://placehold.co/400x300?text=Scented+Candle+Set', 3)
+insert into product (name, description, price, image_url, category_id) values ('Bamboo Cutting Board', 'Large bamboo cutting board with juice groove', 24.99, 'https://placehold.co/400x300?text=Bamboo+Cutting+Board', 3)
+insert into product (name, description, price, image_url, category_id) values ('Garden Tool Set', '5-piece stainless steel garden tool set with carry bag', 44.99, 'https://placehold.co/400x300?text=Garden+Tool+Set', 3)
+insert into product (name, description, price, image_url, category_id) values ('Throw Blanket', 'Soft fleece throw blanket in neutral tones', 39.99, 'https://placehold.co/400x300?text=Throw+Blanket', 3)
+insert into product (name, description, price, image_url, category_id) values ('Wall Clock', 'Minimalist wooden wall clock with silent movement', 49.99, 'https://placehold.co/400x300?text=Wall+Clock', 3)
+insert into product (name, description, price, image_url, category_id) values ('Indoor Herb Garden Kit', 'Self-watering herb garden kit with LED grow light', 59.99, 'https://placehold.co/400x300?text=Indoor+Herb+Garden+Kit', 3)
+insert into product (name, description, price, image_url, category_id) values ('Decorative Cushion', 'Velvet decorative cushion with embroidered pattern', 22.99, 'https://placehold.co/400x300?text=Decorative+Cushion', 3)
+go
+
+-- Books (category_id = 4)
+insert into product (name, description, price, image_url, category_id) values ('Clean Code', 'A handbook of agile software craftsmanship by Robert C. Martin', 44.99, 'https://placehold.co/400x300?text=Clean+Code', 4)
+insert into product (name, description, price, image_url, category_id) values ('The Pragmatic Programmer', 'Your journey to mastery by David Thomas and Andrew Hunt', 49.99, 'https://placehold.co/400x300?text=The+Pragmatic+Programmer', 4)
+insert into product (name, description, price, image_url, category_id) values ('Design Patterns', 'Elements of reusable object-oriented software', 54.99, 'https://placehold.co/400x300?text=Design+Patterns', 4)
+insert into product (name, description, price, image_url, category_id) values ('Refactoring', 'Improving the design of existing code by Martin Fowler', 47.99, 'https://placehold.co/400x300?text=Refactoring', 4)
+insert into product (name, description, price, image_url, category_id) values ('Domain-Driven Design', 'Tackling complexity in the heart of software by Eric Evans', 59.99, 'https://placehold.co/400x300?text=Domain-Driven+Design', 4)
+insert into product (name, description, price, image_url, category_id) values ('Swiss Cookbook', 'Traditional Swiss recipes from all cantons', 34.99, 'https://placehold.co/400x300?text=Swiss+Cookbook', 4)
+insert into product (name, description, price, image_url, category_id) values ('Alpine Photography', 'Stunning photography book of the Swiss Alps', 69.99, 'https://placehold.co/400x300?text=Alpine+Photography', 4)
+insert into product (name, description, price, image_url, category_id) values ('Mindfulness Guide', 'A practical guide to meditation and mindfulness', 19.99, 'https://placehold.co/400x300?text=Mindfulness+Guide', 4)
+go
+
+-- Sports & Outdoors (category_id = 5)
+insert into product (name, description, price, image_url, category_id) values ('Yoga Mat', 'Non-slip eco-friendly yoga mat with carry strap', 29.99, 'https://placehold.co/400x300?text=Yoga+Mat', 5)
+insert into product (name, description, price, image_url, category_id) values ('Hiking Backpack', '40L waterproof hiking backpack with rain cover', 89.99, 'https://placehold.co/400x300?text=Hiking+Backpack', 5)
+insert into product (name, description, price, image_url, category_id) values ('Resistance Bands Set', 'Set of 5 resistance bands with different strengths', 19.99, 'https://placehold.co/400x300?text=Resistance+Bands+Set', 5)
+insert into product (name, description, price, image_url, category_id) values ('Stainless Steel Water Bottle', 'Insulated 750ml water bottle keeps drinks cold for 24h', 24.99, 'https://placehold.co/400x300?text=Stainless+Steel+Water+Bottle', 5)
+insert into product (name, description, price, image_url, category_id) values ('Camping Lantern', 'Rechargeable LED camping lantern with power bank function', 34.99, 'https://placehold.co/400x300?text=Camping+Lantern', 5)
+insert into product (name, description, price, image_url, category_id) values ('Jump Rope', 'Adjustable speed jump rope for fitness training', 14.99, 'https://placehold.co/400x300?text=Jump+Rope', 5)
+insert into product (name, description, price, image_url, category_id) values ('Trekking Poles', 'Lightweight carbon fiber trekking poles pair', 79.99, 'https://placehold.co/400x300?text=Trekking+Poles', 5)
+insert into product (name, description, price, image_url, category_id) values ('Fitness Tracker Band', 'Waterproof fitness band with sleep tracking', 49.99, 'https://placehold.co/400x300?text=Fitness+Tracker+Band', 5)
+insert into product (name, description, price, image_url, category_id) values ('Dumbbell Set', 'Adjustable dumbbell set from 2kg to 20kg', 299.99, 'https://placehold.co/400x300?text=Dumbbell+Set', 5)
+go
+
+-- Food & Beverages (category_id = 6)
+insert into product (name, description, price, image_url, category_id) values ('Swiss Chocolate Box', 'Assorted premium Swiss chocolates in gift box', 29.99, 'https://placehold.co/400x300?text=Swiss+Chocolate+Box', 6)
+insert into product (name, description, price, image_url, category_id) values ('Organic Coffee Beans', '1kg bag of single-origin organic arabica coffee beans', 24.99, 'https://placehold.co/400x300?text=Organic+Coffee+Beans', 6)
+insert into product (name, description, price, image_url, category_id) values ('Herbal Tea Collection', 'Collection of 6 Swiss alpine herbal teas', 18.99, 'https://placehold.co/400x300?text=Herbal+Tea+Collection', 6)
+insert into product (name, description, price, image_url, category_id) values ('Granola Mix', 'Crunchy granola mix with nuts and dried fruits', 12.99, 'https://placehold.co/400x300?text=Granola+Mix', 6)
+insert into product (name, description, price, image_url, category_id) values ('Olive Oil Extra Virgin', 'Cold-pressed extra virgin olive oil from Ticino', 19.99, 'https://placehold.co/400x300?text=Olive+Oil+Extra+Virgin', 6)
+insert into product (name, description, price, image_url, category_id) values ('Dried Fruit Mix', 'Premium mix of organic dried fruits and berries', 14.99, 'https://placehold.co/400x300?text=Dried+Fruit+Mix', 6)
+insert into product (name, description, price, image_url, category_id) values ('Sparkling Water Pack', 'Pack of 6 bottles of Swiss alpine sparkling water', 8.99, 'https://placehold.co/400x300?text=Sparkling+Water+Pack', 6)
+insert into product (name, description, price, image_url, category_id) values ('Artisan Honey', 'Raw unfiltered honey from Swiss alpine meadows', 16.99, 'https://placehold.co/400x300?text=Artisan+Honey', 6)
+go
