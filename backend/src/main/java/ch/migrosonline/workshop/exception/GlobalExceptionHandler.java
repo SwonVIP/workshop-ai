@@ -16,8 +16,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
-    var body =
-        ErrorResponse.builder().error("Not Found").message(ex.getMessage()).status(404).build();
+    var body = new ErrorResponse(404, "Not Found", ex.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
   }
 
@@ -46,12 +45,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
     log.error("Unhandled exception", ex);
-    var body =
-        ErrorResponse.builder()
-            .error("Internal Server Error")
-            .message("An unexpected error occurred")
-            .status(500)
-            .build();
+    var body = new ErrorResponse(500, "Internal Server Error", "An unexpected error occurred");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
   }
 }

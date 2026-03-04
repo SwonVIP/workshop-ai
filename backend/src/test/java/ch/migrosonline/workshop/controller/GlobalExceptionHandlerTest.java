@@ -22,9 +22,9 @@ class GlobalExceptionHandlerTest {
     // then — returns 404 with structured error body
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     assertThat(response.getBody()).isNotNull();
-    assertThat(response.getBody().getError()).isEqualTo("Not Found");
-    assertThat(response.getBody().getMessage()).isEqualTo("Product with id 42 not found");
-    assertThat(response.getBody().getStatus()).isEqualTo(404);
+    assertThat(response.getBody().error()).isEqualTo("Not Found");
+    assertThat(response.getBody().message()).isEqualTo("Product with id 42 not found");
+    assertThat(response.getBody().status()).isEqualTo(404);
   }
 
   @Test
@@ -38,9 +38,9 @@ class GlobalExceptionHandlerTest {
     // then — returns 500 with generic message, internal details are NOT exposed
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(response.getBody()).isNotNull();
-    assertThat(response.getBody().getError()).isEqualTo("Internal Server Error");
-    assertThat(response.getBody().getMessage()).isEqualTo("An unexpected error occurred");
-    assertThat(response.getBody().getMessage()).doesNotContain("Database", "password", "secret");
-    assertThat(response.getBody().getStatus()).isEqualTo(500);
+    assertThat(response.getBody().error()).isEqualTo("Internal Server Error");
+    assertThat(response.getBody().message()).isEqualTo("An unexpected error occurred");
+    assertThat(response.getBody().message()).doesNotContain("Database", "password", "secret");
+    assertThat(response.getBody().status()).isEqualTo(500);
   }
 }
