@@ -272,6 +272,7 @@
                     <threads>8</threads>
                     <outputFormats>
                         <outputFormat>HTML</outputFormat>
+                        <outputFormat>XML</outputFormat>
                     </outputFormats>
                     <excludedClasses>
                         <excludedClass>ch.migrosonline.workshop.WorkshopApplication</excludedClass>

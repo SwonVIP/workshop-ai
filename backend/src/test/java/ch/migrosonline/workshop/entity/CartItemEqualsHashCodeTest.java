@@ -9,111 +9,83 @@ class CartItemEqualsHashCodeTest {
   private CartItem buildItem(Long cartId, Long productId) {
     var cart = Cart.builder().id(cartId).sessionId("sess-" + cartId).build();
     var product = Product.builder().id(productId).name("product-" + productId).build();
-    return CartItem.builder().id(null).cart(cart).product(product).quantity(1).build();
+    return CartItem.builder().cart(cart).product(product).quantity(1).build();
   }
 
   @Test
-  void shouldBeReflexive() {
-    // given
-    var a = buildItem(1L, 1L);
+  void shouldConsiderSameProductInSameCartAsTheSameLineItem() {
+    // given — same product added to the same cart (e.g. loaded from two different queries)
+    var item1 = buildItem(1L, 42L);
+    var item2 = buildItem(1L, 42L);
+
+    // then — same cart + same product = same line item
+    assertThat(item1).isEqualTo(item2);
+    assertThat(item1.hashCode()).isEqualTo(item2.hashCode());
+  }
+
+  @Test
+  void shouldConsiderSameProductInDifferentCartsAsDifferentLineItems() {
+    // given — same product but in Alice's cart vs Bob's cart
+    var aliceItem = buildItem(1L, 42L);
+    var bobItem = buildItem(2L, 42L);
 
     // then
-    assertThat(a.equals(a)).isTrue();
+    assertThat(aliceItem).isNotEqualTo(bobItem);
+    assertThat(aliceItem.hashCode()).isNotEqualTo(bobItem.hashCode());
   }
 
   @Test
-  void shouldBeSymmetric() {
-    // given
-    var a = buildItem(1L, 1L);
-    var b = buildItem(1L, 1L);
+  void shouldConsiderDifferentProductsInSameCartAsDifferentLineItems() {
+    // given — headphones and keyboard in the same cart
+    var headphones = buildItem(1L, 10L);
+    var keyboard = buildItem(1L, 20L);
 
     // then
-    assertThat(a.equals(b)).isTrue();
-    assertThat(b.equals(a)).isTrue();
+    assertThat(headphones).isNotEqualTo(keyboard);
+    assertThat(headphones.hashCode()).isNotEqualTo(keyboard.hashCode());
   }
 
   @Test
-  void shouldReturnFalseForNull() {
+  void shouldNotMatchLineItemWithNull() {
     // given
-    var a = buildItem(1L, 1L);
+    var item = buildItem(1L, 1L);
 
     // then
-    assertThat(a.equals(null)).isFalse();
+    assertThat(item).isNotEqualTo(null);
   }
 
   @Test
-  void shouldReturnFalseForDifferentClass() {
+  void shouldNotMatchLineItemWithDifferentObjectType() {
     // given
-    var a = buildItem(1L, 1L);
+    var item = buildItem(1L, 1L);
 
     // then
-    assertThat(a.equals("string")).isFalse();
+    assertThat(item.equals("not-a-cart-item")).isFalse();
   }
 
   @Test
-  void shouldBeEqualWhenSameCartIdAndProductId() {
-    // given
-    var a = buildItem(1L, 1L);
-    var b = buildItem(1L, 1L);
-
-    // then
-    assertThat(a).isEqualTo(b);
-  }
-
-  @Test
-  void shouldNotBeEqualWhenDifferentCartId() {
-    // given
-    var a = buildItem(1L, 1L);
-    var b = buildItem(2L, 1L);
-
-    // then
-    assertThat(a).isNotEqualTo(b);
-  }
-
-  @Test
-  void shouldNotBeEqualWhenDifferentProductId() {
-    // given
-    var a = buildItem(1L, 1L);
-    var b = buildItem(1L, 2L);
-
-    // then
-    assertThat(a).isNotEqualTo(b);
-  }
-
-  @Test
-  void shouldHandleNullCart() {
-    // given — CartItem with null cart returns false for equals
-    var a =
+  void shouldNotMatchWhenCartIsNull() {
+    // given — an orphan item not yet associated with a cart
+    var orphan =
         CartItem.builder().cart(null).product(Product.builder().id(1L).build()).quantity(1).build();
-    var b = buildItem(1L, 1L);
+    var normal = buildItem(1L, 1L);
 
     // then
-    assertThat(a.equals(b)).isFalse();
+    assertThat(orphan).isNotEqualTo(normal);
   }
 
   @Test
-  void shouldHandleNullProduct() {
-    // given — CartItem with null product returns false for equals
-    var a =
+  void shouldNotMatchWhenProductIsNull() {
+    // given — an item with no product reference
+    var broken =
         CartItem.builder()
             .cart(Cart.builder().id(1L).sessionId("s").build())
             .product(null)
             .quantity(1)
             .build();
-    var b = buildItem(1L, 1L);
+    var normal = buildItem(1L, 1L);
 
     // then
-    assertThat(a.equals(b)).isFalse();
-  }
-
-  @Test
-  void shouldHaveSameHashCodeWhenEqual() {
-    // given
-    var a = buildItem(1L, 1L);
-    var b = buildItem(1L, 1L);
-
-    // then — contract: equal objects must have same hashCode
-    assertThat(a).isEqualTo(b);
-    assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    assertThat(broken).isNotEqualTo(normal);
   }
 }

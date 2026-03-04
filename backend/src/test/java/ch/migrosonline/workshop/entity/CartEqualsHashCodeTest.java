@@ -6,86 +6,53 @@ import org.junit.jupiter.api.Test;
 
 class CartEqualsHashCodeTest {
 
-  private Cart buildCart(String sessionId) {
-    return Cart.builder().id(null).sessionId(sessionId).build();
+  @Test
+  void shouldConsiderTwoCartsWithSameSessionAsTheSameCart() {
+    // given — two cart instances for the same browser session
+    var cart1 = Cart.builder().id(1L).sessionId("abc-123").build();
+    var cart2 = Cart.builder().id(2L).sessionId("abc-123").build();
+
+    // then — same session means same cart
+    assertThat(cart1).isEqualTo(cart2);
+    assertThat(cart1.hashCode()).isEqualTo(cart2.hashCode());
   }
 
   @Test
-  void shouldBeReflexive() {
-    // given
-    var a = buildCart("sess-1");
+  void shouldConsiderCartsFromDifferentSessionsAsDifferentCarts() {
+    // given — two different browser sessions
+    var cart1 = Cart.builder().id(1L).sessionId("session-alice").build();
+    var cart2 = Cart.builder().id(2L).sessionId("session-bob").build();
 
     // then
-    assertThat(a.equals(a)).isTrue();
+    assertThat(cart1).isNotEqualTo(cart2);
+    assertThat(cart1.hashCode()).isNotEqualTo(cart2.hashCode());
   }
 
   @Test
-  void shouldBeSymmetric() {
+  void shouldNotMatchCartWithNull() {
     // given
-    var a = buildCart("sess-1");
-    var b = buildCart("sess-1");
+    var cart = Cart.builder().sessionId("abc-123").build();
 
     // then
-    assertThat(a.equals(b)).isTrue();
-    assertThat(b.equals(a)).isTrue();
+    assertThat(cart).isNotEqualTo(null);
   }
 
   @Test
-  void shouldReturnFalseForNull() {
+  void shouldNotMatchCartWithDifferentObjectType() {
     // given
-    var a = buildCart("sess-1");
+    var cart = Cart.builder().sessionId("abc-123").build();
 
     // then
-    assertThat(a.equals(null)).isFalse();
+    assertThat(cart.equals("abc-123")).isFalse();
   }
 
   @Test
-  void shouldReturnFalseForDifferentClass() {
-    // given
-    var a = buildCart("sess-1");
+  void shouldNotMatchWhenSessionIdIsNull() {
+    // given — a cart not yet assigned to a session
+    var unassigned = Cart.builder().id(1L).sessionId(null).build();
+    var assigned = Cart.builder().id(2L).sessionId("abc-123").build();
 
     // then
-    assertThat(a.equals("string")).isFalse();
-  }
-
-  @Test
-  void shouldBeEqualWhenSameSessionId() {
-    // given
-    var a = buildCart("sess-1");
-    var b = buildCart("sess-1");
-
-    // then
-    assertThat(a).isEqualTo(b);
-  }
-
-  @Test
-  void shouldNotBeEqualWhenDifferentSessionId() {
-    // given
-    var a = buildCart("sess-1");
-    var b = buildCart("sess-2");
-
-    // then
-    assertThat(a).isNotEqualTo(b);
-  }
-
-  @Test
-  void shouldReturnFalseWhenSessionIdIsNull() {
-    // given — Cart.equals returns false when sessionId is null
-    var a = Cart.builder().id(1L).sessionId(null).build();
-    var b = buildCart("sess-1");
-
-    // then
-    assertThat(a.equals(b)).isFalse();
-  }
-
-  @Test
-  void shouldHaveSameHashCodeWhenEqual() {
-    // given
-    var a = buildCart("sess-1");
-    var b = buildCart("sess-1");
-
-    // then — contract: equal objects must have same hashCode
-    assertThat(a).isEqualTo(b);
-    assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    assertThat(unassigned).isNotEqualTo(assigned);
   }
 }

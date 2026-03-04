@@ -6,86 +6,53 @@ import org.junit.jupiter.api.Test;
 
 class ProductEqualsHashCodeTest {
 
-  private Product buildProduct(Long id) {
-    return Product.builder().id(id).name("product-" + id).build();
+  @Test
+  void shouldConsiderTwoProductsWithSameIdAsTheSameProduct() {
+    // given — same product loaded from different queries
+    var product1 = Product.builder().id(42L).name("Headphones v1").build();
+    var product2 = Product.builder().id(42L).name("Headphones v2").build();
+
+    // then — same id means same product
+    assertThat(product1).isEqualTo(product2);
+    assertThat(product1.hashCode()).isEqualTo(product2.hashCode());
   }
 
   @Test
-  void shouldBeReflexive() {
+  void shouldConsiderProductsWithDifferentIdsAsDifferentProducts() {
     // given
-    var a = buildProduct(1L);
+    var headphones = Product.builder().id(1L).name("Headphones").build();
+    var keyboard = Product.builder().id(2L).name("Keyboard").build();
 
     // then
-    assertThat(a.equals(a)).isTrue();
+    assertThat(headphones).isNotEqualTo(keyboard);
+    assertThat(headphones.hashCode()).isNotEqualTo(keyboard.hashCode());
   }
 
   @Test
-  void shouldBeSymmetric() {
+  void shouldNotMatchProductWithNull() {
     // given
-    var a = buildProduct(1L);
-    var b = buildProduct(1L);
+    var product = Product.builder().id(1L).name("Headphones").build();
 
     // then
-    assertThat(a.equals(b)).isTrue();
-    assertThat(b.equals(a)).isTrue();
+    assertThat(product).isNotEqualTo(null);
   }
 
   @Test
-  void shouldReturnFalseForNull() {
+  void shouldNotMatchProductWithDifferentObjectType() {
     // given
-    var a = buildProduct(1L);
+    var product = Product.builder().id(1L).name("Headphones").build();
 
     // then
-    assertThat(a.equals(null)).isFalse();
+    assertThat(product.equals("Headphones")).isFalse();
   }
 
   @Test
-  void shouldReturnFalseForDifferentClass() {
-    // given
-    var a = buildProduct(1L);
+  void shouldNotMatchWhenProductIdIsNull() {
+    // given — a transient product not yet persisted
+    var unsaved = Product.builder().id(null).name("New Product").build();
+    var saved = Product.builder().id(1L).name("Headphones").build();
 
     // then
-    assertThat(a.equals("string")).isFalse();
-  }
-
-  @Test
-  void shouldBeEqualWhenSameId() {
-    // given
-    var a = buildProduct(1L);
-    var b = buildProduct(1L);
-
-    // then
-    assertThat(a).isEqualTo(b);
-  }
-
-  @Test
-  void shouldNotBeEqualWhenDifferentId() {
-    // given
-    var a = buildProduct(1L);
-    var b = buildProduct(2L);
-
-    // then
-    assertThat(a).isNotEqualTo(b);
-  }
-
-  @Test
-  void shouldReturnFalseWhenIdIsNull() {
-    // given — Product.equals returns false when id is null
-    var a = Product.builder().id(null).name("x").build();
-    var b = buildProduct(1L);
-
-    // then
-    assertThat(a.equals(b)).isFalse();
-  }
-
-  @Test
-  void shouldHaveSameHashCodeWhenEqual() {
-    // given
-    var a = buildProduct(1L);
-    var b = buildProduct(1L);
-
-    // then — contract: equal objects must have same hashCode
-    assertThat(a).isEqualTo(b);
-    assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    assertThat(unsaved).isNotEqualTo(saved);
   }
 }
