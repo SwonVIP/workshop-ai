@@ -1,0 +1,29 @@
+# BMAD methodology files (not committed)
+_bmad/
+_bmad-output/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+dist/
+.angular/
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+
+# Environment
+.env
+*.local
