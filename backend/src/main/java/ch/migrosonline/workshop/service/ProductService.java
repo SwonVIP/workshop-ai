@@ -1,5 +1,7 @@
 package ch.migrosonline.workshop.service;
 
+import static ch.migrosonline.workshop.config.CacheConfig.CATEGORIES_CACHE;
+
 import ch.migrosonline.workshop.exception.ResourceNotFoundException;
 import ch.migrosonline.workshop.model.CategoryResponse;
 import ch.migrosonline.workshop.model.ProductResponse;
@@ -9,6 +11,7 @@ import ch.migrosonline.workshop.repository.ProductSpecs;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,7 +44,7 @@ public class ProductService {
         .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
   }
 
-  @Transactional(readOnly = true)
+  @Cacheable(CATEGORIES_CACHE)
   public List<CategoryResponse> getCategories() {
     return categoryRepository.findAllByOrderByNameAsc().stream()
         .map(CategoryResponse::from)
