@@ -16,6 +16,7 @@ import {
   HlmSheetPortal,
 } from '@spartan-ng/helm/sheet';
 import { CartService } from '../../../core/services/cart.service';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-header',
@@ -36,6 +37,7 @@ import { CartService } from '../../../core/services/cart.service';
     HlmSheetTrigger,
     HlmSheetClose,
     HlmSheetPortal,
+    ThemeToggleComponent,
   ],
   template: `
     <header class="fixed top-0 left-0 right-0 h-16 bg-background border-b border-border z-50">
@@ -53,6 +55,8 @@ import { CartService } from '../../../core/services/cart.service';
              class="text-sm font-medium">
             Catalog
           </a>
+
+          <app-theme-toggle />
 
           <hlm-sheet>
             <button hlmSheetTrigger side="right" hlmBtn variant="ghost" size="icon"
