@@ -2,11 +2,13 @@ package ch.migrosonline.workshop.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.migrosonline.workshop.entity.Product;
 import ch.migrosonline.workshop.support.RepositoryTestSupport;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 class ProductRepositoryIT extends RepositoryTestSupport {
@@ -125,5 +127,123 @@ class ProductRepositoryIT extends RepositoryTestSupport {
     // then
     assertThat(page.getContent()).isEmpty();
     assertThat(page.getTotalElements()).isZero();
+  }
+
+  @Test
+  void shouldReturnProductByIdWhenExists() {
+    // given — seeded product id 1 = "Wireless Bluetooth Headphones"
+    Long productId = 1L;
+
+    // when
+    var result = productRepository.findById(productId);
+
+    // then
+    assertThat(result).isPresent();
+    assertThat(result.get().getName()).isEqualTo("Wireless Bluetooth Headphones");
+  }
+
+  @Test
+  void shouldReturnEmptyWhenProductIdDoesNotExist() {
+    // given
+    Long nonExistentId = 99999L;
+
+    // when
+    var result = productRepository.findById(nonExistentId);
+
+    // then
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void shouldReturnEmptyPageWhenPageExceedsTotalPages() {
+    // given
+    var pageable = PageRequest.of(100, 10);
+
+    // when
+    var page = productRepository.findAll(pageable);
+
+    // then
+    assertThat(page.getContent()).isEmpty();
+    assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(50);
+  }
+
+  @Test
+  void shouldReturnProductsSortedByPriceAscending() {
+    // given
+    var pageable = PageRequest.of(0, 100, Sort.by("price").ascending());
+
+    // when
+    var page = productRepository.findAll(pageable);
+
+    // then
+    assertThat(page.getContent()).hasSizeGreaterThan(1);
+    assertThat(page.getContent()).extracting(Product::getPrice).isSorted();
+  }
+
+  @Test
+  void shouldFilterByPriceAtLeastAloneWithoutMaxPrice() {
+    // given
+    var minPrice = new BigDecimal("100.00");
+    var spec = Specification.where(ProductSpecs.priceAtLeast(minPrice));
+    var pageable = PageRequest.of(0, 100);
+
+    // when
+    var page = productRepository.findAll(spec, pageable);
+
+    // then
+    assertThat(page.getContent()).isNotEmpty();
+    assertThat(page.getContent())
+        .allSatisfy(product -> assertThat(product.getPrice()).isGreaterThanOrEqualTo(minPrice));
+  }
+
+  @Test
+  void shouldFilterByPriceAtMostAloneWithoutMinPrice() {
+    // given
+    var maxPrice = new BigDecimal("20.00");
+    var spec = Specification.where(ProductSpecs.priceAtMost(maxPrice));
+    var pageable = PageRequest.of(0, 100);
+
+    // when
+    var page = productRepository.findAll(spec, pageable);
+
+    // then
+    assertThat(page.getContent()).isNotEmpty();
+    assertThat(page.getContent())
+        .allSatisfy(product -> assertThat(product.getPrice()).isLessThanOrEqualTo(maxPrice));
+  }
+
+  @Test
+  void shouldReturnExactPriceMatchWhenMinEqualsMax() {
+    // given — seed has products at 29.99 (Yoga Mat, Swiss Chocolate Box, Ceramic Plant Pot)
+    var exactPrice = new BigDecimal("29.99");
+    var spec =
+        Specification.where(ProductSpecs.priceAtLeast(exactPrice))
+            .and(ProductSpecs.priceAtMost(exactPrice));
+    var pageable = PageRequest.of(0, 100);
+
+    // when
+    var page = productRepository.findAll(spec, pageable);
+
+    // then
+    assertThat(page.getContent()).isNotEmpty();
+    assertThat(page.getContent())
+        .allSatisfy(product -> assertThat(product.getPrice()).isEqualByComparingTo(exactPrice));
+  }
+
+  @Test
+  void shouldReturnAllProductsWhenAllSpecsAreUnrestricted() {
+    // given
+    Specification<Product> spec =
+        Specification.where(ProductSpecs.hasCategory(null))
+            .and(ProductSpecs.nameContains(null))
+            .and(ProductSpecs.priceAtLeast(null))
+            .and(ProductSpecs.priceAtMost(null));
+    var pageable = PageRequest.of(0, 100);
+
+    // when
+    var page = productRepository.findAll(spec, pageable);
+
+    // then
+    assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(50);
   }
 }

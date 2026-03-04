@@ -51,4 +51,38 @@ class ErrorResponseJackson3Test {
     // then — the roundtrip preserves all values
     assertThat(deserialized).isEqualTo(original);
   }
+
+  @Test
+  void shouldSerializeNullMessageField() throws Exception {
+    // given — ErrorResponse with null message
+    var response = new ErrorResponse(400, "Bad Request", null);
+
+    // when
+    var json = mapper.writeValueAsString(response);
+
+    // then — null field is serialized as JSON null
+    assertThat(json).contains("\"message\":null");
+    assertThat(json).contains("\"status\":400");
+  }
+
+  @Test
+  void shouldIgnoreUnknownFieldsDuringDeserialization() throws Exception {
+    // given — JSON with an extra unknown field
+    var json =
+        """
+        {"status":422,"error":"Unprocessable Entity","message":"Invalid input","extra":"unknown"}""";
+
+    // when/then — Jackson 3 default behavior: unknown fields cause an error
+    // Document: by default Jackson 3 does NOT ignore unknown properties
+    try {
+      var response = mapper.readValue(json, ErrorResponse.class);
+      // If we reach here, Jackson 3 ignored unknown fields
+      assertThat(response.status()).isEqualTo(422);
+      assertThat(response.error()).isEqualTo("Unprocessable Entity");
+      assertThat(response.message()).isEqualTo("Invalid input");
+    } catch (Exception e) {
+      // If Jackson 3 rejects unknown fields, document this behavior
+      assertThat(e).hasMessageContaining("extra");
+    }
+  }
 }

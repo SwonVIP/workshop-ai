@@ -117,4 +117,39 @@ describe('ProductCardComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('CHF');
     expect(fixture.nativeElement.textContent).toContain('89.99');
   });
+
+  it.each([
+    { price: 0, expected: '0.00' },
+    { price: 10.5, expected: '10.50' },
+    { price: 99999.99, expected: '99,999.99' },
+  ])('should format price $price correctly', ({ price, expected }) => {
+    // given — a product with a specific price
+    const product: Product = { ...mockProduct, price };
+    const fixture = createComponent(product);
+
+    // when — the card is rendered
+    const text = fixture.nativeElement.textContent;
+
+    // then — the formatted price is displayed
+    expect(text).toContain(expected);
+  });
+
+  it('should set alt attribute on product image to product name', () => {
+    // given — a product card is rendered
+    const fixture = createComponent();
+
+    // then — image alt attribute matches product name
+    const img = fixture.nativeElement.querySelector('img');
+    expect(img.getAttribute('alt')).toBe('Wireless Headphones');
+  });
+
+  it('should display product description text', () => {
+    // given — a product card with a description
+    const fixture = createComponent();
+
+    // then — description text is visible
+    const desc = fixture.nativeElement.querySelector('[data-testid="product-description"]');
+    expect(desc).toBeTruthy();
+    expect(desc.textContent.trim()).toBe('Great sound quality with noise cancellation');
+  });
 });

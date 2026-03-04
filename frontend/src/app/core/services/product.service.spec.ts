@@ -289,4 +289,68 @@ describe('ProductService', () => {
       req.flush(mockCategories);
     });
   });
+
+  // ── Error handling ────────────────────────────────────────────────
+
+  describe('error handling', () => {
+    it('should propagate HTTP 500 error to subscriber on getProducts', () => {
+      // given — the API will return a server error
+      let error: any;
+      service.getProducts({}, 0, 12).subscribe({ error: (e) => (error = e) });
+
+      // when — the request fails with 500
+      httpMock
+        .expectOne(r => r.url === '/api/products')
+        .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
+
+      // then — the error propagates to the subscriber
+      expect(error).toBeTruthy();
+      expect(error.status).toBe(500);
+    });
+
+    it('should propagate HTTP 404 error to subscriber on getProductById', () => {
+      // given — the product does not exist
+      let error: any;
+      service.getProductById(999).subscribe({ error: (e) => (error = e) });
+
+      // when — the request fails with 404
+      httpMock
+        .expectOne('/api/products/999')
+        .flush('Not Found', { status: 404, statusText: 'Not Found' });
+
+      // then — the error propagates to the subscriber
+      expect(error).toBeTruthy();
+      expect(error.status).toBe(404);
+    });
+
+    it('should propagate HTTP 500 error to subscriber on getCategories', () => {
+      // given — the API will return a server error
+      let error: any;
+      service.getCategories().subscribe({ error: (e) => (error = e) });
+
+      // when — the request fails with 500
+      httpMock
+        .expectOne('/api/products/categories')
+        .flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
+
+      // then — the error propagates to the subscriber
+      expect(error).toBeTruthy();
+      expect(error.status).toBe(500);
+    });
+
+    it('should propagate network error (status 0) to subscriber on getProducts', () => {
+      // given — a network failure
+      let error: any;
+      service.getProducts({}, 0, 12).subscribe({ error: (e) => (error = e) });
+
+      // when — the request fails with a network error
+      httpMock
+        .expectOne(r => r.url === '/api/products')
+        .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
+
+      // then — the error propagates to the subscriber
+      expect(error).toBeTruthy();
+      expect(error.status).toBe(0);
+    });
+  });
 });

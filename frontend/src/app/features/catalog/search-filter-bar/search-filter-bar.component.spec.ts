@@ -177,4 +177,106 @@ describe('SearchFilterBarComponent', () => {
     expect(emitted[emitted.length - 1].minPrice).toBeUndefined();
     expect(emitted[emitted.length - 1].maxPrice).toBeUndefined();
   });
+
+  it('should cancel previous debounce and only emit final value on rapid typing', () => {
+    // given — the filter bar is rendered
+    const fixture = createComponent();
+
+    const emitted: ProductFilter[] = [];
+    fixture.componentInstance.filterChange.subscribe((f: ProductFilter) => emitted.push(f));
+    const input = fixture.nativeElement.querySelector('input[type="text"]');
+
+    // when — user types 'a', then quickly 'ab', then 'abc' before debounce completes
+    input.value = 'a';
+    input.dispatchEvent(new Event('input'));
+    vi.advanceTimersByTime(100);
+
+    input.value = 'ab';
+    input.dispatchEvent(new Event('input'));
+    vi.advanceTimersByTime(100);
+
+    input.value = 'abc';
+    input.dispatchEvent(new Event('input'));
+    vi.advanceTimersByTime(300);
+
+    // then — only the final value 'abc' is emitted
+    expect(emitted.length).toBe(1);
+    expect(emitted[0].search).toBe('abc');
+  });
+
+  it('should emit filter without search when input is cleared to empty string', () => {
+    // given — user previously searched for something
+    const fixture = createComponent();
+
+    const emitted: ProductFilter[] = [];
+    fixture.componentInstance.filterChange.subscribe((f: ProductFilter) => emitted.push(f));
+    const input = fixture.nativeElement.querySelector('input[type="text"]');
+
+    // when — user types then clears the input
+    input.value = 'headphones';
+    input.dispatchEvent(new Event('input'));
+    vi.advanceTimersByTime(300);
+
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    vi.advanceTimersByTime(300);
+
+    // then — second emission has no search property
+    expect(emitted.length).toBe(2);
+    expect(emitted[1].search).toBeUndefined();
+  });
+
+  it('should emit combined filter when multiple filters are active', () => {
+    // given — filter bar with categories
+    const fixture = createComponent();
+
+    const emitted: ProductFilter[] = [];
+    fixture.componentInstance.filterChange.subscribe((f: ProductFilter) => emitted.push(f));
+
+    // when — setting category, price, sort, and search all at once
+    const categorySelect = fixture.nativeElement.querySelector('[data-testid="category-filter"]');
+    categorySelect.value = 'Electronics';
+    categorySelect.dispatchEvent(new Event('change'));
+
+    const priceSelect = fixture.nativeElement.querySelector('[data-testid="price-filter"]');
+    priceSelect.value = '50-100';
+    priceSelect.dispatchEvent(new Event('change'));
+
+    const sortSelect = fixture.nativeElement.querySelector('[data-testid="sort-filter"]');
+    sortSelect.value = 'price-asc';
+    sortSelect.dispatchEvent(new Event('change'));
+
+    const input = fixture.nativeElement.querySelector('input[type="text"]');
+    input.value = 'headphones';
+    input.dispatchEvent(new Event('input'));
+    vi.advanceTimersByTime(300);
+
+    // then — the last emission contains all filters combined
+    const lastEmitted = emitted[emitted.length - 1];
+    expect(lastEmitted.category).toBe('Electronics');
+    expect(lastEmitted.minPrice).toBe(50);
+    expect(lastEmitted.maxPrice).toBe(100);
+    expect(lastEmitted.sort).toBe('price');
+    expect(lastEmitted.direction).toBe('asc');
+    expect(lastEmitted.search).toBe('headphones');
+  });
+
+  it('should clean up debounce subscription on component destroy', () => {
+    // given — a search input with a pending debounce timer
+    const fixture = createComponent();
+
+    const emitted: ProductFilter[] = [];
+    fixture.componentInstance.filterChange.subscribe((f: ProductFilter) => emitted.push(f));
+
+    const input = fixture.nativeElement.querySelector('input[type="text"]');
+    input.value = 'pending';
+    input.dispatchEvent(new Event('input'));
+
+    // when — the component is destroyed before debounce fires
+    fixture.destroy();
+    vi.advanceTimersByTime(300);
+
+    // then — no emission occurs (timer was cleaned up)
+    expect(emitted.length).toBe(0);
+  });
 });

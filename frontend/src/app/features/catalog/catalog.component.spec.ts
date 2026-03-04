@@ -352,4 +352,70 @@ describe('CatalogComponent', () => {
     expect(errorEl).toBeTruthy();
     expect(errorEl.textContent).toContain('Something went wrong');
   });
+
+  it('should display correct range 13-24 on page 2 of 50 products', async () => {
+    // given — 50 products, page 1 (0-indexed) with 12 per page
+    const page2Response: PaginatedResponse<Product> = {
+      content: mockProducts,
+      totalElements: 50,
+      totalPages: 5,
+      size: 12,
+      number: 1,
+      first: false,
+      last: false,
+    };
+
+    const fixture = TestBed.createComponent(CatalogComponent);
+    fixture.detectChanges();
+    await flushInitialRequests(fixture, {
+      content: mockProducts,
+      totalElements: 50,
+      totalPages: 5,
+      size: 12,
+      number: 0,
+      first: true,
+      last: false,
+    });
+
+    // when — user navigates to page 1 (second page)
+    const pagination = fixture.debugElement.query(By.directive(PaginationComponent));
+    pagination.triggerEventHandler('pageChange', 1);
+    fixture.detectChanges();
+
+    const req = httpMock.expectOne(
+      (r) => r.urlWithParams.includes('/api/products?') &&
+             urlContains(r.urlWithParams, 'page=1')
+    );
+    req.flush(page2Response);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // then — range shows 13-24
+    const countEl = fixture.nativeElement.querySelector('[data-testid="product-count"]');
+    expect(countEl).toBeTruthy();
+    expect(countEl.textContent).toContain('13-24');
+    expect(countEl.textContent).toContain('of 50');
+  });
+
+  it('should display 0 products when totalElements is 0', async () => {
+    // given — API returns 0 products
+    const emptyResponse: PaginatedResponse<Product> = {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+      size: 12,
+      number: 0,
+      first: true,
+      last: true,
+    };
+
+    const fixture = TestBed.createComponent(CatalogComponent);
+    fixture.detectChanges();
+    await flushInitialRequests(fixture, emptyResponse);
+
+    // then — empty state is shown (no product-count element, shows "No products found")
+    const countEl = fixture.nativeElement.querySelector('[data-testid="product-count"]');
+    expect(countEl).toBeFalsy();
+    expect(fixture.nativeElement.textContent).toContain('No products found');
+  });
 });
