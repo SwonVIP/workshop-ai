@@ -41,4 +41,9 @@ public class ProductController {
   public List<CategoryResponse> getCategories() {
     return productService.getCategories();
   }
+
+  @GetMapping("/suggestions")
+  public List<ProductResponse> getSuggestions(@RequestParam String sessionId) {
+    return productService.getSuggestions(sessionId);
+  }
 }
