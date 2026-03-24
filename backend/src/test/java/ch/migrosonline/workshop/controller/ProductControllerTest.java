@@ -375,6 +375,63 @@ class ProductControllerTest extends ControllerTestSupport {
   }
 
   @Test
+  void shouldReturnSuggestionsWhenCartHasItems() {
+    // given
+    var category = new CategoryResponse(1L, "Electronics", "Gadgets");
+    var suggestion =
+        new ProductResponse(
+            5L,
+            "USB Cable",
+            "Fast charging",
+            new BigDecimal("9.99"),
+            "https://placehold.co/400x300?text=USB+Cable",
+            category);
+    when(productService.getSuggestions("550e8400-e29b-41d4-a716-446655440000"))
+        .thenReturn(List.of(suggestion));
+
+    // when
+    var result =
+        mvc.get()
+            .uri("/api/products/suggestions?sessionId=550e8400-e29b-41d4-a716-446655440000")
+            .exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("$").asList().hasSize(1);
+    assertThat(result).bodyJson().extractingPath("[0].id").isEqualTo(5);
+    assertThat(result).bodyJson().extractingPath("[0].name").isEqualTo("USB Cable");
+    assertThat(result).bodyJson().extractingPath("[0].price").isEqualTo(9.99);
+  }
+
+  @Test
+  void shouldReturnEmptyListWhenCartIsEmpty() {
+    // given
+    when(productService.getSuggestions("550e8400-e29b-41d4-a716-446655440000"))
+        .thenReturn(List.of());
+
+    // when
+    var result =
+        mvc.get()
+            .uri("/api/products/suggestions?sessionId=550e8400-e29b-41d4-a716-446655440000")
+            .exchange();
+
+    // then
+    assertThat(result).hasStatusOk();
+    assertThat(result).bodyJson().extractingPath("$").asList().isEmpty();
+  }
+
+  @Test
+  void shouldReturn400WhenSessionIdMissing() {
+    // given — no sessionId query param
+
+    // when
+    var result = mvc.get().uri("/api/products/suggestions").exchange();
+
+    // then
+    assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
   void shouldPassSortParameterThroughPageable() {
     // given
     var pageableCaptor = ArgumentCaptor.forClass(Pageable.class);

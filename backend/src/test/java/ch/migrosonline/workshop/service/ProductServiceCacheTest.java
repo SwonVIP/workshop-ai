@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import ch.migrosonline.workshop.config.CacheConfig;
 import ch.migrosonline.workshop.entity.CategoryEntity;
 import ch.migrosonline.workshop.model.CategoryResponse;
+import ch.migrosonline.workshop.repository.CartRepository;
 import ch.migrosonline.workshop.repository.CategoryRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
 import java.util.List;
@@ -28,6 +29,7 @@ class ProductServiceCacheTest {
 
   @MockitoBean private CategoryRepository categoryRepository;
   @MockitoBean private ProductRepository productRepository;
+  @MockitoBean private CartRepository cartRepository;
   @Autowired private ProductService productService;
   @Autowired private CacheManager cacheManager;
 

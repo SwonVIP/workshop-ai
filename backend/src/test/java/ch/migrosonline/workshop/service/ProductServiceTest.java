@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import ch.migrosonline.workshop.entity.CategoryEntity;
 import ch.migrosonline.workshop.entity.ProductEntity;
+import ch.migrosonline.workshop.repository.CartRepository;
 import ch.migrosonline.workshop.repository.CategoryRepository;
 import ch.migrosonline.workshop.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,6 +38,8 @@ class ProductServiceTest {
   @Mock private ProductRepository productRepository;
 
   @Mock private CategoryRepository categoryRepository;
+
+  @Mock private CartRepository cartRepository;
 
   @InjectMocks private ProductService productService;
 
